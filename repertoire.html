@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Répertoire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #221B17;
+    --bg-raised: #2C2420;
+    --bg-raised-2: #362D27;
+    --cream: #F0E6D8;
+    --cream-dim: #C9BCA9;
+    --line: #453A32;
+    --gtr: #D9A441;
+    --bass: #4C8577;
+    --drm: #C1443C;
+    --vox: #3E6E8E;
+    --ok: #6E9B6E;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--cream);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #app{max-width:760px;margin:0 auto;padding:28px 18px 60px;}
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2rem;
+    margin:0 0 4px;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{color:var(--cream-dim);font-size:0.92rem;margin:0 0 22px;line-height:1.5;}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;}
+  .tab{
+    background:none;border:none;color:var(--cream-dim);
+    font-family:'IBM Plex Sans',sans-serif;font-size:0.92rem;font-weight:500;
+    padding:10px 4px;margin-right:18px;cursor:pointer;
+    border-bottom:2px solid transparent;transition:color .15s, border-color .15s;
+  }
+  .tab.active{color:var(--cream);border-bottom-color:var(--gtr);}
+  .tab:hover{color:var(--cream);}
+  input[type=text]{
+    width:100%;background:var(--bg-raised);border:1px solid var(--line);
+    color:var(--cream);padding:10px 12px;border-radius:6px;font-family:inherit;font-size:0.9rem;
+  }
+  input[type=text]:focus{outline:none;border-color:var(--gtr);}
+  .search{margin-bottom:16px;}
+  .song-card{
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .song-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .song-title{font-weight:600;font-size:0.98rem;}
+  .song-artist{color:var(--cream-dim);font-size:0.85rem;}
+  .song-num{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--cream-dim);opacity:.7;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .tag{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px 9px;border-radius:20px;font-size:0.78rem;font-weight:500;
+    border:1px solid transparent;
+  }
+  .tag .names{opacity:.85;font-weight:400;}
+  .tag-empty{color:var(--cream-dim);opacity:.5;font-size:0.78rem;font-style:italic;}
+  .artist-header{
+    font-family:'Fraunces', serif;font-weight:600;font-size:1.05rem;color:var(--gtr);
+    margin:22px 0 8px;padding-top:10px;border-top:1px solid var(--line);
+  }
+  .artist-header:first-child{margin-top:0;border-top:none;padding-top:0;}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .tag.gtr{background:rgba(217,164,65,.14);color:var(--gtr);}
+  .tag.gtr .dot{background:var(--gtr);}
+  .tag.bass{background:rgba(76,133,119,.16);color:var(--bass);}
+  .tag.bass .dot{background:var(--bass);}
+  .tag.drm{background:rgba(193,68,60,.14);color:var(--drm);}
+  .tag.drm .dot{background:var(--drm);}
+  .tag.vox{background:rgba(62,110,142,.16);color:var(--vox);}
+  .tag.vox .dot{background:var(--vox);}
+  .note{
+    background:var(--bg-raised-2);border:1px dashed var(--line);border-radius:8px;
+    padding:10px 14px;font-size:0.82rem;color:var(--cream-dim);margin-bottom:16px;line-height:1.5;
+  }
+  .btn{
+    background:var(--gtr);color:#221B17;border:none;border-radius:6px;
+    padding:9px 16px;font-family:inherit;font-weight:600;font-size:0.85rem;cursor:pointer;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn-ghost{
+    background:none;border:1px solid var(--line);color:var(--cream);
+    padding:8px 14px;border-radius:6px;font-family:inherit;font-size:0.85rem;cursor:pointer;
+  }
+  .btn-ghost:hover{border-color:var(--cream-dim);}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .add-song{margin:18px 0 8px;}
+  .chip-select{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+  .chip{
+    padding:8px 14px;border-radius:20px;border:1px solid var(--line);
+    background:var(--bg-raised);color:var(--cream-dim);font-size:0.85rem;font-weight:500;
+    cursor:pointer;transition:all .15s;
+  }
+  .chip.selected{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
+  .chip.universal::after{content:" ★";}
+  .setlist-summary{font-size:0.85rem;color:var(--cream-dim);margin-bottom:14px;}
+  .coverage-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
+  .coverage-item{font-size:0.78rem;color:var(--cream-dim);}
+  .coverage-item b{color:var(--cream);font-weight:600;}
+  .missing{color:var(--drm);}
+  details{margin-top:18px;}
+  summary{cursor:pointer;color:var(--cream-dim);font-size:0.85rem;padding:6px 0;}
+  select{
+    background:var(--bg-raised);color:var(--cream);border:1px solid var(--line);
+    border-radius:6px;padding:9px 12px;font-family:inherit;font-size:0.88rem;
+  }
+  .grid-table{width:100%;border-collapse:collapse;margin-top:14px;}
+  .grid-table th{
+    font-size:0.7rem;text-transform:none;color:var(--cream-dim);text-align:center;
+    padding:6px 4px;font-weight:500;
+  }
+  .grid-table td{padding:8px 4px;border-top:1px solid var(--line);}
+  .grid-song-name{font-size:0.85rem;padding-right:8px;}
+  .grid-song-artist{color:var(--cream-dim);font-size:0.75rem;}
+  .grid-artist-header{
+    font-family:'Fraunces', serif;font-weight:600;font-size:0.92rem;color:var(--gtr);
+    padding:14px 4px 6px;border-top:1px solid var(--line);
+  }
+  .grid-table tbody tr:first-child .grid-artist-header{border-top:none;padding-top:0;}
+  .toggle-cell{text-align:center;}
+  .toggle-btn{
+    width:64px;height:34px;border-radius:6px;border:1px solid var(--line);
+    background:transparent;cursor:pointer;font-size:0.62rem;font-weight:600;
+    font-family:'IBM Plex Sans',sans-serif;color:var(--cream-dim);padding:0 4px;
+  }
+  .toggle-btn.on.gtr{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
+  .toggle-btn.on.bass{background:var(--bass);border-color:var(--bass);color:#101815;}
+  .toggle-btn.on.drm{background:var(--drm);border-color:var(--drm);color:#221B17;}
+  .toggle-btn.on.vox{background:var(--vox);border-color:var(--vox);color:#101418;}
+  .loading{color:var(--cream-dim);font-size:0.9rem;padding:40px 0;text-align:center;}
+  .add-musician-form{
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;
+    padding:14px 16px;margin-top:16px;display:none;gap:10px;flex-direction:column;
+  }
+  .add-musician-form.open{display:flex;}
+  label.check{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--cream-dim);}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">Chargement du répertoire…</div></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBbveF8c8wjGHAaBZI7KB4E8KuHit0jt6k",
+  authDomain: "setlistas.firebaseapp.com",
+  projectId: "setlistas",
+  storageBucket: "setlistas.firebasestorage.app",
+  messagingSenderId: "137937856334",
+  appId: "1:137937856334:web:f759dfb5cfe5fa4834e01f"
+};
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
+// Remplace le window.storage propre à l'environnement artifact Claude par un
+// shim de même interface, adossé à Firestore — tout le reste du code de
+// l'appli (safeGet/safeSet/queueSet, etc.) n'a besoin d'aucun changement.
+window.storage = {
+  async get(key){
+    const snap = await getDoc(doc(db, 'app_data', key));
+    if(!snap.exists()) throw new Error('not found');
+    return {key, value: JSON.stringify(snap.data().value)};
+  },
+  async set(key, value){
+    await setDoc(doc(db, 'app_data', key), {value: JSON.parse(value)});
+    return {key};
+  },
+  async delete(key){
+    await deleteDoc(doc(db, 'app_data', key));
+    return {key, deleted:true};
+  }
+};
+
+const INSTRUMENTS = [
+  {key:'Guitare', abbr:'Guitare', cls:'gtr'},
+  {key:'Basse', abbr:'Basse', cls:'bass'},
+  {key:'Batterie', abbr:'Batterie', cls:'drm'},
+  {key:'Chant', abbr:'Voix', cls:'vox'},
+];
+const REQUIRED = ['Guitare','Basse','Batterie'];
+
+const SEED_SONGS = [
+  {id:1,title:"Back in Black",artist:"AC/DC"},
+  {id:2,title:"Hells Bells",artist:"AC/DC"},
+  {id:3,title:"I Love Rock n Roll",artist:"Joan Jett"},
+  {id:4,title:"Sunshine of Your Love",artist:"Cream"},
+  {id:5,title:"Flipper",artist:"Téléphone"},
+  {id:6,title:"Highway to Hell",artist:"AC/DC"},
+  {id:7,title:"Hoochie Coochie Man",artist:"Muddy Waters"},
+  {id:8,title:"Money for Nothing",artist:"Dire Straits"},
+  {id:9,title:"Smoke on the Water",artist:"Deep Purple"},
+  {id:10,title:"Stairway to Heaven",artist:"Led Zeppelin"},
+  {id:11,title:"The Thrill Is Gone",artist:"B.B. King"},
+  {id:12,title:"Thunderstruck",artist:"AC/DC"},
+  {id:13,title:"TNT",artist:"AC/DC"},
+  {id:14,title:"Walk of Life",artist:"Dire Straits"},
+  {id:15,title:"White Room",artist:"Cream"},
+  {id:16,title:"You Shook Me All Night Long",artist:"AC/DC"},
+  {id:17,title:"Black Magic Woman",artist:"Peter Green"},
+  {id:18,title:"Come Together",artist:"Beatles"},
+  {id:19,title:"Day Tripper",artist:"Beatles"},
+  {id:20,title:"I Got All You Need",artist:"Joe Bonamassa"},
+  {id:21,title:"Johnny B. Goode",artist:"Chuck Berry"},
+  {id:22,title:"Knockin' on Heaven's Door",artist:"Guns N' Roses"},
+  {id:23,title:"La Grange",artist:"ZZ Top"},
+  {id:24,title:"Paranoid",artist:"Black Sabbath"},
+  {id:25,title:"Ticket to Ride",artist:"Beatles"},
+  {id:26,title:"Under Pressure",artist:"Queen"},
+  {id:27,title:"Mountain Climbing",artist:"Joe Bonamassa"},
+  {id:28,title:"Enter Sandman",artist:"Metallica"},
+  {id:29,title:"Tush",artist:"ZZ Top"},
+  {id:30,title:"Midnight",artist:"Joe Satriani"},
+];
+
+const SEED_MUSICIANS = [
+  {id:'seb', name:'Seb'},
+  {id:'arthur', name:'Arthur'},
+  {id:'franck', name:'Franck', universal:true},
+];
+
+const SEED_MASTERY_SEB = {
+  1:['Guitare'],2:[],3:['Basse'],4:[],5:['Guitare','Basse'],6:['Guitare'],7:['Guitare'],
+  8:['Guitare'],9:['Guitare'],10:['Guitare'],11:['Guitare'],12:[],13:['Guitare'],14:['Guitare'],
+  15:['Guitare'],16:['Guitare'],17:['Guitare'],18:['Guitare'],19:['Guitare'],20:['Guitare'],
+  21:['Guitare'],22:['Guitare'],23:['Guitare'],24:['Guitare'],25:['Guitare'],26:['Guitare'],
+  27:['Guitare'],28:['Guitare'],29:['Guitare'],30:['Guitare'],
+};
+const SEED_MASTERY_ARTHUR = {
+  1:['Guitare'],2:['Guitare'],3:['Guitare'],4:['Basse'],5:['Guitare'],6:['Guitare'],7:['Guitare'],
+  8:['Guitare'],9:['Guitare'],10:['Guitare'],11:['Guitare'],12:['Guitare'],13:['Guitare'],14:['Guitare'],
+  15:['Guitare','Basse'],16:['Guitare'],17:[],18:['Guitare'],19:['Guitare'],20:['Guitare'],
+  21:['Guitare'],22:['Guitare'],23:['Guitare'],24:['Guitare'],25:['Guitare'],26:['Batterie'],
+  27:['Batterie'],28:['Guitare'],29:['Guitare'],30:['Guitare'],
+};
+
+let songs = [], musicians = [], mastery = {};
+let activeTab = 'repertoire';
+let searchQuery = '';
+let sortMode = 'title';
+let groupByArtist = true;
+let selectedForSetlist = new Set(['seb','arthur']);
+let selectedGridMusician = null;
+let pendingDeleteMusician = null;
+let deleteCodeError = null;
+let addSongFormOpen = false;
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+let saveError = null;
+let importError = null;
+let pendingImport = null;
+let importCodeError = null;
+
+async function safeGet(key, attempts=2){
+  for(let i=0;i<attempts;i++){
+    try{
+      const res = await window.storage.get(key, true);
+      return res ? JSON.parse(res.value) : null;
+    }catch(e){
+      if(i===attempts-1) return null;
+      await sleep(400);
+    }
+  }
+  return null;
+}
+async function safeSet(key, value, attempts=3){
+  for(let i=0;i<attempts;i++){
+    try{
+      await window.storage.set(key, JSON.stringify(value), true);
+      saveError = null;
+      return true;
+    }catch(e){
+      if(i===attempts-1){
+        saveError = `Échec de sauvegarde (${key}) — réessaie dans un instant.`;
+        console.warn('storage set failed after retries', key);
+        return false;
+      }
+      await sleep(500 * (i+1));
+    }
+  }
+  return false;
+}
+
+// Sérialise les écritures par clé : si des clics rapides déclenchent plusieurs
+// sauvegardes sur la même clé, on n'envoie que la dernière valeur, une à la fois,
+// au lieu de laisser plusieurs requêtes concurrentes se battre sur la même clé.
+const writeQueues = {};
+function queueSet(key, value){
+  let q = writeQueues[key];
+  if(!q){ q = writeQueues[key] = {inFlight:false, hasPending:false, pendingValue:null}; }
+  q.pendingValue = value;
+  q.hasPending = true;
+  processQueue(key);
+}
+async function processQueue(key){
+  const q = writeQueues[key];
+  if(!q || q.inFlight || !q.hasPending) return;
+  const value = q.pendingValue;
+  q.hasPending = false;
+  q.inFlight = true;
+  const ok = await safeSet(key, value);
+  q.inFlight = false;
+  if(!ok) render();
+  if(q.hasPending) processQueue(key);
+}
+
+async function init(){
+  let s = await safeGet('songs');
+  if(!s){ s = SEED_SONGS; await safeSet('songs', s); }
+  songs = s;
+
+  let m = await safeGet('musicians');
+  if(!m){ m = SEED_MUSICIANS; await safeSet('musicians', m); }
+  else {
+    const franck = m.find(mus => mus.id === 'franck');
+    if(franck && !franck.universal){
+      franck.universal = true;
+      await safeSet('musicians', m);
+    }
+  }
+  musicians = m;
+
+  for(const mus of musicians){
+    let data = await safeGet('mastery:'+mus.id);
+    if(!data){
+      data = mus.id==='seb' ? SEED_MASTERY_SEB : mus.id==='arthur' ? SEED_MASTERY_ARTHUR : {};
+      await safeSet('mastery:'+mus.id, data);
+    }
+    mastery[mus.id] = data;
+  }
+  render();
+}
+
+function nameById(id){ const m = musicians.find(x=>x.id===id); return m ? m.name : id; }
+
+function songMastersFor(songId, instrumentKey){
+  return musicians.filter(m => (mastery[m.id][songId]||[]).includes(instrumentKey)).map(m=>m.name);
+}
+
+function renderTabs(){
+  return `<div class="tabs">
+    <button class="tab ${activeTab==='repertoire'?'active':''}" data-tab="repertoire">Répertoire</button>
+    <button class="tab ${activeTab==='setlist'?'active':''}" data-tab="setlist">Setlist</button>
+    <button class="tab ${activeTab==='grille'?'active':''}" data-tab="grille">Ma grille</button>
+  </div>`;
+}
+
+function renderRepertoire(){
+  let filtered = songs.filter(s =>
+    !searchQuery || (s.title+' '+s.artist).toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const collator = new Intl.Collator('fr', {sensitivity:'base'});
+  if(sortMode==='title') filtered.sort((a,b)=>collator.compare(a.title,b.title));
+  else if(sortMode==='artist') filtered.sort((a,b)=>collator.compare(a.artist,b.artist) || collator.compare(a.title,b.title));
+  else filtered.sort((a,b)=>a.id-b.id);
+
+  const renderCard = song => {
+    const tags = INSTRUMENTS.map(ins => {
+      const names = songMastersFor(song.id, ins.key);
+      if(names.length===0) return '';
+      return `<span class="tag ${ins.cls}"><span class="dot"></span>${ins.abbr} <span class="names">${names.join(', ')}</span></span>`;
+    }).join('');
+    return `<div class="song-card">
+      <div class="song-top">
+        <div><span class="song-num">#${song.id}</span> <span class="song-title">${escapeHtml(song.title)}</span> <span class="song-artist">— ${escapeHtml(song.artist)}</span></div>
+      </div>
+      <div class="tags">${tags || '<span class="tag-empty">personne n\u2019a encore renseigné ce morceau</span>'}</div>
+    </div>`;
+  };
+
+  let cards = '';
+  if(groupByArtist){
+    const sorted = [...filtered].sort((a,b)=>collator.compare(a.artist,b.artist) || collator.compare(a.title,b.title));
+    let currentArtist = null;
+    sorted.forEach(song => {
+      if(song.artist !== currentArtist){
+        currentArtist = song.artist;
+        cards += `<div class="artist-header">${escapeHtml(currentArtist)}</div>`;
+      }
+      cards += renderCard(song);
+    });
+  } else {
+    cards = filtered.map(renderCard).join('');
+  }
+
+  return `
+    <input type="text" class="search" id="search" placeholder="Chercher un morceau ou un artiste…" value="${escapeAttr(searchQuery)}">
+    <div class="row" style="margin:12px 0 16px">
+      <label style="font-size:0.85rem;color:var(--cream-dim)">Trier par</label>
+      <select id="sort-select">
+        <option value="num" ${sortMode==='num'?'selected':''}>N° (ordre d'ajout)</option>
+        <option value="title" ${sortMode==='title'?'selected':''}>Titre (A-Z)</option>
+        <option value="artist" ${sortMode==='artist'?'selected':''}>Artiste (A-Z)</option>
+      </select>
+      <label class="check"><input type="checkbox" id="group-toggle" ${groupByArtist?'checked':''}> Grouper par artiste</label>
+    </div>
+    <div class="add-song"><button class="btn-ghost" id="add-song-btn">+ Ajouter un morceau au répertoire</button></div>
+    <div class="add-musician-form ${addSongFormOpen?'open':''}" id="add-song-form">
+      <input type="text" id="new-song-title" placeholder="Titre du morceau">
+      <input type="text" id="new-song-artist" placeholder="Artiste">
+      <div><button class="btn" id="confirm-new-song">Ajouter</button></div>
+    </div>
+    ${cards || '<p style="color:var(--cream-dim)">Aucun morceau ne correspond.</p>'}
+  `;
+}
+
+function computeSetlist(){
+  const selected = musicians.filter(m => selectedForSetlist.has(m.id));
+  const universalSelected = selected.filter(m=>m.universal);
+  return songs.map(song => {
+    const coverage = {};
+    INSTRUMENTS.forEach(ins => {
+      coverage[ins.key] = selected.filter(m=>!m.universal && (mastery[m.id][song.id]||[]).includes(ins.key)).map(m=>m.name);
+    });
+    const requiredGaps = REQUIRED.filter(r => coverage[r].length===0);
+    const chantGap = coverage['Chant'].length===0;
+
+    // Un backup universel ne peut jouer qu'un seul instrument à la fois par morceau.
+    // Franck ne chante jamais : le backup universel ne couvre que les instruments requis, pas le chant.
+    const universalPool = [...universalSelected];
+    const backupLabel = {};
+    requiredGaps.forEach(insKey => {
+      if(universalPool.length) backupLabel[insKey] = universalPool.shift().name;
+    });
+
+    const missingRequired = requiredGaps.filter(insKey => !backupLabel[insKey]);
+    const missingChant = chantGap;
+
+    return {
+      song, coverage, backupLabel,
+      missingRequired, missingChant,
+      playable: missingRequired.length===0,
+      fullyComplete: missingRequired.length===0 && !missingChant,
+    };
+  }).sort((a,b)=>a.song.id-b.song.id);
+}
+
+function renderSetlist(){
+  const chips = musicians.map(m => `<div class="chip ${selectedForSetlist.has(m.id)?'selected':''} ${m.universal?'universal':''}" data-musician="${m.id}">${escapeHtml(m.name)}</div>`).join('');
+  const results = computeSetlist();
+  const complete = results.filter(r=>r.fullyComplete);
+  const missingSinger = results.filter(r=>r.playable && r.missingChant);
+  const incomplete = results.filter(r=>!r.playable);
+
+  const renderResult = r => {
+    const covRow = REQUIRED.map(ins => {
+      const names = r.coverage[ins];
+      const label = names.length ? names.join(', ') : (r.backupLabel[ins] ? r.backupLabel[ins] + ' (backup)' : '—');
+      return `<span class="coverage-item"><b>${ins}:</b> ${label}</span>`;
+    }).join('');
+    const voxNames = r.coverage['Chant'];
+    let voxItem;
+    if(voxNames.length) voxItem = `<span class="coverage-item"><b>Chant:</b> ${voxNames.join(', ')}</span>`;
+    else voxItem = `<span class="coverage-item missing"><b>Chant:</b> —</span>`;
+    return `<div class="song-card">
+      <div class="song-top"><div><span class="song-num">#${r.song.id}</span> <span class="song-title">${escapeHtml(r.song.title)}</span> <span class="song-artist">— ${escapeHtml(r.song.artist)}</span></div></div>
+      <div class="coverage-row">${covRow}${voxItem}</div>
+    </div>`;
+  };
+
+  return `
+    <p class="setlist-summary">Sélectionne les musiciens présents pour voir les morceaux jouables (guitare + basse + batterie couverts). ★ = backup universel sur les instruments (un seul à la fois par morceau) — ne chante pas.</p>
+    <div class="chip-select">${chips}</div>
+
+    <p class="setlist-summary"><b style="color:var(--cream)">${complete.length}</b> morceaux complets (chant inclus) sur ${songs.length}</p>
+    ${complete.map(renderResult).join('') || '<p style="color:var(--cream-dim)">Aucun morceau complet avec cette sélection.</p>'}
+
+    <p class="setlist-summary" style="margin-top:24px"><b style="color:var(--cream)">${missingSinger.length}</b> morceaux jouables mais sans chanteur</p>
+    ${missingSinger.map(renderResult).join('') || '<p style="color:var(--cream-dim)">Aucun.</p>'}
+
+    <details>
+      <summary>${incomplete.length} morceaux incomplets avec ce groupe</summary>
+      ${incomplete.map(r=>{
+        const missingLabel = r.missingRequired.join(', ');
+        return `<div class="song-card"><div class="song-top"><div><span class="song-num">#${r.song.id}</span> <span class="song-title">${escapeHtml(r.song.title)}</span></div></div><p class="missing" style="font-size:0.8rem;margin:8px 0 0">Manque : ${missingLabel}</p></div>`;
+      }).join('')}
+    </details>
+  `;
+}
+
+function renderGrille(){
+  const options = musicians.map(m => `<option value="${m.id}" ${selectedGridMusician===m.id?'selected':''}>${escapeHtml(m.name)}${m.universal?' ★':''}</option>`).join('');
+  const chosen = musicians.find(m=>m.id===selectedGridMusician);
+
+  let body = '';
+  if(!chosen){
+    body = `<p style="color:var(--cream-dim);font-size:0.9rem;margin-top:14px">Choisis ton nom pour renseigner ce que tu sais jouer sur chaque morceau.</p>`;
+  } else if(chosen.universal){
+    body = `<div class="note" style="margin-top:16px">${escapeHtml(chosen.name)} est backup universel : peut couvrir n'importe quel instrument, sur n'importe quel morceau. Pas de saisie nécessaire — mais dans une setlist, ${escapeHtml(chosen.name)} ne peut combler qu'un seul manque à la fois par morceau (on ne joue pas guitare et batterie en même temps).</div>`;
+  } else {
+    const collator = new Intl.Collator('fr', {sensitivity:'base'});
+    const sortedSongs = [...songs].sort((a,b)=>collator.compare(a.artist,b.artist) || collator.compare(a.title,b.title));
+    let currentArtist = null;
+    const rows = sortedSongs.map(song => {
+      let header = '';
+      if(song.artist !== currentArtist){
+        currentArtist = song.artist;
+        header = `<tr><td colspan="${INSTRUMENTS.length+1}" class="grid-artist-header">${escapeHtml(currentArtist)}</td></tr>`;
+      }
+      const known = mastery[chosen.id][song.id] || [];
+      const cells = INSTRUMENTS.map(ins => {
+        const on = known.includes(ins.key);
+        return `<td class="toggle-cell"><button class="toggle-btn ${on?'on '+ins.cls:''}" data-song="${song.id}" data-ins="${ins.key}">${ins.abbr}</button></td>`;
+      }).join('');
+      return header + `<tr><td class="grid-song-name">${escapeHtml(song.title)}</td>${cells}</tr>`;
+    }).join('');
+    body = `<table class="grid-table">
+      <thead><tr><th></th>${INSTRUMENTS.map(i=>`<th>${i.abbr}</th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  return `
+    <div class="row">
+      <label style="font-size:0.85rem;color:var(--cream-dim)">Qui es-tu ?</label>
+      <select id="musician-select"><option value="">— choisir —</option>${options}</select>
+      <button class="btn-ghost" id="new-musician-btn">+ Nouveau musicien</button>
+      ${chosen && pendingDeleteMusician!==chosen.id ? `<button class="btn-ghost" id="delete-musician-btn" style="border-color:var(--drm);color:var(--drm)">Supprimer ${escapeHtml(chosen.name)}</button>` : ''}
+    </div>
+    ${chosen && pendingDeleteMusician===chosen.id ? `
+      <div class="note" style="border-color:var(--drm);margin-top:10px">
+        Supprimer ${escapeHtml(chosen.name)} et toutes ses données ? Irréversible.
+        <div class="row" style="margin-top:8px">
+          <input type="text" inputmode="numeric" id="delete-code-input" placeholder="Code" style="width:90px;background:var(--bg-raised-2);border:1px solid var(--line);color:var(--cream);padding:9px 10px;border-radius:6px;font-family:inherit;font-size:0.85rem">
+          <button class="btn" id="confirm-delete-musician" style="background:var(--drm)">Oui, supprimer</button>
+          <button class="btn-ghost" id="cancel-delete-musician">Annuler</button>
+        </div>
+        ${deleteCodeError ? `<p style="color:var(--drm);font-size:0.8rem;margin:8px 0 0">${escapeHtml(deleteCodeError)}</p>` : ''}
+      </div>` : ''}
+    <div class="add-musician-form" id="new-musician-form">
+      <input type="text" id="new-musician-name" placeholder="Prénom">
+      <div><button class="btn" id="confirm-new-musician">Ajouter</button></div>
+    </div>
+    ${body}
+  `;
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeAttr(s){ return escapeHtml(s); }
+
+function render(){
+  const app = document.getElementById('app');
+  let content = '';
+  if(activeTab==='repertoire') content = renderRepertoire();
+  else if(activeTab==='setlist') content = renderSetlist();
+  else content = renderGrille();
+
+  app.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:flex-start">
+      <div><h1>Répertoire</h1><p class="subtitle">Guitare, basse, batterie, chant — qui joue quoi sur quel morceau.</p></div>
+      <div class="row" style="flex-wrap:nowrap">
+        <button class="btn-ghost" id="export-csv-btn" style="white-space:nowrap">Exporter (CSV)</button>
+        <button class="btn-ghost" id="import-csv-btn" style="white-space:nowrap">Importer (CSV)</button>
+        <input type="file" id="import-csv-input" accept=".csv" style="display:none">
+      </div>
+    </div>
+    ${saveError ? `<div class="note" style="border-color:var(--drm);color:var(--drm)">${escapeHtml(saveError)}</div>` : ''}
+    ${importError ? `<div class="note" style="border-color:var(--drm);color:var(--drm)">${escapeHtml(importError)}</div>` : ''}
+    ${pendingImport ? `
+      <div class="note" style="border-color:var(--gtr)">
+        Importer ${pendingImport.songs.length} morceaux et ${pendingImport.musicians.length} musicien(s) (${pendingImport.musicians.map(m=>escapeHtml(m.name)).join(', ')}) ?
+        Ça remplace entièrement le répertoire et les grilles actuels. Irréversible.
+        <div class="row" style="margin-top:8px">
+          <input type="text" inputmode="numeric" id="import-code-input" placeholder="Code" style="width:90px;background:var(--bg-raised-2);border:1px solid var(--line);color:var(--cream);padding:9px 10px;border-radius:6px;font-family:inherit;font-size:0.85rem">
+          <button class="btn" id="confirm-import-csv">Oui, remplacer</button>
+          <button class="btn-ghost" id="cancel-import-csv">Annuler</button>
+        </div>
+        ${importCodeError ? `<p style="color:var(--drm);font-size:0.8rem;margin:8px 0 0">${escapeHtml(importCodeError)}</p>` : ''}
+      </div>` : ''}
+    ${renderTabs()}
+    <div id="tab-content">${content}</div>
+  `;
+  attachEvents();
+}
+
+function csvEscape(val){
+  const s = String(val ?? '');
+  if(/[;"\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+  return s;
+}
+
+function exportCSV(){
+  const header = ['N°','Titre','Artiste', ...musicians.map(m => m.universal ? m.name+' (backup universel)' : m.name)];
+  const rows = songs.map(song => {
+    const row = [song.id, song.title, song.artist];
+    musicians.forEach(m => {
+      if(m.universal) row.push('backup — tous instruments');
+      else row.push((mastery[m.id][song.id]||[]).join(' + '));
+    });
+    return row;
+  });
+  const lines = [header, ...rows].map(r => r.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + lines], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'repertoire.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function parseCSVLine(line){
+  const fields = [];
+  let cur = '', inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(inQuotes){
+      if(ch === '"'){
+        if(line[i+1] === '"'){ cur += '"'; i++; }
+        else inQuotes = false;
+      } else cur += ch;
+    } else {
+      if(ch === '"') inQuotes = true;
+      else if(ch === ';'){ fields.push(cur); cur=''; }
+      else cur += ch;
+    }
+  }
+  fields.push(cur);
+  return fields;
+}
+
+function parseCSV(text){
+  if(text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  return text.split(/\r\n|\n|\r/).filter(l => l.trim().length).map(parseCSVLine);
+}
+
+function handleImportFile(file){
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try{
+      const rows = parseCSV(e.target.result);
+      if(rows.length < 2) throw new Error('fichier vide ou format inattendu');
+      const header = rows[0];
+      const musicianCols = header.slice(3);
+      if(musicianCols.length === 0) throw new Error('aucune colonne musicien trouvée');
+
+      const seenIds = {};
+      const newMusicians = musicianCols.map(h => {
+        const universal = /\(backup universel\)/i.test(h);
+        const name = h.replace(/\s*\(backup universel\)\s*/i, '').trim() || 'musicien';
+        let id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'') || 'musicien';
+        if(seenIds[id]){ seenIds[id]++; id = id + seenIds[id]; } else seenIds[id] = 1;
+        return {id, name, universal};
+      });
+
+      const newSongs = [];
+      const newMastery = {};
+      newMusicians.forEach(m => { newMastery[m.id] = {}; });
+
+      rows.slice(1).forEach((r, idx) => {
+        const title = (r[1]||'').trim();
+        if(!title) return;
+        const parsedId = parseInt(r[0], 10);
+        const id = Number.isFinite(parsedId) ? parsedId : (idx+1);
+        const artist = (r[2]||'').trim();
+        newSongs.push({id, title, artist});
+        newMusicians.forEach((m, ci) => {
+          if(m.universal) return;
+          const cell = (r[3+ci]||'').trim();
+          if(!cell) return;
+          const instruments = cell.split('+').map(s=>s.trim()).filter(s => INSTRUMENTS.some(i=>i.key===s));
+          if(instruments.length) newMastery[m.id][id] = instruments;
+        });
+      });
+
+      if(newSongs.length === 0) throw new Error('aucun morceau reconnu dans le fichier');
+
+      importError = null;
+      importCodeError = null;
+      pendingImport = {musicians:newMusicians, songs:newSongs, mastery:newMastery};
+      render();
+    }catch(err){
+      importError = 'Fichier illisible (' + err.message + ').';
+      pendingImport = null;
+      render();
+    }
+  };
+  reader.onerror = () => { importError = 'Impossible de lire le fichier.'; render(); };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function attachEvents(){
+  const exportBtn = document.getElementById('export-csv-btn');
+  if(exportBtn) exportBtn.onclick = exportCSV;
+
+  const importBtn = document.getElementById('import-csv-btn');
+  const importInput = document.getElementById('import-csv-input');
+  if(importBtn && importInput){
+    importBtn.onclick = () => importInput.click();
+    importInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if(file) handleImportFile(file);
+      importInput.value = '';
+    };
+  }
+
+  const cancelImportBtn = document.getElementById('cancel-import-csv');
+  if(cancelImportBtn) cancelImportBtn.onclick = () => { pendingImport = null; importCodeError = null; render(); };
+
+  const confirmImportBtn = document.getElementById('confirm-import-csv');
+  if(confirmImportBtn) confirmImportBtn.onclick = async () => {
+    const codeInput = document.getElementById('import-code-input');
+    if(!codeInput || codeInput.value.trim() !== '2206'){
+      importCodeError = 'Code incorrect.';
+      render();
+      return;
+    }
+    const data = pendingImport;
+    if(!data) return;
+    songs = data.songs;
+    musicians = data.musicians;
+    mastery = data.mastery;
+    selectedForSetlist = new Set();
+    selectedGridMusician = null;
+    pendingImport = null;
+    importCodeError = null;
+    render();
+    // Écritures en série (pas en parallèle) pour éviter de saturer le stockage sur un gros import.
+    await safeSet('songs', songs);
+    await safeSet('musicians', musicians);
+    for(const m of musicians){
+      await safeSet('mastery:'+m.id, mastery[m.id]);
+    }
+    render();
+  };
+
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => { activeTab = t.dataset.tab; render(); });
+
+  const search = document.getElementById('search');
+  if(search){
+    search.addEventListener('input', () => { searchQuery = search.value; renderPartial(true); });
+  }
+
+  const sortSelect = document.getElementById('sort-select');
+  if(sortSelect) sortSelect.onchange = (e) => { sortMode = e.target.value; renderPartial(); };
+
+  const groupToggle = document.getElementById('group-toggle');
+  if(groupToggle) groupToggle.onchange = (e) => { groupByArtist = e.target.checked; renderPartial(); };
+
+  const addSongBtn = document.getElementById('add-song-btn');
+  if(addSongBtn) addSongBtn.onclick = () => { addSongFormOpen = !addSongFormOpen; renderPartial(); };
+
+  const confirmNewSong = document.getElementById('confirm-new-song');
+  if(confirmNewSong) confirmNewSong.onclick = () => {
+    const titleInput = document.getElementById('new-song-title');
+    const artistInput = document.getElementById('new-song-artist');
+    const title = titleInput.value.trim();
+    if(!title) return;
+    const artist = artistInput.value.trim();
+    const newId = songs.length ? Math.max(...songs.map(s=>s.id))+1 : 1;
+    songs.push({id:newId, title, artist});
+    addSongFormOpen = false;
+    renderPartial();
+    safeSet('songs', songs).then(ok => { if(!ok) renderPartial(); });
+  };
+
+  document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
+    const id = c.dataset.musician;
+    if(selectedForSetlist.has(id)) selectedForSetlist.delete(id); else selectedForSetlist.add(id);
+    render();
+  });
+
+  const musicianSelect = document.getElementById('musician-select');
+  if(musicianSelect) musicianSelect.onchange = (e) => { selectedGridMusician = e.target.value || null; render(); };
+
+  const newMusicianBtn = document.getElementById('new-musician-btn');
+  if(newMusicianBtn) newMusicianBtn.onclick = () => {
+    document.getElementById('new-musician-form').classList.toggle('open');
+  };
+
+  const confirmBtn = document.getElementById('confirm-new-musician');
+  if(confirmBtn) confirmBtn.onclick = async () => {
+    const nameInput = document.getElementById('new-musician-name');
+    const name = nameInput.value.trim();
+    if(!name) return;
+    let id = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'') || 'musicien';
+    if(musicians.some(m=>m.id===id)) id = id + Math.floor(Math.random()*1000);
+    const newMusician = {id, name};
+    musicians.push(newMusician);
+    mastery[id] = {};
+    selectedGridMusician = id;
+    render();
+    const ok = await safeSet('musicians', musicians);
+    if(!ok) render();
+    await safeSet('mastery:'+id, {});
+  };
+
+  const deleteBtn = document.getElementById('delete-musician-btn');
+  if(deleteBtn) deleteBtn.onclick = () => { pendingDeleteMusician = selectedGridMusician; deleteCodeError = null; render(); };
+
+  const cancelDeleteBtn = document.getElementById('cancel-delete-musician');
+  if(cancelDeleteBtn) cancelDeleteBtn.onclick = () => { pendingDeleteMusician = null; deleteCodeError = null; render(); };
+
+  const confirmDeleteBtn = document.getElementById('confirm-delete-musician');
+  if(confirmDeleteBtn) confirmDeleteBtn.onclick = () => {
+    const codeInput = document.getElementById('delete-code-input');
+    if(!codeInput || codeInput.value.trim() !== '2206'){
+      deleteCodeError = 'Code incorrect.';
+      render();
+      return;
+    }
+    const id = pendingDeleteMusician;
+    musicians = musicians.filter(m=>m.id!==id);
+    delete mastery[id];
+    selectedForSetlist.delete(id);
+    selectedGridMusician = null;
+    pendingDeleteMusician = null;
+    deleteCodeError = null;
+    render();
+    safeSet('musicians', musicians).then(ok => { if(!ok) render(); });
+    window.storage.delete('mastery:'+id, true).catch(()=>{});
+  };
+
+  document.querySelectorAll('.toggle-btn').forEach(btn => btn.onclick = () => {
+    if(!selectedGridMusician) return;
+    const songId = btn.dataset.song;
+    const ins = btn.dataset.ins;
+    const current = mastery[selectedGridMusician][songId] || [];
+    const idx = current.indexOf(ins);
+    if(idx>=0) current.splice(idx,1); else current.push(ins);
+    mastery[selectedGridMusician][songId] = current;
+    render();
+    queueSet('mastery:'+selectedGridMusician, mastery[selectedGridMusician]);
+  });
+}
+
+function renderPartial(focusSearch){
+  document.getElementById('tab-content').innerHTML = renderRepertoire();
+  attachEvents();
+  if(focusSearch){
+    const s = document.getElementById('search');
+    const val = s.value;
+    s.focus();
+    s.selectionStart = s.selectionEnd = val.length;
+  }
+}
+
+init();
+</script>
+</body>
+</html>
