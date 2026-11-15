@@ -3,232 +3,334 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Répertoire</title>
+<title>SetlistAS</title>
+<meta name="theme-color" content="#1E2421">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SetlistAS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 <style>
+  /* Console de studio : panneaux gris-vert, sérigraphie claire, vumètre ivoire,
+     et une couleur de capuchon de fader par instrument. */
   :root{
-    --bg: #221B17;
-    --bg-raised: #2C2420;
-    --bg-raised-2: #362D27;
-    --cream: #F0E6D8;
-    --cream-dim: #C9BCA9;
-    --line: #453A32;
-    --gtr: #D9A441;
-    --bass: #4C8577;
-    --drm: #C1443C;
-    --vox: #3E6E8E;
-    --ok: #6E9B6E;
-    --keys: #9B7BB8;
+    --console:#1E2421;
+    --panel:#2A312D;
+    --panel-2:#343C37;
+    --rule:#46504A;
+    --ink:#ECE8DC;
+    --ink-dim:#A7AEA5;
+    --ivory:#EFE4B8;
+    --ivory-ink:#2B2A22;
+    --amber:#F0A43A;
+    --amber-ink:#2A1C06;
+    --red:#E04A3C;
+    --ok:#7FBF7A;
+    /* capuchons de fader */
+    --gtr:#E9C54A;
+    --bass:#4FAE8D;
+    --drm:#E0574C;
+    --keys:#A08BDB;
+    --vox:#62A2DB;
+    --r-s:5px; --r-m:9px; --r-l:14px;
+    --font:'Archivo', system-ui, sans-serif;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--cream);
-    font-family:'IBM Plex Sans', sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  #app{max-width:760px;margin:0 auto;padding:28px 18px 60px;}
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:2rem;
-    margin:0 0 4px;
-    letter-spacing:-0.01em;
-  }
-  .subtitle{color:var(--cream-dim);font-size:0.92rem;margin:0 0 22px;line-height:1.5;}
-  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;}
-  .tab{
-    background:none;border:none;color:var(--cream-dim);
-    font-family:'IBM Plex Sans',sans-serif;font-size:0.92rem;font-weight:500;
-    padding:10px 4px;margin-right:18px;cursor:pointer;
-    border-bottom:2px solid transparent;transition:color .15s, border-color .15s;
-  }
-  .tab.active{color:var(--cream);border-bottom-color:var(--gtr);}
-  .tab:hover{color:var(--cream);}
-  input[type=text]{
-    width:100%;background:var(--bg-raised);border:1px solid var(--line);
-    color:var(--cream);padding:10px 12px;border-radius:6px;font-family:inherit;font-size:0.9rem;
-  }
-  input[type=text]:focus{outline:none;border-color:var(--gtr);}
-  .search{margin-bottom:16px;}
-  .song-card{
-    background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;
-    padding:14px 16px;margin-bottom:10px;
-  }
-  .song-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
-  .song-title{font-weight:600;font-size:0.98rem;}
-  .song-artist{color:var(--cream-dim);font-size:0.85rem;}
-  .song-num{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--cream-dim);opacity:.7;}
-  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-  .tag{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:4px 9px;border-radius:20px;font-size:0.78rem;font-weight:500;
-    border:1px solid transparent;
-  }
-  .tag .names{opacity:.85;font-weight:400;}
-  .tag-empty{color:var(--cream-dim);opacity:.5;font-size:0.78rem;font-style:italic;}
-  .artist-header{
-    font-family:'Fraunces', serif;font-weight:600;font-size:1.05rem;color:var(--gtr);
-    margin:22px 0 8px;padding-top:10px;border-top:1px solid var(--line);
-  }
-  .artist-header:first-child{margin-top:0;border-top:none;padding-top:0;}
-  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .tag.gtr{background:rgba(217,164,65,.14);color:var(--gtr);}
-  .tag.gtr .dot{background:var(--gtr);}
-  .tag.bass{background:rgba(76,133,119,.16);color:var(--bass);}
-  .tag.bass .dot{background:var(--bass);}
-  .tag.drm{background:rgba(193,68,60,.14);color:var(--drm);}
-  .tag.drm .dot{background:var(--drm);}
-  .tag.vox{background:rgba(62,110,142,.16);color:var(--vox);}
-  .tag.vox .dot{background:var(--vox);}
-  .note{
-    background:var(--bg-raised-2);border:1px dashed var(--line);border-radius:8px;
-    padding:10px 14px;font-size:0.82rem;color:var(--cream-dim);margin-bottom:16px;line-height:1.5;
-  }
-  .btn{
-    background:var(--gtr);color:#221B17;border:none;border-radius:6px;
-    padding:9px 16px;font-family:inherit;font-weight:600;font-size:0.85rem;cursor:pointer;
-  }
-  .btn:hover{filter:brightness(1.08);}
-  .btn-ghost{
-    background:none;border:1px solid var(--line);color:var(--cream);
-    padding:8px 14px;border-radius:6px;font-family:inherit;font-size:0.85rem;cursor:pointer;
-  }
-  .btn-ghost:hover{border-color:var(--cream-dim);}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-  .add-song{margin:18px 0 8px;}
-  .chip-select{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
-  .chip{
-    padding:8px 14px;border-radius:20px;border:1px solid var(--line);
-    background:var(--bg-raised);color:var(--cream-dim);font-size:0.85rem;font-weight:500;
-    cursor:pointer;transition:all .15s;
-  }
-  .chip.selected{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
-  .chip.universal::after{content:" ★";}
-  .setlist-summary{font-size:0.85rem;color:var(--cream-dim);margin-bottom:14px;}
-  .coverage-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
-  .coverage-item{font-size:0.78rem;color:var(--cream-dim);}
-  .coverage-item b{color:var(--cream);font-weight:600;}
-  .missing{color:var(--drm);}
-  details{margin-top:18px;}
-  summary{cursor:pointer;color:var(--cream-dim);font-size:0.85rem;padding:6px 0;}
-  select{
-    background:var(--bg-raised);color:var(--cream);border:1px solid var(--line);
-    border-radius:6px;padding:9px 12px;font-family:inherit;font-size:0.88rem;
-  }
-  .grid-table{width:100%;border-collapse:collapse;margin-top:14px;}
-  .grid-table th{
-    font-size:0.7rem;text-transform:none;color:var(--cream-dim);text-align:center;
-    padding:6px 4px;font-weight:500;
-  }
-  .grid-table td{padding:8px 4px;border-top:1px solid var(--line);}
-  .grid-song-name{font-size:0.85rem;padding-right:8px;}
-  .grid-song-artist{color:var(--cream-dim);font-size:0.75rem;}
-  .grid-artist-header{
-    font-family:'Fraunces', serif;font-weight:600;font-size:0.92rem;color:var(--gtr);
-    padding:14px 4px 6px;border-top:1px solid var(--line);
-  }
-  .grid-table tbody tr:first-child .grid-artist-header{border-top:none;padding-top:0;}
-  .toggle-cell{text-align:center;}
-  .toggle-btn{
-    width:64px;height:34px;border-radius:6px;border:1px solid var(--line);
-    background:transparent;cursor:pointer;font-size:0.62rem;font-weight:600;
-    font-family:'IBM Plex Sans',sans-serif;color:var(--cream-dim);padding:0 4px;
-  }
-  .toggle-btn.on.gtr{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
-  .toggle-btn.on.bass{background:var(--bass);border-color:var(--bass);color:#101815;}
-  .toggle-btn.on.drm{background:var(--drm);border-color:var(--drm);color:#221B17;}
-  .toggle-btn.on.vox{background:var(--vox);border-color:var(--vox);color:#101418;}
-  .loading{color:var(--cream-dim);font-size:0.9rem;padding:40px 0;text-align:center;}
-  .add-musician-form{
-    background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;
-    padding:14px 16px;margin-top:16px;display:none;gap:10px;flex-direction:column;
-  }
-  .add-musician-form.open{display:flex;}
-  label.check{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--cream-dim);}
-  .tag.keys{background:rgba(155,123,184,.16);color:var(--keys);}
-  .tag.keys .dot{background:var(--keys);}
-  .toggle-btn.on.keys{background:var(--keys);border-color:var(--keys);color:#1b1620;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--console);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;font-variant-numeric:tabular-nums;}
+  button,input,select,textarea{font:inherit;color:inherit;}
+  :focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  a{color:var(--amber);}
+  .grow{flex:1;}
+  [hidden]{display:none !important;}
 
-  /* ---------- Studio ---------- */
-  .studio-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
-  .who-chips{display:flex;gap:8px;}
-  .who-chip{padding:10px 18px;border-radius:24px;border:1px solid var(--line);background:var(--bg-raised);color:var(--cream);font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;}
-  .who-chip.selected{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
-  .who-big{display:flex;gap:14px;justify-content:center;margin:40px 0;}
-  .who-big .who-chip{font-size:1.3rem;padding:22px 40px;border-radius:14px;}
-  .level-box{min-width:200px;flex:1;max-width:320px;}
-  .level-line{display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 10px;font-size:0.8rem;color:var(--cream-dim);margin-bottom:5px;}
-  .level-line b{color:var(--cream);}
-  .bar{height:8px;border-radius:6px;background:var(--bg-raised-2);overflow:hidden;}
-  .bar > div{height:100%;background:linear-gradient(90deg,var(--gtr),#E8C46A);border-radius:6px;}
-  .subtabs{display:flex;gap:6px;margin-bottom:16px;}
-  .subtab{padding:7px 14px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.85rem;cursor:pointer;}
-  .subtab.active{background:var(--bg-raised-2);color:var(--cream);border-color:var(--cream-dim);}
-  .step{background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
-  .step.prio{border-color:var(--gtr);}
-  .step-head{display:flex;justify-content:space-between;align-items:center;gap:10px;}
-  .step-num{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--cream-dim);margin-right:6px;}
-  .step-title{font-weight:600;}
-  .step-min{font-size:0.8rem;color:var(--cream-dim);}
-  .step-body{font-size:0.88rem;color:var(--cream-dim);line-height:1.55;margin-top:8px;}
-  .step-song{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--cream);margin-top:8px;}
-  .objective{margin-top:8px;padding:9px 12px;border-radius:8px;background:var(--bg-raised-2);font-size:0.92rem;color:var(--cream);}
-  .objective.missing-obj{color:var(--drm);border:1px dashed var(--drm);background:none;}
-  .timer-btn{font-family:'IBM Plex Mono',monospace;font-size:0.9rem;min-width:92px;white-space:nowrap;}
-  .timer-btn.running{background:var(--ok);color:#16200f;}
-  .results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-  .res-btn{padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.85rem;cursor:pointer;}
-  .res-btn.on{background:var(--cream);color:#221B17;border-color:var(--cream);font-weight:600;}
-  .finish-bar{margin-top:16px;display:flex;justify-content:flex-end;}
-  .btn:disabled{opacity:.4;cursor:default;filter:none;}
-  .item-row{display:grid;grid-template-columns:1fr auto;gap:8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
-  .item-row .meta{font-size:0.75rem;color:var(--cream-dim);margin-top:3px;}
-  .item-row input[type=text]{padding:8px 10px;font-size:0.85rem;margin-top:8px;grid-column:1 / -1;}
-  .item-actions{display:flex;gap:6px;align-items:flex-start;}
-  .item-actions select{padding:6px 8px;font-size:0.8rem;}
-  .x-btn{background:none;border:none;color:var(--cream-dim);cursor:pointer;font-size:1rem;padding:4px 6px;}
-  .section-label{font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cream-dim);margin:20px 0 8px;}
-  .badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-  .badge{background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center;}
-  .badge .ico{font-size:2rem;line-height:1;}
-  .badge .bn{font-weight:600;font-size:0.88rem;margin-top:8px;}
-  .badge .bd{font-size:0.75rem;color:var(--cream-dim);margin-top:4px;line-height:1.4;}
-  .badge.locked{opacity:.38;}
-  .badge.locked .ico{filter:grayscale(1);}
-  .badge.earned{border-color:var(--gtr);}
-  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
-  .stat{background:var(--bg-raised);border-radius:8px;padding:10px 12px;}
-  .stat b{display:block;font-family:'Fraunces',serif;font-size:1.4rem;}
-  .stat span{font-size:0.75rem;color:var(--cream-dim);}
-  .toast-back{position:fixed;inset:0;background:rgba(10,8,6,.72);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
-  .toast{background:var(--bg-raised);border:1px solid var(--gtr);border-radius:14px;padding:24px;max-width:380px;width:100%;text-align:center;animation:pop .35s ease-out;}
-  .toast h2{font-family:'Fraunces',serif;margin:0 0 6px;}
-  .toast .xp{color:var(--gtr);font-weight:600;margin-bottom:14px;}
-  .toast .badge{margin:8px 0;}
-  .stars{color:var(--gtr);font-size:0.85rem;letter-spacing:2px;margin-top:4px;}
-  .badge .count{color:var(--gtr);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;}
-  .challenge{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg,rgba(217,164,65,.16),transparent);border:1px solid var(--gtr);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
-  .challenge .ico{font-size:1.6rem;}
-  .challenge .ct{font-weight:600;font-size:0.92rem;}
-  .challenge .cs{font-size:0.78rem;color:var(--cream-dim);margin-top:2px;}
-  .rec-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-  .rec-chip{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.82rem;cursor:pointer;}
-  .rec-chip.on{background:var(--cream);color:#221B17;border-color:var(--cream);font-weight:600;}
-  .rec-list{margin-top:10px;font-size:0.85rem;}
-  .rec-list div{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--line);}
-  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+  /* ---------- Barre du haut ---------- */
+  .appbar{position:sticky;top:0;z-index:20;background:rgba(30,36,33,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule);
+    display:flex;align-items:center;gap:20px;padding:0 max(16px, calc((100vw - 860px)/2));}
+  .brand{font-stretch:75%;font-weight:800;font-size:1.25rem;letter-spacing:.01em;padding:12px 0;white-space:nowrap;}
+  .brand small{font-weight:500;font-stretch:100%;font-size:.7rem;color:var(--amber);margin-left:4px;}
+  .tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{background:none;border:0;border-bottom:3px solid transparent;color:var(--ink-dim);padding:14px 12px 11px;cursor:pointer;white-space:nowrap;font-weight:500;}
+  .tab:hover{color:var(--ink);}
+  .tab.active{color:var(--ink);border-bottom-color:var(--amber);}
+  .page{max-width:860px;margin:0 auto;padding:24px 16px 80px;}
+  .loading{padding:60px 20px;text-align:center;color:var(--ink-dim);}
+
+  /* ---------- Typo ---------- */
+  h1,h2,h3{font-stretch:80%;font-weight:700;line-height:1.15;margin:0;}
+  .section-title{font-size:1.35rem;margin:32px 0 12px;}
+  .group-title{font-size:1.05rem;margin:24px 0 10px;color:var(--ink);}
+  .lede{color:var(--ink-dim);max-width:62ch;margin:0 0 16px;}
+  .hint{color:var(--ink-dim);font-size:.85rem;margin:8px 0;}
+  .empty{color:var(--ink-dim);font-size:.92rem;}
+  .meta-line{color:var(--ink-dim);font-size:.9rem;}
+  .small{font-size:.85rem;}
+  .warn-text{color:var(--red);}
+  .danger-text{color:var(--red) !important;border-color:var(--red) !important;}
+
+  /* ---------- Contrôles ---------- */
+  .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+  .btn{background:var(--amber);color:var(--amber-ink);border:0;border-radius:var(--r-s);padding:10px 16px;font-weight:700;cursor:pointer;}
+  .btn:hover{filter:brightness(1.07);}
+  .btn.big{padding:14px 22px;font-size:1.05rem;}
+  .btn.danger{background:var(--red);color:#fff;}
+  .btn:disabled,.btn-ghost:disabled{opacity:.4;cursor:default;filter:none;}
+  .btn-ghost{background:none;border:1px solid var(--rule);color:var(--ink);border-radius:var(--r-s);padding:9px 14px;cursor:pointer;}
+  .btn-ghost:hover{border-color:var(--ink-dim);}
+  .btn-ghost.small{padding:6px 10px;font-size:.85rem;}
+  .link-btn{background:none;border:0;padding:0;color:var(--amber);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  .icon-btn,.x-btn{background:none;border:1px solid transparent;color:var(--ink-dim);border-radius:var(--r-s);width:34px;height:34px;cursor:pointer;flex:none;}
+  .icon-btn:hover,.x-btn:hover{border-color:var(--rule);color:var(--ink);}
+  .icon-btn:disabled{opacity:.3;}
+  input[type=text],input[type=password],input[type=number],input[type=url],input[type=date],input:not([type]),select,.search{
+    background:var(--console);border:1px solid var(--rule);border-radius:var(--r-s);padding:9px 11px;color:var(--ink);min-width:0;}
+  input::placeholder{color:#7E867E;}
+  .search{width:100%;font-size:1rem;padding:12px 14px;}
+  .field{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .field > span{font-size:.8rem;color:var(--ink-dim);}
+  .field.inline{flex-direction:row;align-items:center;gap:10px;}
+  .field.inline input{width:90px;}
+  .check{display:flex;align-items:center;gap:8px;font-size:.92rem;color:var(--ink);cursor:pointer;}
+  .check input{width:18px;height:18px;accent-color:var(--amber);}
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px;}
+  .form-grid .wide{grid-column:1 / -1;}
+  .note{background:var(--panel);border-left:3px solid var(--amber);border-radius:var(--r-s);padding:12px 14px;margin:0 0 16px;color:var(--ink);}
+  .note.warn{border-left-color:var(--red);}
+  details{margin:20px 0;}
+  summary{cursor:pointer;color:var(--ink-dim);}
+  .error{color:var(--red);margin:10px 0 0;}
+
+  /* ---------- Capuchons d'instrument ---------- */
+  .tag{display:inline-flex;align-items:center;gap:6px;padding:3px 9px 3px 7px;border-radius:var(--r-s);background:var(--panel-2);font-size:.8rem;font-weight:600;white-space:nowrap;}
+  .tag .dot{width:9px;height:14px;border-radius:2px;background:var(--ink-dim);box-shadow:inset 0 -3px 0 rgba(0,0,0,.25);}
+  .tag.gtr .dot{background:var(--gtr);} .tag.bass .dot{background:var(--bass);} .tag.drm .dot{background:var(--drm);} .tag.keys .dot{background:var(--keys);} .tag.vox .dot{background:var(--vox);}
+  .tag .names{font-weight:400;color:var(--ink-dim);}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .tag-empty{color:var(--ink-dim);font-size:.85rem;}
+
+  /* ---------- Fiches morceaux ---------- */
+  .song-card{background:var(--panel);border-radius:var(--r-m);padding:12px 14px;margin-bottom:8px;}
+  .song-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .song-title{font-weight:700;}
+  .song-artist{color:var(--ink-dim);}
+  .song-extra{color:var(--ink-dim);font-size:.85rem;margin-left:6px;}
+  .artist-header{font-stretch:80%;font-weight:700;font-size:1.1rem;color:var(--ink-dim);margin:22px 0 8px;}
+  .links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:.88rem;align-items:center;}
+  .links .ext{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(240,164,58,.4);}
+  .song-key{color:var(--ink-dim);}
+  .song-edit .row{margin-top:4px;}
+  .coverage-row{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:.88rem;color:var(--ink-dim);}
+  .coverage-item b{color:var(--ink);font-weight:600;margin-right:4px;}
+  .coverage-item.missing{color:var(--red);}
+  .coverage-item.backup{color:var(--amber);}
+
+  /* ---------- Sélection de musiciens ---------- */
+  .chip-select{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px;}
+  .chip{padding:8px 16px;border-radius:999px;border:1px solid var(--rule);cursor:pointer;color:var(--ink-dim);user-select:none;}
+  .chip.selected{background:var(--ink);color:var(--console);border-color:var(--ink);font-weight:600;}
+  .chip.universal::after{content:' (backup)';font-size:.8em;opacity:.8;}
+
+  /* ---------- Grille ---------- */
+  .grid-table{width:100%;border-collapse:collapse;margin-top:16px;}
+  .grid-table th{font-size:.78rem;color:var(--ink-dim);font-weight:500;padding:6px 2px;position:sticky;top:50px;background:var(--console);}
+  .grid-song-name{padding:6px 8px 6px 0;font-size:.92rem;}
+  .grid-artist-header{padding:18px 0 6px;font-stretch:80%;font-weight:700;color:var(--ink-dim);}
+  .toggle-cell{text-align:center;padding:3px;}
+  .toggle-btn{width:100%;min-width:52px;padding:7px 4px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink-dim);font-size:.75rem;cursor:pointer;}
+  .toggle-btn.on{color:#14130f;font-weight:700;border-color:transparent;}
+  .toggle-btn.on.gtr{background:var(--gtr);} .toggle-btn.on.bass{background:var(--bass);} .toggle-btn.on.drm{background:var(--drm);} .toggle-btn.on.keys{background:var(--keys);} .toggle-btn.on.vox{background:var(--vox);}
+  .add-musician-form{display:none;gap:8px;margin-top:10px;}
+  .add-musician-form.open{display:flex;flex-wrap:wrap;}
+
+  /* ---------- Studio : en-tête et vumètre ---------- */
+  .studio-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+  .who-chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .who-chip{padding:9px 16px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink-dim);font-weight:600;cursor:pointer;}
+  .who-chip small{font-weight:400;opacity:.75;}
+  .who-chip.selected{background:var(--ink);color:var(--console);border-color:var(--ink);}
+  .who-pick{text-align:center;padding:40px 0;}
+  .who-pick h2{font-size:2rem;}
+  .who-big{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:24px 0 12px;}
+  .who-big .who-chip{font-size:1.3rem;padding:22px 36px;border-radius:var(--r-l);}
+  .level-box{display:flex;align-items:center;gap:14px;}
+  .vu{width:150px;height:auto;display:block;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35));}
+  .level-text{display:flex;flex-direction:column;gap:2px;}
+  .lvl{font-stretch:75%;font-weight:800;font-size:1.5rem;line-height:1;}
+  .lvl-title{color:var(--amber);font-weight:600;}
+  .level-sub{font-size:.8rem;color:var(--ink-dim);}
+  .subtabs{display:flex;gap:4px;margin-bottom:20px;border:1px solid var(--rule);border-radius:var(--r-m);padding:4px;width:fit-content;max-width:100%;overflow-x:auto;}
+  .subtab,.seg-btn{background:none;border:0;border-radius:var(--r-s);padding:8px 14px;color:var(--ink-dim);cursor:pointer;white-space:nowrap;}
+  .subtab.active,.seg-btn.on{background:var(--panel-2);color:var(--ink);font-weight:600;}
+  .seg{display:flex;gap:4px;border:1px solid var(--rule);border-radius:var(--r-m);padding:4px;width:fit-content;margin-bottom:10px;}
+  .bar{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden;}
+  .bar > div{height:100%;background:var(--amber);}
+  .bar.thin{height:4px;margin-top:8px;}
+
+  /* ---------- Séance ---------- */
+  .challenge{display:flex;gap:14px;align-items:center;background:var(--panel);border-radius:var(--r-m);padding:12px 16px;margin-bottom:16px;}
+  .challenge .ico{font-size:1.4rem;}
+  .challenge .ct{font-weight:600;}
+  .challenge .cs{font-size:.85rem;color:var(--ink-dim);}
+  .steps{display:flex;flex-direction:column;gap:10px;}
+  .step{background:var(--panel);border-radius:var(--r-m);padding:16px 18px;}
+  .step.prio{background:var(--panel-2);box-shadow:inset 4px 0 0 var(--amber);}
+  .step.bonus{background:none;border:1px dashed var(--rule);}
+  .step-head{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+  .step-head h3{font-size:1.15rem;display:flex;align-items:baseline;gap:10px;}
+  .step-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--rule);font-size:.85rem;font-stretch:100%;color:var(--ink-dim);flex:none;}
+  .step.prio .step-num{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);}
+  .step-song{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:1.1rem;}
+  .step-body{color:var(--ink-dim);margin:10px 0 0;max-width:68ch;}
+  .objective{margin:10px 0 0;padding:10px 14px;border-radius:var(--r-s);background:var(--ivory);color:var(--ivory-ink);font-weight:600;}
+  .objective .tempo-badge{background:rgba(0,0,0,.08);color:var(--ivory-ink);}
+  .objective .by{font-weight:400;font-size:.82rem;opacity:.7;margin-left:6px;}
+  .objective.missing-obj{background:none;color:var(--amber);border:1px dashed var(--amber);font-weight:400;}
+  .timer-btn{background:var(--console);border:1px solid var(--rule);color:var(--ink);border-radius:var(--r-s);padding:8px 12px;min-width:96px;cursor:pointer;font-weight:600;white-space:nowrap;}
+  .timer-btn.running{background:var(--ok);color:#10200f;border-color:var(--ok);}
+  .results{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
+  .res-btn{padding:9px 14px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;}
+  .res-btn.on{background:var(--ink);color:var(--console);border-color:var(--ink);font-weight:700;}
+  .after-result{display:flex;flex-direction:column;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);}
+  .finish-bar{display:flex;justify-content:flex-end;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;}
+  .finish-bar .hint{margin:0;}
+  .empty-state{text-align:center;padding:40px 20px;background:var(--panel);border-radius:var(--r-l);}
+  .empty-state h2{font-size:1.5rem;margin-bottom:6px;}
+  .empty-state p{color:var(--ink-dim);margin:0 auto 16px;max-width:44ch;}
+
+  /* Métronome */
+  .metro{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding:8px;background:var(--console);border-radius:var(--r-m);width:fit-content;}
+  .metro-btn{width:44px;height:40px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;font-weight:600;}
+  .metro-bpm{min-width:92px;text-align:center;color:var(--ink-dim);}
+  .metro-bpm output{font-stretch:75%;font-weight:800;font-size:1.7rem;color:var(--ink);margin-right:3px;}
+  .metro-toggle{background:var(--panel-2);border:0;border-radius:var(--r-s);padding:10px 16px;color:var(--ink);cursor:pointer;font-weight:600;}
+  .metro-toggle.on{background:var(--amber);color:var(--amber-ink);}
+  .metro-dot{width:14px;height:14px;border-radius:50%;background:#3d2b14;margin:0 4px;}
+  .metro-dot.tick{animation:led .12s ease-out;}
+  .metro-dot.tick.accent{animation-name:ledred;}
+  @keyframes led{from{background:var(--amber);box-shadow:0 0 10px var(--amber);}to{background:#3d2b14;}}
+  @keyframes ledred{from{background:var(--red);box-shadow:0 0 12px var(--red);}to{background:#3d2b14;}}
+
+  /* Enregistrement */
+  .rec-chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
+  .rec-chip{padding:7px 12px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink-dim);cursor:pointer;}
+  .rec-chip.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:600;}
+  .rec-list{list-style:none;padding:0;margin:12px 0 0;}
+  .rec-list li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--rule);font-size:.92rem;}
+
+  /* ---------- Mes morceaux ---------- */
+  .item-row{display:grid;grid-template-columns:1fr auto;gap:8px 12px;background:var(--panel);border-radius:var(--r-m);padding:12px 14px;margin-bottom:8px;}
+  .item-main{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;}
+  .item-row .meta{width:100%;font-size:.82rem;color:var(--ink-dim);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;}
+  .item-actions{display:flex;gap:4px;align-items:flex-start;}
+  .item-actions select{padding:6px 8px;font-size:.85rem;}
+  .item-edit{grid-column:1 / -1;display:flex;gap:10px;flex-wrap:wrap;}
+  .item-edit .grow{flex:1 1 260px;}
+  .item-edit .field:not(.grow) input{width:100px;}
+  .tempo-badge{display:inline-block;padding:1px 7px;border-radius:var(--r-s);background:var(--panel-2);font-size:.8rem;font-weight:600;white-space:nowrap;}
+  .spark{vertical-align:middle;}
+  .spark-line{fill:none;stroke:var(--amber);stroke-width:1.8;stroke-linejoin:round;}
+  .spark-target{stroke:var(--ink-dim);stroke-dasharray:2 3;stroke-width:1;}
+  .add-item{margin-top:8px;}
+
+  /* ---------- Badges ---------- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px;}
+  .stat{background:var(--panel);border-radius:var(--r-m);padding:12px 14px;}
+  .stat b{display:block;font-stretch:75%;font-weight:800;font-size:1.8rem;line-height:1.1;}
+  .stat span{font-size:.82rem;color:var(--ink-dim);}
+  .badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;}
+  .badge{background:var(--panel);border-radius:var(--r-m);padding:14px 12px;text-align:center;}
+  .badge .ico{font-size:1.9rem;line-height:1;}
+  .badge .bn{font-weight:700;margin-top:8px;}
+  .badge .bd{font-size:.8rem;color:var(--ink-dim);margin-top:4px;line-height:1.35;}
+  .badge .count{color:var(--amber);}
+  .badge.locked .ico{filter:grayscale(1);opacity:.35;}
+  .badge.locked .bn{color:var(--ink-dim);}
+  .stars{color:var(--amber);letter-spacing:2px;font-size:.85rem;margin-top:2px;}
+  .badge .bar{margin-top:8px;height:4px;}
+  .section-label{font-size:.9rem;color:var(--ink-dim);margin:22px 0 8px;}
+
+  /* ---------- Groupe ---------- */
+  .members{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;}
+  .member{background:var(--panel);border-radius:var(--r-m);padding:16px;}
+  .member h3{font-size:1.3rem;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0 4px;}
+  .kpis div{display:flex;flex-direction:column;}
+  .kpis dd{order:-1;}
+  .kpis dt{font-size:.72rem;color:var(--ink-dim);line-height:1.2;}
+  .kpis dd{margin:0;font-stretch:75%;font-weight:800;font-size:1.6rem;}
+  .weeks{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;height:84px;align-items:end;margin-top:12px;}
+  .wk{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:4px;}
+  .wk-bar{background:var(--amber);border-radius:2px 2px 0 0;min-height:2px;}
+  .wk span{font-size:.65rem;color:var(--ink-dim);text-align:center;white-space:nowrap;}
+
+  /* ---------- Setlists ---------- */
+  .gig-list{list-style:none;padding:0;margin:0 0 12px;}
+  .gig-open{width:100%;text-align:left;background:var(--panel);border:0;border-radius:var(--r-m);padding:12px 14px;margin-bottom:6px;cursor:pointer;display:flex;flex-direction:column;}
+  .gig-name{font-weight:700;}
+  .gig-meta{font-size:.85rem;color:var(--ink-dim);}
+  .gig-rows{list-style:none;padding:0;margin:12px 0;}
+  .gig-row{display:flex;gap:12px;align-items:center;background:var(--panel);border-radius:var(--r-m);padding:10px 12px;margin-bottom:6px;}
+  .gig-num{font-stretch:75%;font-weight:800;font-size:1.4rem;width:28px;text-align:right;color:var(--ink-dim);}
+  .gig-row .meta{font-size:.82rem;color:var(--ink-dim);}
+  .gig-actions{display:flex;}
+  .print-sheet{display:none;}
+
+  /* ---------- Réglages ---------- */
+  .backup-list{list-style:none;padding:0;margin:0 0 12px;}
+  .backup-list li{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule);font-size:.92rem;}
+  .tech{background:var(--panel);border-radius:var(--r-m);padding:12px 14px;}
+  .tech p{color:var(--ink-dim);font-size:.9rem;}
+  .tech pre{background:var(--console);padding:12px;border-radius:var(--r-s);overflow-x:auto;font-size:.8rem;}
+
+  /* ---------- Accès ---------- */
+  .gate{max-width:380px;margin:12vh auto 0;padding:0 20px;}
+  .gate h1{font-size:2.6rem;font-stretch:75%;font-weight:800;}
+  .gate p{color:var(--ink-dim);}
+  .gate form{display:flex;flex-direction:column;gap:14px;margin-top:20px;}
+  .gate input[type=password]{font-size:1.1rem;padding:12px 14px;}
+
+  /* ---------- Récompense ---------- */
+  .toast-back{position:fixed;inset:0;background:rgba(12,15,13,.78);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .toast{background:var(--panel);border-radius:var(--r-l);padding:26px;max-width:400px;width:100%;text-align:center;max-height:90vh;overflow:auto;animation:pop .3s ease-out;}
+  .toast h2{font-size:1.9rem;margin-bottom:4px;}
+  .toast .xp{color:var(--amber);font-stretch:75%;font-weight:800;font-size:1.4rem;margin-bottom:10px;}
+  .toast .badge{background:var(--panel-2);margin:8px 0;}
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
+
+  @media (max-width:600px){
+    .appbar{flex-direction:column;align-items:stretch;gap:0;}
+    .brand{padding:10px 0 0;}
+    .page{padding-top:18px;}
+    .level-box{width:100%;}
+    .vu{width:120px;}
+    .kpis dd{font-size:1.35rem;}
+    .grid-table th{top:92px;}
+  }
+
+  @media print{
+    body{background:#fff;color:#000;}
+    .appbar,.page > *:not(#tab-content),#tab-content > *:not(.gig-editor),.gig-editor > *:not(.print-sheet){display:none !important;}
+    .print-sheet{display:block !important;font-family:var(--font);}
+    .print-sheet h1{font-size:28pt;margin:0 0 4pt;}
+    .print-sheet ol{font-size:20pt;line-height:1.35;padding-left:1.2em;}
+    .print-sheet small{font-size:11pt;color:#444;}
+  }
 </style>
+
 </head>
 <body>
-<div id="app"><div class="loading">Chargement du répertoire…</div></div>
+<div id="app"><div class="loading">Chargement…</div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBbveF8c8wjGHAaBZI7KB4E8KuHit0jt6k",
@@ -241,34 +343,82 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
-// Remplace le window.storage propre à l'environnement artifact Claude par un
-// shim de même interface, adossé à Firestore — tout le reste du code de
-// l'appli (safeGet/safeSet/queueSet, etc.) n'a besoin d'aucun changement.
-// ?demo dans l'URL : stockage local au navigateur, pour tester sans toucher aux vraies données.
+// ---------------------------------------------------------------------
+// Données : un « espace » Firestore dont le nom est dérivé du mot de passe.
+// Sans le mot de passe, on ne peut ni deviner ni lister cet espace.
+// Toutes les écritures passent par une transaction (lecture de la dernière
+// version + modification), et un abonnement temps réel tient chaque appareil à jour.
+// ?demo dans l'URL : même fonctionnement, mais dans le stockage local du navigateur.
+// ---------------------------------------------------------------------
 const DEMO = new URLSearchParams(location.search).has('demo');
-window.storage = DEMO ? {
-  async get(key){
-    const v = localStorage.getItem('demo:'+key);
-    if(v === null) throw new Error('not found');
-    return {key, value: v};
+const LEGACY = 'app_data';
+let SPACE = null;
+
+const clone = v => v == null ? v : JSON.parse(JSON.stringify(v));
+
+const fireStore = {
+  async getMeta(space){ const s = await getDoc(doc(db, space, 'meta')); return s.exists() ? s.data().value : null; },
+  async legacyAll(){
+    const q = await getDocs(collection(db, LEGACY)); const all = {};
+    q.forEach(d => all[d.id] = d.data().value); return all;
   },
-  async set(key, value){ localStorage.setItem('demo:'+key, value); return {key}; },
-  async delete(key){ localStorage.removeItem('demo:'+key); return {key, deleted:true}; }
-} : {
-  async get(key){
-    const snap = await getDoc(doc(db, 'app_data', key));
-    if(!snap.exists()) throw new Error('not found');
-    return {key, value: JSON.stringify(snap.data().value)};
+  async writeAll(space, all){ for(const [k,v] of Object.entries(all)) await setDoc(doc(db, space, k), {value:v}); },
+  async deleteLegacy(keys){ for(const k of keys) await deleteDoc(doc(db, LEGACY, k)); },
+  async set(k, v){ await setDoc(doc(db, SPACE, k), {value:v}); },
+  async remove(k){ await deleteDoc(doc(db, SPACE, k)); },
+  async mutate(k, fn){
+    return runTransaction(db, async tx => {
+      const r = doc(db, SPACE, k); const s = await tx.get(r);
+      const nv = fn(s.exists() ? clone(s.data().value) : null);
+      if(nv !== undefined) tx.set(r, {value:nv});
+      return nv;
+    });
   },
-  async set(key, value){
-    await setDoc(doc(db, 'app_data', key), {value: JSON.parse(value)});
-    return {key};
+  subscribe(cb, onErr){
+    return onSnapshot(collection(db, SPACE), snap => {
+      const all = {}; snap.forEach(d => all[d.id] = d.data().value); cb(all);
+    }, onErr);
   },
-  async delete(key){
-    await deleteDoc(doc(db, 'app_data', key));
-    return {key, deleted:true};
-  }
 };
+
+const demoListeners = [];
+const demoKey = (space, k) => 'demo:' + space + ':' + k;
+function demoNotify(){ const all = demoReadAll(SPACE); setTimeout(() => demoListeners.forEach(cb => cb(clone(all))), 0); }
+function demoReadAll(space){
+  const all = {}, pre = 'demo:' + space + ':';
+  for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(k.startsWith(pre)) all[k.slice(pre.length)] = JSON.parse(localStorage.getItem(k)); }
+  return all;
+}
+const demoStore = {
+  async getMeta(space){ const v = localStorage.getItem(demoKey(space,'meta')); return v ? JSON.parse(v) : null; },
+  async legacyAll(){
+    const all = {};
+    for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(k.startsWith('demo:') && k.split(':').length>=2 && !k.startsWith('demo:e_')) all[k.slice(5)] = JSON.parse(localStorage.getItem(k)); }
+    return all;
+  },
+  async writeAll(space, all){ for(const [k,v] of Object.entries(all)) localStorage.setItem(demoKey(space,k), JSON.stringify(v)); },
+  async deleteLegacy(keys){ keys.forEach(k => localStorage.removeItem('demo:'+k)); },
+  async set(k, v){ localStorage.setItem(demoKey(SPACE,k), JSON.stringify(v)); demoNotify(); },
+  async remove(k){ localStorage.removeItem(demoKey(SPACE,k)); demoNotify(); },
+  async mutate(k, fn){
+    const cur = localStorage.getItem(demoKey(SPACE,k));
+    const nv = fn(cur ? JSON.parse(cur) : null);
+    if(nv !== undefined) localStorage.setItem(demoKey(SPACE,k), JSON.stringify(nv));
+    demoNotify(); return nv;
+  },
+  subscribe(cb){
+    demoListeners.push(cb); demoNotify();
+    window.addEventListener('storage', e => { if(e.key && e.key.startsWith('demo:'+SPACE+':')) demoNotify(); });
+    return () => {};
+  },
+};
+const store = DEMO ? demoStore : fireStore;
+
+async function deriveSpace(password){
+  const bytes = new TextEncoder().encode('setlistas:' + password.trim());
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return 'e_' + [...new Uint8Array(hash)].map(b => b.toString(16).padStart(2,'0')).join('').slice(0,32);
+}
 
 const INSTRUMENTS = [
   {key:'Guitare', abbr:'Guitare', cls:'gtr'},
@@ -279,76 +429,20 @@ const INSTRUMENTS = [
 ];
 const REQUIRED = ['Guitare','Basse','Batterie'];
 
-const SEED_SONGS = [
-  {id:1,title:"Back in Black",artist:"AC/DC"},
-  {id:2,title:"Hells Bells",artist:"AC/DC"},
-  {id:3,title:"I Love Rock n Roll",artist:"Joan Jett"},
-  {id:4,title:"Sunshine of Your Love",artist:"Cream"},
-  {id:5,title:"Flipper",artist:"Téléphone"},
-  {id:6,title:"Highway to Hell",artist:"AC/DC"},
-  {id:7,title:"Hoochie Coochie Man",artist:"Muddy Waters"},
-  {id:8,title:"Money for Nothing",artist:"Dire Straits"},
-  {id:9,title:"Smoke on the Water",artist:"Deep Purple"},
-  {id:10,title:"Stairway to Heaven",artist:"Led Zeppelin"},
-  {id:11,title:"The Thrill Is Gone",artist:"B.B. King"},
-  {id:12,title:"Thunderstruck",artist:"AC/DC"},
-  {id:13,title:"TNT",artist:"AC/DC"},
-  {id:14,title:"Walk of Life",artist:"Dire Straits"},
-  {id:15,title:"White Room",artist:"Cream"},
-  {id:16,title:"You Shook Me All Night Long",artist:"AC/DC"},
-  {id:17,title:"Black Magic Woman",artist:"Peter Green"},
-  {id:18,title:"Come Together",artist:"Beatles"},
-  {id:19,title:"Day Tripper",artist:"Beatles"},
-  {id:20,title:"I Got All You Need",artist:"Joe Bonamassa"},
-  {id:21,title:"Johnny B. Goode",artist:"Chuck Berry"},
-  {id:22,title:"Knockin' on Heaven's Door",artist:"Guns N' Roses"},
-  {id:23,title:"La Grange",artist:"ZZ Top"},
-  {id:24,title:"Paranoid",artist:"Black Sabbath"},
-  {id:25,title:"Ticket to Ride",artist:"Beatles"},
-  {id:26,title:"Under Pressure",artist:"Queen"},
-  {id:27,title:"Mountain Climbing",artist:"Joe Bonamassa"},
-  {id:28,title:"Enter Sandman",artist:"Metallica"},
-  {id:29,title:"Tush",artist:"ZZ Top"},
-  {id:30,title:"Midnight",artist:"Joe Satriani"},
-];
-
-const SEED_MUSICIANS = [
-  {id:'seb', name:'Seb'},
-  {id:'arthur', name:'Arthur'},
-  {id:'franck', name:'Franck', universal:true},
-];
-
-const SEED_MASTERY_SEB = {
-  1:['Guitare'],2:[],3:['Basse'],4:[],5:['Guitare','Basse'],6:['Guitare'],7:['Guitare'],
-  8:['Guitare'],9:['Guitare'],10:['Guitare'],11:['Guitare'],12:[],13:['Guitare'],14:['Guitare'],
-  15:['Guitare'],16:['Guitare'],17:['Guitare'],18:['Guitare'],19:['Guitare'],20:['Guitare'],
-  21:['Guitare'],22:['Guitare'],23:['Guitare'],24:['Guitare'],25:['Guitare'],26:['Guitare'],
-  27:['Guitare'],28:['Guitare'],29:['Guitare'],30:['Guitare'],
-};
-const SEED_MASTERY_ARTHUR = {
-  1:['Guitare'],2:['Guitare'],3:['Guitare'],4:['Basse'],5:['Guitare'],6:['Guitare'],7:['Guitare'],
-  8:['Guitare'],9:['Guitare'],10:['Guitare'],11:['Guitare'],12:['Guitare'],13:['Guitare'],14:['Guitare'],
-  15:['Guitare','Basse'],16:['Guitare'],17:[],18:['Guitare'],19:['Guitare'],20:['Guitare'],
-  21:['Guitare'],22:['Guitare'],23:['Guitare'],24:['Guitare'],25:['Guitare'],26:['Batterie'],
-  27:['Batterie'],28:['Guitare'],29:['Guitare'],30:['Guitare'],
-};
-
 let songs = [], musicians = [], mastery = {};
-let activeTab = 'repertoire';
+let activeTab = 'studio';
 let searchQuery = '';
 let sortMode = 'title';
 let groupByArtist = true;
 let selectedForSetlist = new Set(['seb','arthur']);
 let selectedGridMusician = null;
 let pendingDeleteMusician = null;
-let deleteCodeError = null;
 let addSongFormOpen = false;
 
 // ---------- Studio : état ----------
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function lsSet(k,v){ try{ if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){} }
 let progress = {};
-let progressError = false;
 let studioWho = lsGet('setlistas-who');
 let studioView = 'seance';
 let session = (()=>{ try{ return JSON.parse(lsGet('setlistas-session')); }catch(e){ return null; } })();
@@ -363,165 +457,94 @@ function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 let saveError = null;
 let importError = null;
 let pendingImport = null;
-let importCodeError = null;
+let importBusy = false;
+let gigs = {};
+let backups = [];
+let meta = null;
+let firstSnapshot = true;
 
-async function safeGet(key, attempts=2){
-  for(let i=0;i<attempts;i++){
-    try{
-      const res = await window.storage.get(key, true);
-      return res ? JSON.parse(res.value) : null;
-    }catch(e){
-      if(i===attempts-1) return null;
-      await sleep(400);
-    }
-  }
-  return null;
-}
-async function safeSet(key, value, attempts=3){
-  for(let i=0;i<attempts;i++){
-    try{
-      await window.storage.set(key, JSON.stringify(value), true);
-      saveError = null;
-      return true;
-    }catch(e){
-      if(i===attempts-1){
-        saveError = `Échec de sauvegarde (${key}) — réessaie dans un instant.`;
-        console.warn('storage set failed after retries', key);
-        return false;
-      }
-      await sleep(500 * (i+1));
-    }
-  }
-  return false;
-}
-
-// Sérialise les écritures par clé : si des clics rapides déclenchent plusieurs
-// sauvegardes sur la même clé, on n'envoie que la dernière valeur, une à la fois,
-// au lieu de laisser plusieurs requêtes concurrentes se battre sur la même clé.
-const writeQueues = {};
-function queueSet(key, value){
-  let q = writeQueues[key];
-  if(!q){ q = writeQueues[key] = {inFlight:false, hasPending:false, pendingValue:null}; }
-  q.pendingValue = value;
-  q.hasPending = true;
-  processQueue(key);
-}
-async function processQueue(key){
-  const q = writeQueues[key];
-  if(!q || q.inFlight || !q.hasPending) return;
-  const value = q.pendingValue;
-  q.hasPending = false;
-  q.inFlight = true;
-  const ok = await safeSet(key, value);
-  q.inFlight = false;
-  if(!ok) render();
-  if(q.hasPending) processQueue(key);
-}
-
-async function init(){
-  let s = await safeGet('songs');
-  if(!s){ s = SEED_SONGS; await safeSet('songs', s); }
-  songs = s;
-
-  let m = await safeGet('musicians');
-  if(!m){ m = SEED_MUSICIANS; await safeSet('musicians', m); }
-  else {
-    const franck = m.find(mus => mus.id === 'franck');
-    if(franck && !franck.universal){
-      franck.universal = true;
-      await safeSet('musicians', m);
-    }
-  }
-  musicians = m;
-
-  for(const mus of musicians){
-    let data = await safeGet('mastery:'+mus.id);
-    if(!data){
-      data = mus.id==='seb' ? SEED_MASTERY_SEB : mus.id==='arthur' ? SEED_MASTERY_ARTHUR : {};
-      await safeSet('mastery:'+mus.id, data);
-    }
-    mastery[mus.id] = data;
-  }
-  await loadProgress();
-  if(location.hash === '#studio' || (studioWho && musicians.some(m=>m.id===studioWho))) activeTab = 'studio';
-  render();
-}
-
-// ---------- Studio : chargement + pré-remplissage ----------
-// Lecture stricte : distingue « n'existe pas » (on peut initialiser) d'une erreur réseau
-// (on ne touche à rien, sinon on écraserait la progression existante).
-async function strictGet(key){
+// Écriture sûre : relit la dernière version, applique la modification, réessaie en cas d'échec.
+async function save(key, fn){
   for(let i=0;i<3;i++){
-    try{
-      const res = await window.storage.get(key, true);
-      return {ok:true, value: JSON.parse(res.value)};
-    }catch(e){
-      if(e && e.message === 'not found') return {ok:true, value:null};
-      await sleep(500);
+    try{ const v = await store.mutate(key, fn); if(saveError){ saveError = null; scheduleRender(); } return v; }
+    catch(e){
+      console.warn('save failed', key, e);
+      if(i===2){ saveError = "Modification non enregistrée : vérifie la connexion, puis recommence."; scheduleRender(); return undefined; }
+      await sleep(600*(i+1));
     }
   }
-  return {ok:false, value:null};
+}
+
+// Ne pas redessiner l'écran pendant qu'on tape : on attend la fin de la saisie.
+let renderPending = false;
+function isEditing(){
+  const a = document.activeElement;
+  return !!a && ['INPUT','TEXTAREA','SELECT'].includes(a.tagName) && document.getElementById('app').contains(a) && a.type!=='checkbox' && a.type!=='file';
+}
+function scheduleRender(){ if(isEditing()){ renderPending = true; return; } render(); }
+document.addEventListener('focusout', () => setTimeout(() => { if(renderPending && !isEditing()){ renderPending = false; render(); } }, 60));
+
+function applyAll(all){
+  lastAll = all;
+  songs = Array.isArray(all.songs) ? all.songs : [];
+  musicians = Array.isArray(all.musicians) ? all.musicians : [];
+  mastery = {};
+  musicians.forEach(m => mastery[m.id] = all['mastery:'+m.id] || {});
+  progress = {};
+  studioMusicians().forEach(m => { progress[m.id] = all['progress:'+m.id] ? normalizeProgress(all['progress:'+m.id]) : emptyProgress(); });
+  // Succès déjà acquis : marqués comme vus, sans redonner d'XP.
+  studioMusicians().forEach(m => { const p = progress[m.id]; if(!p.seen){ p.seen = achievements(m.id); p.seenDates = p.seenDates || {}; } });
+  gigs = all.gigs || {};
+  meta = all.meta || null;
+  backups = Object.keys(all).filter(k => k.startsWith('backup:')).sort().reverse();
+  if(!selectedGridMusician && studioWho && musicians.some(m=>m.id===studioWho)) selectedGridMusician = studioWho;
+}
+
+async function start(){
+  document.getElementById('app').innerHTML = '<div class="loading">Chargement…</div>';
+  store.subscribe(all => {
+    applyAll(all);
+    if(firstSnapshot){
+      firstSnapshot = false;
+      if(location.hash === '#studio' || (studioWho && musicians.some(m=>m.id===studioWho))) activeTab = 'studio';
+      render();
+      dailyBackup(all);
+    } else scheduleRender();
+  }, err => {
+    console.warn(err);
+    document.getElementById('app').innerHTML = `<div class="gate"><h1>Accès impossible</h1><p>Les données n'ont pas pu être chargées (${escapeHtml(err.code||err.message||'erreur')}). Vérifie la connexion et recharge la page.</p></div>`;
+  });
+}
+
+// ---------- Sauvegardes ----------
+function snapshotOf(all){
+  const out = {};
+  Object.entries(all).forEach(([k,v]) => { if(k!=='meta' && !k.startsWith('backup:')) out[k] = v; });
+  return out;
+}
+async function dailyBackup(all){
+  const key = 'backup:' + todayStr();
+  if(all[key]) return;
+  try{
+    await store.set(key, {at: new Date().toISOString(), data: snapshotOf(all)});
+    const old = Object.keys(all).filter(k => /^backup:\d{4}-\d{2}-\d{2}/.test(k)).sort().reverse().slice(13);
+    for(const k of old) await store.remove(k);
+  }catch(e){ console.warn('backup failed', e); }
+}
+async function manualBackup(label){
+  const all = {songs, musicians, gigs};
+  musicians.forEach(m => all['mastery:'+m.id] = mastery[m.id]);
+  Object.entries(progress).forEach(([id,p]) => all['progress:'+id] = p);
+  const key = 'backup:' + todayStr() + '-' + label + '-' + Date.now().toString(36);
+  await store.set(key, {at: new Date().toISOString(), data: clone(all)});
 }
 
 function studioMusicians(){ return musicians.filter(m => !m.universal); }
 
-async function loadProgress(){
-  const missing = [];
-  for(const m of studioMusicians()){
-    const r = await strictGet('progress:'+m.id);
-    if(!r.ok){ progressError = true; return; }
-    if(r.value){ progress[m.id] = normalizeProgress(r.value); }
-    else { progress[m.id] = emptyProgress(); missing.push(m.id); }
-  }
-  if(missing.includes('seb') && missing.includes('arthur')) await seedProgress();
-  // Passage au nouveau système de badges : on marque l'existant comme déjà vu, sans redonner d'XP.
-  for(const m of studioMusicians()){
-    const p = progress[m.id];
-    if(p && !p.seen){ p.seen = achievements(m.id); p.seenDates = {}; }
-  }
-}
-
-function emptyProgress(){ return {items:{}, sessions:[], badges:{}, xp:0, dustCount:0, challenges:{}, seen:null, seenDates:{}}; }
+function emptyProgress(){ return {items:{}, sessions:[], badges:{}, xp:0, dustCount:0, tempoRecords:0, challenges:{}, seen:null, seenDates:{}}; }
 function normalizeProgress(p){ return Object.assign(emptyProgress(), p, {items:p.items||{}, sessions:p.sessions||[], badges:p.badges||{}, challenges:p.challenges||{}}); }
 
-function normTitle(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,''); }
-function ensureSong(title, artist){
-  let s = songs.find(x => normTitle(x.title) === normTitle(title));
-  if(!s){
-    s = {id: songs.length ? Math.max(...songs.map(x=>x.id))+1 : 1, title, artist};
-    songs.push(s);
-  }
-  return s;
-}
-
-// Morceaux en cours au 15 novembre 2026, tels que Seb les a décrits.
-async function seedProgress(){
-  const before = songs.length;
-  const gs = ensureSong('Goodbye Stranger','Supertramp');
-  const sfa = ensureSong('So Far Away','Dire Straits');
-  const htl = ensureSong('Hold the Line','Toto');
-  const rwy = ensureSong('Rock With You','Michael Jackson');
-  const tush = ensureSong('Tush','ZZ Top');
-  ensureSong('Éteins la lumière','Axel Bauer');
-  const today = todayStr();
-  const add = (mid, song, ins, status, objective='') => {
-    if(!progress[mid]) return;
-    progress[mid].items[song.id+'|'+ins] = {songId:song.id, ins, status, objective, createdAt:today, lastWorked:null, workedCount:0, reachedCount:0};
-  };
-  add('seb', gs, 'Clavier', 'wip');
-  add('seb', sfa, 'Guitare', 'wip');
-  add('seb', sfa, 'Chant', 'wip');
-  add('seb', htl, 'Basse', 'wip');
-  add('seb', rwy, 'Guitare', 'wip');
-  add('seb', rwy, 'Clavier', 'todo');
-  add('arthur', gs, 'Basse', 'wip');
-  add('arthur', tush, 'Guitare', 'wip', 'Le solo');
-  add('arthur', sfa, 'Basse', 'wip');
-  add('arthur', htl, 'Guitare', 'wip');
-  add('arthur', rwy, 'Guitare', 'todo');
-  if(songs.length !== before) await safeSet('songs', songs);
-  for(const mid of ['seb','arthur']) if(progress[mid]) await safeSet('progress:'+mid, progress[mid]);
-}
+function normTitle(s){ return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,''); }
 
 function nameById(id){ const m = musicians.find(x=>x.id===id); return m ? m.name : id; }
 
@@ -530,12 +553,8 @@ function songMastersFor(songId, instrumentKey){
 }
 
 function renderTabs(){
-  return `<div class="tabs">
-    <button class="tab ${activeTab==='studio'?'active':''}" data-tab="studio">Studio</button>
-    <button class="tab ${activeTab==='repertoire'?'active':''}" data-tab="repertoire">Répertoire</button>
-    <button class="tab ${activeTab==='setlist'?'active':''}" data-tab="setlist">Setlist</button>
-    <button class="tab ${activeTab==='grille'?'active':''}" data-tab="grille">Ma grille</button>
-  </div>`;
+  const t = (k,l) => `<button class="tab ${activeTab===k?'active':''}" data-tab="${k}" ${activeTab===k?'aria-current="page"':''}>${l}</button>`;
+  return `<nav class="tabs" aria-label="Sections">${t('studio','Studio')}${t('repertoire','Répertoire')}${t('setlist','Setlists')}${t('grille','Ma grille')}${t('reglages','Réglages')}</nav>`;
 }
 
 function renderRepertoire(){
@@ -549,16 +568,20 @@ function renderRepertoire(){
   else filtered.sort((a,b)=>a.id-b.id);
 
   const renderCard = song => {
+    if(editingSong===song.id) return `<div class="song-card editing">${songEditForm(song)}</div>`;
     const tags = INSTRUMENTS.map(ins => {
       const names = songMastersFor(song.id, ins.key);
       if(names.length===0) return '';
       return `<span class="tag ${ins.cls}"><span class="dot"></span>${ins.abbr} <span class="names">${names.join(', ')}</span></span>`;
     }).join('');
+    const extra = [song.key, song.duration].filter(Boolean).map(escapeHtml).join(', ');
     return `<div class="song-card">
       <div class="song-top">
-        <div><span class="song-num">#${song.id}</span> <span class="song-title">${escapeHtml(song.title)}</span> <span class="song-artist">— ${escapeHtml(song.artist)}</span></div>
+        <div><span class="song-title">${escapeHtml(song.title)}</span>${groupByArtist ? '' : ` <span class="song-artist">${escapeHtml(song.artist)}</span>`}${extra ? ` <span class="song-extra">${extra}</span>` : ''}</div>
+        <button class="icon-btn" data-editsong="${song.id}" aria-label="Modifier ${escapeAttr(song.title)}">✎</button>
       </div>
-      <div class="tags">${tags || '<span class="tag-empty">personne n\u2019a encore renseigné ce morceau</span>'}</div>
+      <div class="tags">${tags || '<span class="tag-empty">Personne ne l\u2019a encore coché.</span>'}</div>
+      ${songLinks(song)}
     </div>`;
   };
 
@@ -580,7 +603,7 @@ function renderRepertoire(){
   return `
     <input type="text" class="search" id="search" placeholder="Chercher un morceau ou un artiste…" value="${escapeAttr(searchQuery)}">
     <div class="row" style="margin:12px 0 16px">
-      <label style="font-size:0.85rem;color:var(--cream-dim)">Trier par</label>
+      <label style="font-size:0.85rem;color:var(--ink-dim)">Trier par</label>
       <select id="sort-select">
         <option value="num" ${sortMode==='num'?'selected':''}>N° (ordre d'ajout)</option>
         <option value="title" ${sortMode==='title'?'selected':''}>Titre (A-Z)</option>
@@ -588,18 +611,25 @@ function renderRepertoire(){
       </select>
       <label class="check"><input type="checkbox" id="group-toggle" ${groupByArtist?'checked':''}> Grouper par artiste</label>
     </div>
-    <div class="add-song"><button class="btn-ghost" id="add-song-btn">+ Ajouter un morceau au répertoire</button></div>
+    <div class="row">
+      <button class="btn-ghost" id="add-song-btn">Ajouter un morceau</button>
+      <span class="grow"></span>
+      <button class="btn-ghost small" id="export-csv-btn">Exporter en CSV</button>
+      <button class="btn-ghost small" id="import-csv-btn">Importer un CSV</button>
+      <input type="file" id="import-csv-input" accept=".csv" hidden>
+    </div>
     <div class="add-musician-form ${addSongFormOpen?'open':''}" id="add-song-form">
       <input type="text" id="new-song-title" placeholder="Titre du morceau">
       <input type="text" id="new-song-artist" placeholder="Artiste">
       <div><button class="btn" id="confirm-new-song">Ajouter</button></div>
     </div>
-    ${cards || '<p style="color:var(--cream-dim)">Aucun morceau ne correspond.</p>'}
+    ${cards || '<p style="color:var(--ink-dim)">Aucun morceau ne correspond.</p>'}
   `;
 }
 
-function computeSetlist(){
-  const selected = musicians.filter(m => selectedForSetlist.has(m.id));
+function computeSetlist(){ return computeSetlistFor([...selectedForSetlist]); }
+function computeSetlistFor(ids){
+  const selected = musicians.filter(m => ids.includes(m.id));
   const universalSelected = selected.filter(m=>m.universal);
   return songs.map(song => {
     const coverage = {};
@@ -640,35 +670,31 @@ function renderSetlist(){
     const covRow = REQUIRED.map(ins => {
       const names = r.coverage[ins];
       const label = names.length ? names.join(', ') : (r.backupLabel[ins] ? r.backupLabel[ins] + ' (backup)' : '—');
-      return `<span class="coverage-item"><b>${ins}:</b> ${label}</span>`;
+      return `<span class="coverage-item ${names.length?'':(r.backupLabel[ins]?'backup':'missing')}"><b>${ins}</b> ${label}</span>`;
     }).join('');
     const voxNames = r.coverage['Chant'];
     let voxItem;
-    if(voxNames.length) voxItem = `<span class="coverage-item"><b>Chant:</b> ${voxNames.join(', ')}</span>`;
-    else voxItem = `<span class="coverage-item missing"><b>Chant:</b> —</span>`;
-    if(r.coverage['Clavier'].length) voxItem += `<span class="coverage-item"><b>Clavier:</b> ${r.coverage['Clavier'].join(', ')}</span>`;
+    if(voxNames.length) voxItem = `<span class="coverage-item"><b>Chant</b> ${voxNames.join(', ')}</span>`;
+    else voxItem = `<span class="coverage-item missing"><b>Chant</b> —</span>`;
+    if(r.coverage['Clavier'].length) voxItem += `<span class="coverage-item"><b>Clavier</b> ${r.coverage['Clavier'].join(', ')}</span>`;
     return `<div class="song-card">
-      <div class="song-top"><div><span class="song-num">#${r.song.id}</span> <span class="song-title">${escapeHtml(r.song.title)}</span> <span class="song-artist">— ${escapeHtml(r.song.artist)}</span></div></div>
+      <div class="song-top"><div><span class="song-title">${escapeHtml(r.song.title)}</span> <span class="song-artist">${escapeHtml(r.song.artist)}</span></div></div>
       <div class="coverage-row">${covRow}${voxItem}</div>
     </div>`;
   };
 
+  if(openGig && gigs[openGig]) return renderGigs();
   return `
-    <p class="setlist-summary">Sélectionne les musiciens présents pour voir les morceaux jouables (guitare + basse + batterie couverts). ★ = backup universel sur les instruments (un seul à la fois par morceau) — ne chante pas.</p>
+    <p class="lede">Sélectionne les musiciens présents : l'appli liste ce que vous pouvez jouer ensemble (guitare, basse et batterie couvertes). Franck, en backup, peut tenir un instrument par morceau, mais ne chante pas.</p>
     <div class="chip-select">${chips}</div>
-
-    <p class="setlist-summary"><b style="color:var(--cream)">${complete.length}</b> morceaux complets (chant inclus) sur ${songs.length}</p>
-    ${complete.map(renderResult).join('') || '<p style="color:var(--cream-dim)">Aucun morceau complet avec cette sélection.</p>'}
-
-    <p class="setlist-summary" style="margin-top:24px"><b style="color:var(--cream)">${missingSinger.length}</b> morceaux jouables mais sans chanteur</p>
-    ${missingSinger.map(renderResult).join('') || '<p style="color:var(--cream-dim)">Aucun.</p>'}
-
+    ${renderGigs()}
+    <h2 class="section-title">${complete.length} morceaux complets, chant compris</h2>
+    ${complete.map(renderResult).join('') || '<p class="empty">Aucun morceau complet avec ce groupe.</p>'}
+    <h2 class="section-title">${missingSinger.length} morceaux jouables sans chanteur</h2>
+    ${missingSinger.map(renderResult).join('') || '<p class="empty">Aucun.</p>'}
     <details>
       <summary>${incomplete.length} morceaux incomplets avec ce groupe</summary>
-      ${incomplete.map(r=>{
-        const missingLabel = r.missingRequired.join(', ');
-        return `<div class="song-card"><div class="song-top"><div><span class="song-num">#${r.song.id}</span> <span class="song-title">${escapeHtml(r.song.title)}</span></div></div><p class="missing" style="font-size:0.8rem;margin:8px 0 0">Manque : ${missingLabel}</p></div>`;
-      }).join('')}
+      ${incomplete.map(r=>`<div class="song-card"><div class="song-top"><div><span class="song-title">${escapeHtml(r.song.title)}</span></div></div><p class="warn-text small">Il manque : ${r.missingRequired.join(', ').toLowerCase()}</p></div>`).join('')}
     </details>
   `;
 }
@@ -679,7 +705,7 @@ function renderGrille(){
 
   let body = '';
   if(!chosen){
-    body = `<p style="color:var(--cream-dim);font-size:0.9rem;margin-top:14px">Choisis ton nom pour renseigner ce que tu sais jouer sur chaque morceau.</p>`;
+    body = `<p style="color:var(--ink-dim);font-size:0.9rem;margin-top:14px">Choisis ton nom pour renseigner ce que tu sais jouer sur chaque morceau.</p>`;
   } else if(chosen.universal){
     body = `<div class="note" style="margin-top:16px">${escapeHtml(chosen.name)} est backup universel : peut couvrir n'importe quel instrument, sur n'importe quel morceau. Pas de saisie nécessaire — mais dans une setlist, ${escapeHtml(chosen.name)} ne peut combler qu'un seul manque à la fois par morceau (on ne joue pas guitare et batterie en même temps).</div>`;
   } else {
@@ -707,20 +733,18 @@ function renderGrille(){
 
   return `
     <div class="row">
-      <label style="font-size:0.85rem;color:var(--cream-dim)">Qui es-tu ?</label>
+      <label style="font-size:0.85rem;color:var(--ink-dim)">Qui es-tu ?</label>
       <select id="musician-select"><option value="">— choisir —</option>${options}</select>
       <button class="btn-ghost" id="new-musician-btn">+ Nouveau musicien</button>
       ${chosen && pendingDeleteMusician!==chosen.id ? `<button class="btn-ghost" id="delete-musician-btn" style="border-color:var(--drm);color:var(--drm)">Supprimer ${escapeHtml(chosen.name)}</button>` : ''}
     </div>
     ${chosen && pendingDeleteMusician===chosen.id ? `
-      <div class="note" style="border-color:var(--drm);margin-top:10px">
-        Supprimer ${escapeHtml(chosen.name)} et toutes ses données ? Irréversible.
-        <div class="row" style="margin-top:8px">
-          <input type="text" inputmode="numeric" id="delete-code-input" placeholder="Code" style="width:90px;background:var(--bg-raised-2);border:1px solid var(--line);color:var(--cream);padding:9px 10px;border-radius:6px;font-family:inherit;font-size:0.85rem">
-          <button class="btn" id="confirm-delete-musician" style="background:var(--drm)">Oui, supprimer</button>
+      <div class="note warn">
+        Supprimer ${escapeHtml(chosen.name)}, sa grille et sa progression ? Une sauvegarde est faite juste avant (restaurable depuis Réglages).
+        <div class="row" style="margin-top:10px">
+          <button class="btn danger" id="confirm-delete-musician">Supprimer ${escapeHtml(chosen.name)}</button>
           <button class="btn-ghost" id="cancel-delete-musician">Annuler</button>
         </div>
-        ${deleteCodeError ? `<p style="color:var(--drm);font-size:0.8rem;margin:8px 0 0">${escapeHtml(deleteCodeError)}</p>` : ''}
       </div>` : ''}
     <div class="add-musician-form" id="new-musician-form">
       <input type="text" id="new-musician-name" placeholder="Prénom">
@@ -771,13 +795,14 @@ const REPEAT = [
   {id:'duo',       ico:'🤝', name:'Duo',                desc:'Seb et Arthur en séance le même jour',            stat:'duoDays',    xp:10},
   {id:'dust',      ico:'🧹', name:'Dépoussiéreur',      desc:'Reprendre un morceau oublié depuis 2 semaines',    stat:'dust',       xp:15},
   {id:'boxed',     ico:'💿', name:'Morceau en boîte',   desc:'Un morceau avec 3 instruments enregistrés (à deux, ça compte)', stat:'boxed', xp:40},
+  {id:'tempo',     ico:'🚀', name:'Record de tempo',    desc:'Battre son meilleur tempo sur un morceau',          stat:'tempoRecords', xp:15},
   {id:'comeback',  ico:'💪', name:'Le retour',          desc:"Revenir au studio après une pause d'une semaine", stat:'comebacks',  xp:20},
 ];
 const ONCE = [
   {id:'precise', ico:'✍️', name:'Objectifs clairs', desc:'Au moins 2 morceaux en cours, tous avec un objectif précis'},
 ];
 const ALL_BADGES_COUNT = TIERED.length + REPEAT.length + ONCE.length;
-const XP = {session:10, progress:15, reached:30, mastered:60, tier:10, once:10, record:15};
+const XP = {session:10, progress:15, reached:30, mastered:60, tier:10, once:10, record:15, teacher:15};
 
 // Même défi pour Seb et Arthur, il change chaque lundi.
 const CHALLENGES = [
@@ -860,6 +885,7 @@ function stats(mid){
     dust: p.dustCount||0,
     comebacks,
     challenges: Object.keys(p.challenges||{}).length,
+    tempoRecords: p.tempoRecords||0,
     ...recordStats(mid),
   };
 }
@@ -936,7 +962,6 @@ function checkBadges(mid){
   return fresh;
 }
 
-function saveProgress(mid){ if(!progressError && progress[mid]) queueSet('progress:'+mid, progress[mid]); }
 function saveSession(){ lsSet('setlistas-session', session ? JSON.stringify(session) : null); }
 
 // Séance du jour : créée au premier geste (minuteur, résultat, changement de priorité).
@@ -946,7 +971,7 @@ function currentSession(){
 }
 function ensureSession(plan){
   if(!currentSession()){
-    session = {who:studioWho, date:todayStr(), proposedKey:plan.proposed?.key||null, priorityKey:null, swapped:false, results:{}, mastered:{}, newObjectives:{}};
+    session = {who:studioWho, date:todayStr(), proposedKey:plan.proposed?.key||null, priorityKey:null, swapped:false, results:{}, mastered:{}, newObjectives:{}, tempos:{}, recordings:[]};
   }
   return session;
 }
@@ -987,149 +1012,320 @@ function sinceLabel(d){
   return n===0 ? "travaillé aujourd'hui" : n===1 ? 'travaillé hier' : `travaillé il y a ${n} jours`;
 }
 
+// Vumètre : l'aiguille indique la progression vers le niveau suivant.
+function vuMeter(pct){
+  const cx=100, cy=104, r=78, a0=-50, a1=50;
+  const pt = (deg, rad) => { const t=(deg-90)*Math.PI/180; return [(cx+rad*Math.cos(t)).toFixed(1),(cy+rad*Math.sin(t)).toFixed(1)]; };
+  const arc = (d0,d1,rad) => { const [x0,y0]=pt(d0,rad), [x1,y1]=pt(d1,rad); return `M${x0} ${y0} A${rad} ${rad} 0 0 1 ${x1} ${y1}`; };
+  const ticks = []; for(let i=0;i<=10;i++){ const d=a0+i*(a1-a0)/10, [x0,y0]=pt(d,r-(i%5?6:11)), [x1,y1]=pt(d,r); ticks.push(`<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y1}"/>`); }
+  const ang = a0 + (a1-a0)*Math.max(0,Math.min(100,pct))/100;
+  const [nx,ny] = pt(ang, r+4);
+  return `<svg class="vu" viewBox="0 0 200 118" role="img" aria-label="Progression vers le niveau suivant : ${pct} %">
+    <rect x="2" y="2" width="196" height="114" rx="10" fill="#EFE4B8" stroke="#1E2421" stroke-width="3"/>
+    <path d="${arc(a0, a0+(a1-a0)*0.8, r)}" fill="none" stroke="#2B2A22" stroke-width="2"/>
+    <path d="${arc(a0+(a1-a0)*0.8, a1, r)}" fill="none" stroke="#E04A3C" stroke-width="5"/>
+    <g stroke="#2B2A22" stroke-width="1.6">${ticks.join('')}</g>
+    <text x="100" y="74" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="15" fill="#2B2A22" style="font-stretch:75%">VU</text>
+    <line class="vu-needle" x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="#1E2421" stroke-width="2.4" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="7" fill="#1E2421"/>
+  </svg>`;
+}
+function whoChips(big){
+  return musicians.map(m => `<button class="who-chip ${m.id===studioWho?'selected':''}" data-who="${m.id}">${escapeHtml(m.name)}${m.universal?' <small>prof</small>':''}</button>`).join('');
+}
 function renderStudio(){
-  if(progressError) return `<div class="note" style="border-color:var(--drm);color:var(--drm)">Impossible de charger la progression. Recharge la page (rien n'a été modifié).</div>`;
-  const people = studioMusicians();
-  if(!studioWho || !people.some(m=>m.id===studioWho)){
-    return `<p style="text-align:center;font-family:'Fraunces',serif;font-size:1.4rem;margin-top:30px">Qui joue ?</p>
-      <div class="who-big">${people.map(m=>`<button class="who-chip" data-who="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>`;
+  const me = musicians.find(m => m.id===studioWho);
+  if(!me){
+    return `<div class="who-pick"><h2>Qui joue ?</h2><div class="who-big">${whoChips(true)}</div>
+      <p class="hint">L'appli s'en souviendra sur cet appareil.</p></div>`;
+  }
+  if(me.universal){
+    return `<div class="studio-head"><div class="who-chips">${whoChips()}</div></div>${renderTeacher()}`;
   }
   if(!progress[studioWho]) progress[studioWho] = emptyProgress();
   const p = progress[studioWho];
   const L = levelOf(p.xp||0), lo = levelFloor(L), hi = levelFloor(L+1);
   const pct = Math.round(100*((p.xp||0)-lo)/(hi-lo));
   const streak = currentStreak(studioWho);
+  const nBadges = Object.values(p.seen||{}).filter(v=>v>0).length;
   const head = `<div class="studio-head">
-      <div class="who-chips">${people.map(m=>`<button class="who-chip ${m.id===studioWho?'selected':''}" data-who="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>
+      <div class="who-chips">${whoChips()}</div>
       <div class="level-box">
-        <div class="level-line"><span><b>Niveau ${L}</b> · ${levelTitle(L)} · ${p.xp||0} XP</span><span>${streak?`🔥 ${streak} j · `:''}${Object.values(p.seen||{}).filter(v=>v>0).length}/${ALL_BADGES_COUNT} badges</span></div>
-        <div class="bar"><div style="width:${pct}%"></div></div>
+        ${vuMeter(pct)}
+        <div class="level-text">
+          <span class="lvl">Niveau ${L}</span><span class="lvl-title">${levelTitle(L)}</span>
+          <span class="level-sub">${p.xp||0} XP, encore ${hi-(p.xp||0)} pour le niveau ${L+1}</span>
+          <span class="level-sub">${streak?`${streak} jour${streak>1?'s':''} de suite, `:''}${nBadges ? `${nBadges} badge${nBadges>1?'s':''}` : 'aucun badge pour l\u2019instant'}</span>
+        </div>
       </div>
     </div>
-    <div class="subtabs">
-      <button class="subtab ${studioView==='seance'?'active':''}" data-sv="seance">Séance du jour</button>
-      <button class="subtab ${studioView==='morceaux'?'active':''}" data-sv="morceaux">Mes morceaux</button>
-      <button class="subtab ${studioView==='badges'?'active':''}" data-sv="badges">Badges</button>
-    </div>`;
-  const body = studioView==='morceaux' ? renderMyItems() : studioView==='badges' ? renderBadges() : renderSeance();
+    <nav class="subtabs" aria-label="Studio">
+      ${[['seance','Séance du jour'],['morceaux','Mes morceaux'],['badges','Badges'],['groupe','Le groupe']].map(([k,l])=>`<button class="subtab ${studioView===k?'active':''}" data-sv="${k}">${l}</button>`).join('')}
+    </nav>`;
+  const body = studioView==='morceaux' ? renderMyItems() : studioView==='badges' ? renderBadges() : studioView==='groupe' ? renderGroup() : renderSeance();
   return head + body;
+}
+
+// Bilan de la semaine pour tout le groupe, montré à tous.
+function renderGroup(){
+  const today = todayStr(), wk = weekKey(today);
+  const weeks = []; for(let i=5;i>=0;i--){ const d = parseDay(wk); d.setDate(d.getDate()-7*i); weeks.push(todayStr(d)); }
+  const students = studioMusicians();
+  const rows = students.map(m => {
+    const p = progress[m.id] || emptyProgress();
+    const ws = p.sessions.filter(x => weekKey(x.date)===wk);
+    const items = ws.flatMap(x => x.items||[]);
+    const recs = ws.flatMap(x => x.recordings||[]).reduce((n,r)=>n+r.ins.length,0);
+    const mastered = Object.values(p.items).filter(i => i.masteredAt && weekKey(i.masteredAt)===wk).length;
+    const perWeek = weeks.map(w => p.sessions.filter(x => weekKey(x.date)===w).length);
+    const max = Math.max(4, ...perWeek);
+    const cp = challengeProgress(m.id);
+    return `<div class="member">
+      <h3>${escapeHtml(m.name)}</h3>
+      <dl class="kpis">
+        <div><dt>Séances</dt><dd>${ws.length}</dd></div>
+        <div><dt>Objectifs atteints</dt><dd>${items.filter(i=>i.result==='reached').length}</dd></div>
+        <div><dt>Enregistrements</dt><dd>${recs}</dd></div>
+        <div><dt>Maîtrisés</dt><dd>${mastered}</dd></div>
+      </dl>
+      <p class="meta-line">Défi : ${cp.done ? 'relevé ✓' : `${cp.cur} / ${cp.ch.goal}`}</p>
+      <div class="weeks" aria-label="Séances des six dernières semaines">${perWeek.map((n,i)=>`<div class="wk"><div class="wk-bar" style="height:${Math.round(100*n/max)}%"></div><span>${i===5?'cette sem.':parseDay(weeks[i]).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span></div>`).join('')}</div>
+    </div>`;
+  }).join('');
+  const total = students.reduce((n,m)=>n+(progress[m.id]?.sessions||[]).filter(x=>weekKey(x.date)===wk).length,0);
+  const ch = weekChallenge();
+  return `<p class="lede">${total ? `Cette semaine, le groupe a fait ${total} séance${total>1?'s':''}.` : `Pas encore de séance cette semaine. La première lance la semaine.`} Défi commun : ${ch.text.toLowerCase()}.</p>
+    <div class="members">${rows}</div>`;
 }
 
 function renderSeance(){
   const plan = buildPlan(studioWho);
   const s = currentSession();
   if(!plan.priority){
-    return `<div class="note">Aucun morceau en cours. Va dans <b>Mes morceaux</b> pour en passer un « en cours » et lui donner un objectif.</div>`;
+    return `<div class="empty-state"><h2>Rien en cours pour l'instant</h2><p>Passe un morceau « en cours » et donne-lui un objectif : la séance se construira toute seule.</p><button class="btn" data-sv="morceaux">Choisir mes morceaux</button></div>`;
   }
   const lastToday = (progress[studioWho].sessions||[]).filter(x=>x.date===todayStr()).length;
   const resultBtns = (it) => {
     const r = s?.results?.[it.key];
     let extra = '';
-    if(r==='reached'){
-      extra = `<label class="check" style="margin-top:10px"><input type="checkbox" class="master-cb" data-key="${it.key}" ${s.mastered[it.key]?'checked':''}> Je le maîtrise : passer en « maîtrisé » 🏆</label>
-        ${s.mastered[it.key] ? '' : `<input type="text" class="newobj-input" data-key="${it.key}" placeholder="Prochain objectif (ex. le pont, à 100 % du tempo)" value="${escapeAttr(s.newObjectives[it.key]||'')}" style="margin-top:8px">`}`;
+    if(r==='reached' || r==='progress'){
+      const tv = s.tempos?.[it.key] ?? (metro.usedKey===it.key ? metro.bpm : '');
+      extra += `<label class="field inline"><span>Tempo atteint aujourd'hui</span><input type="number" inputmode="numeric" min="30" max="260" class="tempo-today" data-key="${it.key}" value="${tv}" placeholder="bpm"></label>`;
     }
-    return `<div class="results">
-        <button class="res-btn ${r==='reached'?'on':''}" data-res="reached" data-key="${it.key}">🎯 Objectif atteint</button>
-        <button class="res-btn ${r==='progress'?'on':''}" data-res="progress" data-key="${it.key}">📈 Ça avance</button>
+    if(r==='reached'){
+      extra += `<label class="check"><input type="checkbox" class="master-cb" data-key="${it.key}" ${s.mastered[it.key]?'checked':''}> Je le maîtrise : passer en « maîtrisé »</label>
+        ${s.mastered[it.key] ? '' : `<label class="field"><span>Prochain objectif</span><input type="text" class="newobj-input" data-key="${it.key}" placeholder="Ex. le pont, à 100 % du tempo" value="${escapeAttr(s.newObjectives[it.key]||'')}"></label>`}`;
+    }
+    return `<div class="results" role="group" aria-label="Bilan">
+        <button class="res-btn ${r==='reached'?'on':''}" data-res="reached" data-key="${it.key}">Objectif atteint</button>
+        <button class="res-btn ${r==='progress'?'on':''}" data-res="progress" data-key="${it.key}">Ça avance</button>
         <button class="res-btn ${r==='skip'?'on':''}" data-res="skip" data-key="${it.key}">Pas travaillé</button>
-      </div>${extra}`;
+      </div>${extra ? `<div class="after-result">${extra}</div>` : ''}`;
   };
   const objBox = (it) => (it.objective||'').trim()
-    ? `<div class="objective">🎯 ${escapeHtml(it.objective)}</div>`
-    : `<div class="objective missing-obj">Pas d'objectif écrit. Choisis-en un précis avant de jouer (un passage, un tempo), et note-le dans « Mes morceaux ».</div>`;
+    ? `<p class="objective">${escapeHtml(it.objective)}${it.tempoTarget?` <span class="tempo-badge">cible ${it.tempoTarget} bpm</span>`:''} ${objectiveAuthor(it, studioWho)}</p>`
+    : `<p class="objective missing-obj">Pas d'objectif écrit. Choisis un passage et un tempo avant de jouer, puis note-le dans « Mes morceaux ».</p>`;
   const pr = plan.priority, song = songById(pr.songId);
-  const swapSel = swapOpen && plan.wip.length>1 ? `<select id="swap-select" style="margin-top:10px">${plan.wip.map(i=>`<option value="${i.key}" ${i.key===pr.key?'selected':''}>${escapeHtml(songById(i.songId).title)} · ${i.ins}</option>`).join('')}</select>` : '';
-  const step = (n, id, min, title, inner, cls='') => `<div class="step ${cls}">
-      <div class="step-head"><div><span class="step-num">${n}</span><span class="step-title">${title}</span></div>
-        ${min ? `<button class="btn-ghost timer-btn ${timer.step===id&&timer.endAt?'running':''}" data-timer="${id}" data-min="${min}" id="timer-${id}">${timerLabel(id,min)}</button>` : ''}</div>
-      ${inner}</div>`;
+  if(metro.key !== pr.key && !metro.running){
+    const last = pr.tempoLog?.length ? pr.tempoLog[pr.tempoLog.length-1].bpm : null;
+    metro.bpm = last || (pr.tempoTarget ? Math.round(pr.tempoTarget*0.75/5)*5 : 80);
+    metro.key = pr.key;
+  }
+  const swapSel = swapOpen && plan.wip.length>1 ? `<select id="swap-select" aria-label="Morceau prioritaire">${plan.wip.map(i=>`<option value="${i.key}" ${i.key===pr.key?'selected':''}>${escapeHtml(songById(i.songId).title)} (${i.ins})</option>`).join('')}</select>` : '';
+  const step = (n, id, min, title, inner, cls='') => `<section class="step ${cls}">
+      <header class="step-head"><h3><span class="step-num">${n}</span>${title}</h3>
+        ${min ? `<button class="timer-btn ${timer.step===id&&timer.endAt?'running':''}" data-timer="${id}" data-min="${min}" id="timer-${id}" aria-label="Minuteur ${min} minutes">${timerLabel(id,min)}</button>` : ''}</header>
+      ${inner}</section>`;
+  const songHead = (sg, it) => `<div class="step-song"><span class="song-title">${escapeHtml(sg.title)}</span> <span class="song-artist">${escapeHtml(sg.artist)}</span> ${insTag(it.ins)}</div>`;
 
   let secondInner;
   if(plan.second){
     const s2 = songById(plan.second.songId);
-    secondInner = `<div class="step-song">${escapeHtml(s2.title)} <span class="song-artist">— ${escapeHtml(s2.artist)}</span> ${insTag(plan.second.ins)}</div>
-      ${objBox(plan.second)}
-      <div class="step-body">Joue-le en entier avec le backing Moises à vitesse normale. Repère l'endroit où ça casse : ce sera peut-être ton prochain objectif. <i>${sinceLabel(plan.second.lastWorked)}</i></div>
+    secondInner = `${songHead(s2, plan.second)}${objBox(plan.second)}${songLinks(s2)}
+      <p class="step-body">Joue-le en entier sur le backing, à vitesse normale. Repère l'endroit où ça casse : ce sera peut-être ton prochain objectif. ${sinceLabel(plan.second.lastWorked)[0].toUpperCase()+sinceLabel(plan.second.lastWorked).slice(1)}.</p>
       ${resultBtns(plan.second)}`;
   } else if(plan.review){
-    secondInner = `<div class="step-song">${escapeHtml(plan.review.song.title)} <span class="song-artist">— ${escapeHtml(plan.review.song.artist)}</span> ${insTag(plan.review.ins)}</div>
-      <div class="step-body">Un morceau que tu connais déjà, en entier sur le backing, pour l'entretenir.</div>`;
+    secondInner = `${songHead(plan.review.song, plan.review)}${songLinks(plan.review.song)}<p class="step-body">Un morceau que tu connais déjà, en entier sur le backing, pour l'entretenir.</p>`;
   } else {
-    secondInner = `<div class="step-body">Repasse un morceau que tu connais déjà, en entier sur le backing.</div>`;
+    secondInner = `<p class="step-body">Repasse un morceau que tu connais déjà, en entier sur le backing.</p>`;
   }
 
   const canFinish = s && (Object.values(s.results).some(r=>r==='reached'||r==='progress') || (s.recordings||[]).length);
   const cp = challengeProgress(studioWho);
-  const challengeCard = `<div class="challenge"><div class="ico">⭐</div><div style="flex:1">
-      <div class="ct">Défi de la semaine : ${cp.ch.text}</div>
-      <div class="cs">${cp.done ? 'Relevé ✓ · nouveau défi lundi' : `${cp.cur} / ${cp.ch.goal} · +40 XP à la clé`}</div>
-      ${cp.done ? '' : `<div class="bar" style="margin-top:6px;height:5px"><div style="width:${Math.round(100*cp.cur/cp.ch.goal)}%"></div></div>`}
-    </div></div>`;
+  const challengeCard = `<aside class="challenge" aria-label="Défi de la semaine"><div class="ico" aria-hidden="true">⭐</div><div class="grow">
+      <div class="ct">Défi de la semaine : ${cp.ch.text.toLowerCase()}</div>
+      <div class="cs">${cp.done ? 'Relevé. Nouveau défi lundi.' : `${cp.cur} sur ${cp.ch.goal}, 40 XP à gagner`}</div>
+      ${cp.done ? '' : `<div class="bar thin"><div style="width:${Math.round(100*cp.cur/cp.ch.goal)}%"></div></div>`}
+    </div></aside>`;
   const recSong = recDraft.songId ?? pr.songId;
   const allRec = recordedBySong();
   (s?.recordings||[]).forEach(r => { allRec[r.songId] = new Set([...(allRec[r.songId]||[]), ...r.ins]); });
   const already = allRec[recSong] ? [...allRec[recSong]] : [];
   const collator2 = new Intl.Collator('fr',{sensitivity:'base'});
-  const recInner = `<div class="step-body">Enregistre-toi sur le backing (GarageBand ou le téléphone), puis indique-le ici. Chaque nouvel instrument sur un même morceau multiplie les points : ×2 pour le 2e, ×3 pour le 3e… À deux, ça compte aussi.</div>
-      <div class="row" style="margin-top:10px">
-        <select id="rec-song" style="flex:1;min-width:180px">${[...songs].sort((a,b)=>collator2.compare(a.title,b.title)).map(x=>`<option value="${x.id}" ${String(x.id)===String(recSong)?'selected':''}>${escapeHtml(x.title)}</option>`).join('')}</select>
+  const recInner = `<p class="step-body">Enregistre-toi sur le backing (GarageBand ou téléphone), puis note-le ici. Chaque nouvel instrument réuni sur un même morceau multiplie les points, et ceux de l'autre comptent aussi.</p>
+      <div class="row">
+        <select id="rec-song" aria-label="Morceau enregistré" style="flex:1;min-width:180px">${[...songs].sort((a,b)=>collator2.compare(a.title,b.title)).map(x=>`<option value="${x.id}" ${String(x.id)===String(recSong)?'selected':''}>${escapeHtml(x.title)}</option>`).join('')}</select>
       </div>
-      ${already.length ? `<div class="step-body" style="margin-top:6px">Déjà enregistré sur ce morceau : ${already.map(i=>escapeHtml(i)).join(', ')}. Prochain instrument : ×${already.length+1}.</div>` : ''}
-      <div class="rec-chips">${INSTRUMENTS.map(i=>`<button class="rec-chip ${recDraft.ins.includes(i.key)?'on':''}" data-recins="${i.key}">${i.key}</button>`).join('')}</div>
-      <div style="margin-top:10px"><button class="btn-ghost" id="rec-add" ${recDraft.ins.length?'':'disabled'}>🎙️ J'ai enregistré ça</button></div>
-      ${(s?.recordings||[]).length ? `<div class="rec-list">${s.recordings.map((r,idx)=>`<div><span>🎙️ ${escapeHtml(songById(r.songId)?.title||'?')} · ${r.ins.join(' + ')}</span><button class="x-btn" data-recdel="${idx}">✕</button></div>`).join('')}</div>` : ''}`;
+      ${already.length ? `<p class="hint">Déjà enregistré sur ce morceau : ${already.map(i=>escapeHtml(i)).join(', ')}. Un nouvel instrument vaut ×${already.length+1}.</p>` : ''}
+      <div class="rec-chips">${INSTRUMENTS.map(i=>`<button class="rec-chip ${recDraft.ins.includes(i.key)?'on':''}" data-recins="${i.key}" aria-pressed="${recDraft.ins.includes(i.key)}">${i.key}</button>`).join('')}</div>
+      <button class="btn-ghost" id="rec-add" ${recDraft.ins.length?'':'disabled'}>Noter l'enregistrement</button>
+      ${(s?.recordings||[]).length ? `<ul class="rec-list">${s.recordings.map((r,idx)=>`<li><span>${escapeHtml(songById(r.songId)?.title||'?')} : ${r.ins.join(' + ')}</span><button class="x-btn" data-recdel="${idx}" aria-label="Retirer">✕</button></li>`).join('')}</ul>` : ''}`;
+  const metroUI = `<div class="metro" aria-label="Métronome">
+      <button class="metro-btn" data-metro="-5" aria-label="Moins 5 bpm">−5</button>
+      <span class="metro-bpm"><output id="metro-bpm">${metro.bpm}</output> bpm</span>
+      <button class="metro-btn" data-metro="5" aria-label="Plus 5 bpm">+5</button>
+      <button class="metro-toggle ${metro.running?'on':''}" id="metro-toggle">${metro.running?'Arrêter':'Métronome'}</button>
+      <span id="metro-dot" class="metro-dot" aria-hidden="true"></span>
+    </div>`;
   return `
     ${challengeCard}
-    ${lastToday ? `<div class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} terminée${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</div>` : ''}
-    ${step(1,'warm',5,'Échauffement',`<div class="step-body">${WARMUP[pr.ins]||WARMUP.Guitare}</div>`)}
+    ${lastToday ? `<p class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</p>` : ''}
+    <div class="steps">
+    ${step(1,'warm',5,'Échauffement',`<p class="step-body">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`)}
     ${step(2,'prio',15,'Objectif prioritaire',`
-      <div class="step-song">${escapeHtml(song.title)} <span class="song-artist">— ${escapeHtml(song.artist)}</span> ${insTag(pr.ins)}</div>
-      ${objBox(pr)}
-      <div class="step-body">${METHOD[pr.ins]||METHOD.Guitare} <i>${sinceLabel(pr.lastWorked)}.</i>
-        ${plan.wip.length>1 ? `<a href="#" id="swap-link" style="color:var(--cream-dim);margin-left:4px">Changer de priorité</a>` : ''}</div>
+      ${songHead(song, pr)}${objBox(pr)}${songLinks(song)}
+      ${metroUI}
+      <p class="step-body">${METHOD[pr.ins]||METHOD.Guitare}</p>
+      <p class="hint">${sinceLabel(pr.lastWorked)[0].toUpperCase()+sinceLabel(pr.lastWorked).slice(1)}.${plan.wip.length>1 ? ` <button class="link-btn" id="swap-link">Travailler un autre morceau</button>` : ''}</p>
       ${swapSel}
       ${resultBtns(pr)}`,'prio')}
-    ${step(3,'second',7, plan.second ? 'Deuxième morceau en cours' : 'Morceau du répertoire', secondInner)}
-    ${step('★','rec',0,'🎙️ Enregistrement (bonus)', recInner)}
-    ${step(4,'free',0,'Jeu libre 🎸',`<div class="step-body">Joue ce que tu veux : c'est la récompense. Mais d'abord, clique sur « Terminer la séance » pour gagner tes points.</div>`)}
-    <div class="finish-bar"><button class="btn" id="finish-session" ${canFinish?'':'disabled'}>Terminer la séance</button></div>
-    ${canFinish ? '' : `<p style="font-size:0.78rem;color:var(--cream-dim);text-align:right;margin-top:6px">Indique au moins un « Objectif atteint », un « Ça avance » ou un enregistrement pour terminer.</p>`}
+    ${step(3,'second',7, plan.second ? 'Deuxième morceau' : 'Morceau du répertoire', secondInner)}
+    ${step(4,'free',0,'Jeu libre',`<p class="step-body">Joue ce que tu veux, c'est la récompense. Termine d'abord la séance pour compter tes points.</p>`)}
+    ${step('+','rec',0,'Enregistrement, en bonus', recInner, 'bonus')}
+    </div>
+    <div class="finish-bar">
+      ${canFinish ? '' : `<p class="hint">Note au moins un bilan ou un enregistrement pour terminer.</p>`}
+      <button class="btn big" id="finish-session" ${canFinish?'':'disabled'}>Terminer la séance</button>
+    </div>
   `;
 }
 
-function renderMyItems(){
-  const items = itemsOf(studioWho);
+// ---------- Métronome ----------
+const metro = {running:false, bpm:80, ctx:null, next:0, beat:0, timer:null, key:null, usedKey:null};
+function metroClick(time, accent){
+  const c = metro.ctx, o = c.createOscillator(), g = c.createGain();
+  o.frequency.value = accent ? 1600 : 1050;
+  g.gain.setValueAtTime(0.0001, time);
+  g.gain.exponentialRampToValueAtTime(accent ? 0.5 : 0.3, time + 0.002);
+  g.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
+  o.connect(g); g.connect(c.destination); o.start(time); o.stop(time + 0.06);
+  const delay = Math.max(0, (time - c.currentTime) * 1000);
+  setTimeout(() => {
+    const d = document.getElementById('metro-dot'); if(!d) return;
+    d.classList.toggle('accent', accent); d.classList.remove('tick'); void d.offsetWidth; d.classList.add('tick');
+  }, delay);
+}
+function metroSchedule(){
+  while(metro.next < metro.ctx.currentTime + 0.12){
+    metroClick(metro.next, metro.beat % 4 === 0);
+    metro.next += 60 / metro.bpm; metro.beat++;
+  }
+}
+function metroStart(){
+  try{
+    metro.ctx = metro.ctx || new (window.AudioContext||window.webkitAudioContext)();
+    metro.ctx.resume();
+    metro.running = true; metro.beat = 0; metro.next = metro.ctx.currentTime + 0.06; metro.usedKey = metro.key;
+    metro.timer = setInterval(metroSchedule, 25);
+  }catch(e){ metro.running = false; }
+  wakeLockUpdate();
+}
+function metroStop(){ if(metro.timer) clearInterval(metro.timer); metro.timer = null; metro.running = false; wakeLockUpdate(); }
+
+// ---------- Écran allumé pendant le minuteur ou le métronome ----------
+let wakeLock = null;
+async function wakeLockUpdate(){
+  const need = metro.running || !!(timer.step && timer.endAt);
+  try{
+    if(need && !wakeLock && 'wakeLock' in navigator){ wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); }
+    else if(!need && wakeLock){ const w = wakeLock; wakeLock = null; await w.release(); }
+  }catch(e){}
+}
+document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible') wakeLockUpdate(); });
+
+function sparkline(log, target){
+  if(!log || log.length < 2) return '';
+  const pts = log.slice(-12), w = 90, h = 24;
+  const vals = pts.map(x=>x.bpm).concat(target ? [target] : []);
+  const lo = Math.min(...vals) - 2, hi = Math.max(...vals) + 2;
+  const y = v => (h - (v-lo)/(hi-lo)*h).toFixed(1);
+  const d = pts.map((x,i) => `${i?'L':'M'}${(i*(w/(pts.length-1))).toFixed(1)},${y(x.bpm)}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">
+    ${target ? `<line x1="0" x2="${w}" y1="${y(target)}" y2="${y(target)}" class="spark-target"/>` : ''}
+    <path d="${d}" class="spark-line"/></svg>`;
+}
+function tempoLabel(it){
+  const last = it.tempoLog?.length ? it.tempoLog[it.tempoLog.length-1].bpm : null;
+  if(!last && !it.tempoTarget) return '';
+  return `<span class="tempo-badge">♩ ${last ?? '–'}${it.tempoTarget ? ` / ${it.tempoTarget}` : ''} bpm</span>`;
+}
+function songLinks(song){
+  if(!song) return '';
+  const l = [];
+  if(song.moises) l.push(`<a class="ext" href="${escapeAttr(song.moises)}" target="_blank" rel="noopener">Backing (Moises)</a>`);
+  if(song.newzik) l.push(`<a class="ext" href="${escapeAttr(song.newzik)}" target="_blank" rel="noopener">Partition (Newzik)</a>`);
+  if(song.key) l.push(`<span class="song-key">Tonalité : ${escapeHtml(song.key)}</span>`);
+  return l.length ? `<div class="links">${l.join('')}</div>` : '';
+}
+function objectiveAuthor(it, mid){
+  return it.objectiveBy && it.objectiveBy !== mid ? `<span class="by">fixé par ${escapeHtml(nameById(it.objectiveBy))}</span>` : '';
+}
+
+function renderItems(mid, teacher){
+  const items = itemsOf(mid);
   const collator = new Intl.Collator('fr',{sensitivity:'base'});
   const row = (it) => {
     const s = songById(it.songId);
     return `<div class="item-row">
-      <div><span class="song-title">${escapeHtml(s.title)}</span> <span class="song-artist">— ${escapeHtml(s.artist)}</span> ${insTag(it.ins)}
-        <div class="meta">${it.status==='done' ? (it.masteredAt?`maîtrisé le ${parseDay(it.masteredAt).toLocaleDateString('fr-FR')}`:'maîtrisé') : sinceLabel(it.lastWorked)}${it.reachedCount?` · ${it.reachedCount} objectif${it.reachedCount>1?'s':''} atteint${it.reachedCount>1?'s':''}`:''}</div></div>
+      <div class="item-main"><span class="song-title">${escapeHtml(s.title)}</span> <span class="song-artist">${escapeHtml(s.artist)}</span> ${insTag(it.ins)}
+        <div class="meta">${it.status==='done' ? (it.masteredAt?`maîtrisé le ${parseDay(it.masteredAt).toLocaleDateString('fr-FR')}`:'maîtrisé') : sinceLabel(it.lastWorked)}${it.reachedCount?`, ${it.reachedCount} objectif${it.reachedCount>1?'s':''} atteint${it.reachedCount>1?'s':''}`:''} ${tempoLabel(it)} ${sparkline(it.tempoLog, it.tempoTarget)}</div></div>
       <div class="item-actions">
-        <select class="status-select" data-key="${it.key}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${it.status===k?'selected':''}>${v}</option>`).join('')}</select>
-        <button class="x-btn" data-delitem="${it.key}" title="Retirer">✕</button>
+        <select class="status-select" data-mid="${mid}" data-key="${it.key}" aria-label="Statut">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${it.status===k?'selected':''}>${v}</option>`).join('')}</select>
+        <button class="x-btn" data-mid="${mid}" data-delitem="${it.key}" aria-label="Retirer ce morceau">✕</button>
       </div>
-      ${it.status!=='done' ? `<input type="text" class="obj-input" data-key="${it.key}" placeholder="Objectif précis : un passage, un tempo (ex. solo mesures 9 à 16 à 90 bpm)" value="${escapeAttr(it.objective||'')}">` : ''}
+      ${it.status!=='done' ? `<div class="item-edit">
+        <label class="field grow"><span>Objectif ${objectiveAuthor(it, mid)}</span><input type="text" class="obj-input" data-mid="${mid}" data-key="${it.key}" placeholder="Un passage et un tempo, ex. solo mesures 9 à 16 à 90 bpm" value="${escapeAttr(it.objective||'')}"></label>
+        <label class="field"><span>Tempo cible</span><input type="number" inputmode="numeric" min="30" max="260" class="tempo-input" data-mid="${mid}" data-key="${it.key}" placeholder="bpm" value="${it.tempoTarget||''}"></label>
+      </div>` : ''}
     </div>`;
   };
   const group = (status) => items.filter(i=>i.status===status)
     .sort((a,b)=>collator.compare(songById(a.songId).title, songById(b.songId).title)).map(row).join('');
-  const missingObj = items.filter(i=>i.status==='wip' && !(i.objective||'').trim()).length;
   const sortedSongs = [...songs].sort((a,b)=>collator.compare(a.title,b.title));
+  const missingObj = items.filter(i=>i.status==='wip' && !(i.objective||'').trim()).length;
   return `
-    ${missingObj ? `<div class="note">${missingObj} morceau${missingObj>1?'x':''} en cours sans objectif. Le bon moment pour les écrire : juste après le cours de Franck, le samedi.</div>` : ''}
-    <div class="section-label">En cours</div>${group('wip') || '<p style="color:var(--cream-dim);font-size:0.85rem">Rien en cours.</p>'}
-    <div class="section-label">À travailler ensuite</div>${group('todo') || '<p style="color:var(--cream-dim);font-size:0.85rem">Rien en attente.</p>'}
-    <div class="section-label">Ajouter un morceau à travailler</div>
-    <div class="row">
-      <select id="add-item-song" style="flex:1;min-width:180px">${sortedSongs.map(s=>`<option value="${s.id}">${escapeHtml(s.title)} — ${escapeHtml(s.artist)}</option>`).join('')}</select>
-      <select id="add-item-ins">${INSTRUMENTS.map(i=>`<option>${i.key}</option>`).join('')}</select>
-      <select id="add-item-status"><option value="wip">En cours</option><option value="todo">À travailler</option></select>
-      <button class="btn" id="add-item-btn">Ajouter</button>
+    ${!teacher && missingObj ? `<div class="note">${missingObj} morceau${missingObj>1?'x':''} en cours sans objectif. Le bon moment pour les écrire : juste après le cours du samedi.</div>` : ''}
+    <h3 class="group-title">En cours</h3>${group('wip') || '<p class="empty">Rien en cours. Ajoute un morceau ci-dessous.</p>'}
+    <h3 class="group-title">À travailler ensuite</h3>${group('todo') || '<p class="empty">Rien en attente.</p>'}
+    <div class="add-item">
+      <h3 class="group-title">Ajouter un morceau</h3>
+      <div class="row">
+        <select class="add-item-song" aria-label="Morceau" style="flex:1;min-width:180px">${sortedSongs.map(s=>`<option value="${s.id}">${escapeHtml(s.title)} (${escapeHtml(s.artist)})</option>`).join('')}</select>
+        <select class="add-item-ins" aria-label="Instrument">${INSTRUMENTS.map(i=>`<option>${i.key}</option>`).join('')}</select>
+        <select class="add-item-status" aria-label="Statut"><option value="wip">En cours</option><option value="todo">À travailler</option></select>
+        <button class="btn add-item-btn" data-mid="${mid}">Ajouter</button>
+      </div>
+      <p class="hint">Morceau absent de la liste ? Ajoute-le d'abord dans l'onglet Répertoire.</p>
     </div>
-    <p style="font-size:0.78rem;color:var(--cream-dim)">Morceau absent de la liste ? Ajoute-le d'abord dans l'onglet Répertoire.</p>
     ${items.some(i=>i.status==='done') ? `<details><summary>Maîtrisés grâce au studio</summary>${group('done')}</details>` : ''}
+  `;
+}
+function renderMyItems(){ return renderItems(studioWho, false); }
+
+// Mode prof : Franck fixe les objectifs de chaque élève à la fin du cours.
+let teacherStudent = null;
+function renderTeacher(){
+  const students = studioMusicians();
+  if(!teacherStudent || !students.some(m=>m.id===teacherStudent)) teacherStudent = students[0]?.id;
+  if(!teacherStudent) return '<p class="empty">Aucun élève.</p>';
+  const st = stats(teacherStudent), p = progress[teacherStudent];
+  const wk = weekKey(todayStr());
+  const weekSessions = p.sessions.filter(x => weekKey(x.date)===wk).length;
+  return `
+    <p class="lede">Fixe ici les objectifs de la semaine : un passage précis et, si tu veux, un tempo cible. L'élève les retrouve dans sa séance, et atteindre un objectif que tu as fixé lui rapporte un bonus.</p>
+    <div class="seg" role="tablist">${students.map(m=>`<button class="seg-btn ${m.id===teacherStudent?'on':''}" data-student="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>
+    <p class="meta-line">${escapeHtml(nameById(teacherStudent))} : ${weekSessions} séance${weekSessions>1?'s':''} cette semaine, ${st.reached} objectif${st.reached>1?'s':''} atteint${st.reached>1?'s':''} au total, niveau ${levelOf(p.xp||0)}.</p>
+    ${renderItems(teacherStudent, true)}
   `;
 }
 
@@ -1163,7 +1359,7 @@ function renderBadges(){
       const got = (p.seen||{})['o:'+o.id];
       return `<div class="badge ${got?'earned':'locked'}"><div class="ico">${o.ico}</div><div class="bn">${o.name}</div><div class="bd">${o.desc}</div></div>`;
     }).join('')}</div>
-    <p style="font-size:0.78rem;color:var(--cream-dim);margin-top:14px">Points : séance ${XP.session} · ça avance ${XP.progress} · objectif atteint ${XP.reached} · morceau maîtrisé ${XP.mastered} · enregistrement ${XP.record} × le nombre d'instruments déjà réunis sur le morceau · palier ${XP.tier} × le n° du palier · défi de la semaine 40.</p>`;
+    <p style="font-size:0.78rem;color:var(--ink-dim);margin-top:14px">Points : séance ${XP.session} · ça avance ${XP.progress} · objectif atteint ${XP.reached} · morceau maîtrisé ${XP.mastered} · enregistrement ${XP.record} × le nombre d'instruments déjà réunis sur le morceau · palier ${XP.tier} × le n° du palier · défi de la semaine 40.</p>`;
 }
 
 function renderToast(){
@@ -1171,84 +1367,111 @@ function renderToast(){
   return `<div class="toast-back"><div class="toast">
     <h2>${toast.title}</h2>
     <div class="xp">+${toast.xp} XP${toast.levelUp ? ` · niveau ${toast.levelUp} atteint !` : ''}</div>
-    ${toast.msg ? `<p style="color:var(--cream-dim);font-size:0.9rem;margin:0 0 12px">${toast.msg}</p>` : ''}
+    ${toast.msg ? `<p style="color:var(--ink-dim);font-size:0.9rem;margin:0 0 12px">${toast.msg}</p>` : ''}
     ${toast.badges.map(b=>`<div class="badge earned"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${b.desc}</div></div>`).join('')}
-    ${toast.next ? `<p style="color:var(--cream-dim);font-size:0.8rem;margin:12px 0 0">Prochain palier : ${toast.next}</p>` : ''}
+    ${toast.next ? `<p style="color:var(--ink-dim);font-size:0.8rem;margin:12px 0 0">Prochain palier : ${toast.next}</p>` : ''}
     <button class="btn" id="toast-ok" style="margin-top:14px">${toast.cta||'Continuer'}</button>
   </div></div>`;
 }
 
+// Modifie la progression d'un musicien : d'abord en local (affichage immédiat),
+// puis en transaction sur la dernière version enregistrée (aucune perte entre appareils).
+function runOnProgress(mid, p, fn){
+  const prev = progress[mid]; progress[mid] = p;
+  try{
+    if(!p.seen){ p.seen = achievements(mid); p.seenDates = p.seenDates || {}; }
+    return fn(p);
+  } finally { progress[mid] = prev; }
+}
+function updateProgress(mid, fn){
+  const local = normalizeProgress(clone(progress[mid] || emptyProgress()));
+  const result = runOnProgress(mid, local, fn);
+  progress[mid] = local;
+  save('progress:'+mid, cur => {
+    const p = normalizeProgress(cur || emptyProgress());
+    runOnProgress(mid, p, fn);
+    return p;
+  });
+  return result;
+}
+
 function addMastery(mid, songId, ins){
-  const cur = mastery[mid][songId] || mastery[mid][String(songId)] || [];
-  if(!cur.includes(ins)){ cur.push(ins); mastery[mid][String(songId)] = cur; queueSet('mastery:'+mid, mastery[mid]); }
+  const cur = mastery[mid][String(songId)] || [];
+  if(cur.includes(ins)) return;
+  mastery[mid][String(songId)] = [...cur, ins];
+  save('mastery:'+mid, m => { m = m || {}; const a = m[String(songId)] || []; if(!a.includes(ins)) a.push(ins); m[String(songId)] = a; return m; });
 }
 
 function finishSession(){
   const s = currentSession(); if(!s) return;
-  const who = s.who, p = progress[who], today = todayStr();
-  const worked = Object.entries(s.results).filter(([k,r]) => (r==='reached'||r==='progress') && p.items[k]);
+  const who = s.who, today = todayStr();
+  const worked = Object.entries(s.results).filter(([k,r]) => (r==='reached'||r==='progress') && progress[who]?.items[k]);
   const recs = (s.recordings||[]).filter(r => songById(r.songId) && r.ins.length);
   if(!worked.length && !recs.length) return;
-  const xpBefore = p.xp||0, levelBefore = levelOf(xpBefore);
-  const prevDays = uniqueDays(who).filter(d => d!==today);
-  const comeback = prevDays.length && daysBetween(prevDays[prevDays.length-1], today) >= 7;
-  let xp = XP.session;
-  // Enregistrements : multiplicateur = nombre d'instruments réunis sur le morceau (Seb + Arthur).
-  const known = recordedBySong();
-  let bestMult = 1;
-  recs.forEach(r => {
-    const set = new Set(known[r.songId] || []);
-    r.ins.forEach(i => {
-      if(set.has(i)){ xp += XP.record; }
-      else { set.add(i); xp += XP.record * set.size; bestMult = Math.max(bestMult, set.size); }
+  const ts = new Date().toISOString();
+  const levelBefore = levelOf(progress[who].xp||0);
+  const res = updateProgress(who, p => {
+    if(p.sessions.some(x => x.ts===ts)) return null;   // déjà appliquée
+    const xpBefore = p.xp||0;
+    const prevDays = [...new Set(p.sessions.map(x=>x.date))].filter(d => d!==today).sort();
+    const comeback = prevDays.length && daysBetween(prevDays[prevDays.length-1], today) >= 7;
+    let xp = XP.session; const msgs = []; const mastered = [];
+    // Enregistrements : multiplicateur = nombre d'instruments réunis sur le morceau (tous musiciens).
+    const known = recordedBySong(); let bestMult = 1;
+    recs.forEach(r => {
+      const set = new Set(known[r.songId] || []);
+      r.ins.forEach(i => { if(set.has(i)) xp += XP.record; else { set.add(i); xp += XP.record*set.size; bestMult = Math.max(bestMult, set.size); } });
+      known[r.songId] = set;
     });
-    known[r.songId] = set;
-  });
-  worked.forEach(([k,r]) => {
-    const it = p.items[k];
-    if(it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
-    it.lastWorked = today;
-    it.workedCount = (it.workedCount||0)+1;
-    if(r==='reached'){
-      xp += XP.reached;
-      it.reachedCount = (it.reachedCount||0)+1;
-      it.lastReached = it.objective || '';
-      if(s.mastered[k]){
-        it.status = 'done'; it.masteredAt = today; xp += XP.mastered;
-        addMastery(who, it.songId, it.ins);
-      } else {
-        it.objective = (s.newObjectives[k]||'').trim();
+    worked.forEach(([k,r]) => {
+      const it = p.items[k]; if(!it) return;
+      if(it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
+      it.lastWorked = today;
+      it.workedCount = (it.workedCount||0)+1;
+      const bpm = Number(s.tempos?.[k]);
+      if(bpm > 0){
+        it.tempoLog = [...(it.tempoLog||[]), {date:today, bpm}].slice(-60);
+        if(it.tempoBest && bpm > it.tempoBest){ p.tempoRecords = (p.tempoRecords||0)+1; msgs.push(`🚀 Record de tempo sur ${songById(it.songId).title} : ${bpm} bpm.`); }
+        if(it.tempoTarget && bpm >= it.tempoTarget && !(it.tempoBest >= it.tempoTarget)) msgs.push(`Tempo cible atteint sur ${songById(it.songId).title} !`);
+        it.tempoBest = Math.max(it.tempoBest||0, bpm);
       }
-    } else xp += XP.progress;
+      if(r==='reached'){
+        xp += XP.reached;
+        if(it.objectiveBy && it.objectiveBy !== who){ xp += XP.teacher; msgs.push(`🎓 Objectif de ${nameById(it.objectiveBy)} atteint : +${XP.teacher} XP bonus.`); }
+        it.reachedCount = (it.reachedCount||0)+1;
+        it.lastReached = it.objective || '';
+        if(s.mastered[k]){ it.status = 'done'; it.masteredAt = today; xp += XP.mastered; mastered.push(it); }
+        else { it.objective = (s.newObjectives[k]||'').trim(); it.objectiveBy = it.objective ? who : null; it.objectiveAt = today; }
+      } else xp += XP.progress;
+    });
+    p.sessions.push({
+      date: today, ts,
+      items: worked.map(([k,r]) => ({key:k, result:r})),
+      followedPlan: !s.swapped && !!s.proposedKey && worked.some(([k]) => k===s.proposedKey),
+      recordings: recs.map(r => ({songId:r.songId, ins:[...r.ins]})),
+    });
+    p.xp = xpBefore + xp;
+    const cp = challengeProgress(who);
+    if(!cp.done && cp.cur >= cp.ch.goal){ p.challenges[weekKey(today)] = today; msgs.push('⭐ Défi de la semaine relevé !'); }
+    else if(!cp.done) msgs.push(`Défi de la semaine : ${cp.ch.text} (${cp.cur}/${cp.ch.goal}).`);
+    if(bestMult > 1) msgs.unshift(`🎚️ Multiplicateur ×${bestMult} sur l'enregistrement.`);
+    if(comeback) msgs.unshift('Content de te revoir au studio !');
+    const fresh = checkBadges(who);
+    return {comeback, msgs, mastered, fresh, gain: p.xp - xpBefore};
   });
-  p.sessions.push({
-    date: today, ts: new Date().toISOString(),
-    items: worked.map(([k,r]) => ({key:k, result:r})),
-    followedPlan: !s.swapped && !!s.proposedKey && worked.some(([k]) => k===s.proposedKey),
-    recordings: recs.map(r => ({songId:r.songId, ins:[...r.ins]})),
-  });
-  p.xp = xpBefore + xp;
-  // Défi de la semaine
-  const cp = challengeProgress(who);
-  if(!cp.done && cp.cur >= cp.ch.goal){ p.challenges = p.challenges || {}; p.challenges[weekKey(today)] = today; }
-  const fresh = checkBadges(who);
-  // Le badge Duo peut aussi se débloquer pour l'autre.
-  studioMusicians().forEach(m => { if(m.id!==who){ const f = checkBadges(m.id); if(f.length) saveProgress(m.id); } });
-  saveProgress(who);
-  const levelAfter = levelOf(p.xp);
-  const msgs = [];
-  if(comeback) msgs.push('Content de te revoir au studio !');
-  if(bestMult > 1) msgs.push(`🎚️ Multiplicateur ×${bestMult} sur l'enregistrement.`);
-  if(cp.done === false && (p.challenges||{})[weekKey(today)]) msgs.push('⭐ Défi de la semaine relevé !');
-  else if(!(p.challenges||{})[weekKey(today)]) msgs.push(`Défi de la semaine : ${cp.ch.text} (${challengeProgress(who).cur}/${cp.ch.goal}).`);
-  toast = {title: comeback ? 'Content de te revoir !' : fresh.length ? 'Bravo !' : 'Bien joué !', msg: msgs.join(' '), xp: p.xp - xpBefore, badges: fresh, next: nextGoal(who),
-    levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre 🎸'};
+  if(!res) return;
+  res.mastered.forEach(it => addMastery(who, it.songId, it.ins));
+  // Duo, morceau en boîte… peuvent aussi se débloquer pour l'autre.
+  studioMusicians().forEach(m => { if(m.id!==who) updateProgress(m.id, () => checkBadges(m.id)); });
+  const levelAfter = levelOf(progress[who].xp);
+  toast = {title: res.comeback ? 'Content de te revoir !' : res.fresh.length ? 'Bravo !' : 'Bien joué !', msg: res.msgs.join(' '), xp: res.gain, badges: res.fresh, next: nextGoal(who),
+    levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre'};
   session = null; saveSession();
-  stopTimer();
+  stopTimer(); metroStop();
   render();
 }
 
-function stopTimer(){ timer = {step:null, endAt:null, remaining:null}; if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+function stopTimer(){ timer = {step:null, endAt:null, remaining:null}; if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } wakeLockUpdate(); }
 function beep(){
   try{
     const ctx = new (window.AudioContext||window.webkitAudioContext)();
@@ -1270,8 +1493,8 @@ function attachStudioEvents(){
   if(activeTab!=='studio') return;
 
   document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
-    studioWho = b.dataset.who; lsSet('setlistas-who', studioWho);
-    swapOpen = false; recDraft = {songId:null, ins:[]}; stopTimer(); render();
+    studioWho = b.dataset.who; lsSet('setlistas-who', studioWho); selectedGridMusician = studioWho;
+    swapOpen = false; recDraft = {songId:null, ins:[]}; stopTimer(); metroStop(); render();
   });
   document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { studioView = b.dataset.sv; render(); });
 
@@ -1283,8 +1506,20 @@ function attachStudioEvents(){
     else if(timer.step===id && timer.remaining!=null){ timer.endAt = Date.now()+timer.remaining*1000; }
     else { timer = {step:id, endAt:Date.now()+min*60000, remaining:null}; }
     if(!timerInterval) timerInterval = setInterval(tick, 500);
-    render();
+    wakeLockUpdate(); render();
   });
+
+  // Métronome
+  document.querySelectorAll('[data-metro]').forEach(b => b.onclick = () => {
+    metro.bpm = Math.min(260, Math.max(30, metro.bpm + Number(b.dataset.metro)));
+    const o = document.getElementById('metro-bpm'); if(o) o.textContent = metro.bpm;
+  });
+  const mt = document.getElementById('metro-toggle');
+  if(mt) mt.onclick = () => { if(metro.running) metroStop(); else { ensureSession(buildPlan(studioWho)); saveSession(); metroStart(); } render(); };
+  document.querySelectorAll('.tempo-today').forEach(inp => inp.oninput = () => {
+    const s = currentSession(); if(!s) return; s.tempos = s.tempos || {}; s.tempos[inp.dataset.key] = inp.value; saveSession();
+  });
+  document.querySelectorAll('[data-student]').forEach(b => b.onclick = () => { teacherStudent = b.dataset.student; render(); });
 
   const swapLink = document.getElementById('swap-link');
   if(swapLink) swapLink.onclick = (e) => { e.preventDefault(); swapOpen = !swapOpen; render(); };
@@ -1331,84 +1566,100 @@ function attachStudioEvents(){
   const finishBtn = document.getElementById('finish-session');
   if(finishBtn) finishBtn.onclick = finishSession;
 
-  // Mes morceaux
-  const p = progress[studioWho];
+  attachItemEditors(studioWho);
+}
+
+// Édition des morceaux à travailler (utilisée par l'élève et par le prof).
+function attachItemEditors(defaultMid){
+  const midOf = el => el.dataset.mid || defaultMid;
   document.querySelectorAll('.obj-input').forEach(inp => inp.onchange = () => {
-    const it = p.items[inp.dataset.key]; if(!it) return;
-    it.objective = inp.value.trim(); it.objectiveAt = todayStr();
-    const fresh = checkBadges(studioWho);
-    saveProgress(studioWho);
-    if(fresh.length){ toast = {title:'Badge débloqué', xp: fresh.xp, badges: fresh}; render(); }
+    const mid = midOf(inp), key = inp.dataset.key, val = inp.value.trim(), by = studioWho;
+    const fresh = updateProgress(mid, p => {
+      const it = p.items[key]; if(!it) return [];
+      it.objective = val; it.objectiveAt = todayStr(); it.objectiveBy = val ? by : null;
+      return checkBadges(mid);
+    });
+    if(fresh && fresh.length && mid===studioWho){ toast = {title:'Badge débloqué', xp: fresh.xp, badges: fresh}; }
+    scheduleRender();
+  });
+  document.querySelectorAll('.tempo-input').forEach(inp => inp.onchange = () => {
+    const mid = midOf(inp), key = inp.dataset.key, v = Math.round(Number(inp.value)) || null;
+    updateProgress(mid, p => { const it = p.items[key]; if(it) it.tempoTarget = v; });
+    scheduleRender();
   });
   document.querySelectorAll('.status-select').forEach(sel => sel.onchange = () => {
-    const it = p.items[sel.dataset.key]; if(!it) return;
-    const was = it.status; it.status = sel.value;
-    let gained = 0;
-    if(sel.value==='done' && was!=='done'){
-      it.masteredAt = todayStr(); p.xp = (p.xp||0) + XP.mastered; gained += XP.mastered;
-      addMastery(studioWho, it.songId, it.ins);
-    }
-    const fresh = checkBadges(studioWho);
-    saveProgress(studioWho);
-    if(gained || fresh.length) toast = {title: sel.value==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: gained + fresh.xp, badges: fresh, next: nextGoal(studioWho)};
+    const mid = midOf(sel), key = sel.dataset.key, status = sel.value;
+    const res = updateProgress(mid, p => {
+      const it = p.items[key]; if(!it) return null;
+      const was = it.status; it.status = status; let gained = 0;
+      if(status==='done' && was!=='done'){ it.masteredAt = todayStr(); p.xp = (p.xp||0) + XP.mastered; gained = XP.mastered; }
+      const fresh = checkBadges(mid);
+      return {gained, fresh, it:{...it}};
+    });
+    if(res && status==='done') addMastery(mid, res.it.songId, res.it.ins);
+    if(res && mid===studioWho && (res.gained || res.fresh.length)) toast = {title: status==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: res.gained + res.fresh.xp, badges: res.fresh, next: nextGoal(mid)};
     render();
   });
   document.querySelectorAll('[data-delitem]').forEach(b => b.onclick = () => {
-    const it = p.items[b.dataset.delitem]; if(!it) return;
-    if(!confirm(`Retirer « ${songById(it.songId).title} · ${it.ins} » de tes morceaux ?`)) return;
-    delete p.items[b.dataset.delitem]; saveProgress(studioWho); render();
+    const mid = midOf(b), key = b.dataset.delitem;
+    const it = progress[mid]?.items[key]; if(!it) return;
+    if(!confirm(`Retirer « ${songById(it.songId).title} · ${it.ins} » des morceaux de ${nameById(mid)} ?`)) return;
+    updateProgress(mid, p => { delete p.items[key]; });
+    render();
   });
-  const addBtn = document.getElementById('add-item-btn');
-  if(addBtn) addBtn.onclick = () => {
-    const songId = Number(document.getElementById('add-item-song').value);
-    const ins = document.getElementById('add-item-ins').value;
-    const status = document.getElementById('add-item-status').value;
-    const key = songId+'|'+ins;
-    if(p.items[key]){ p.items[key].status = status; }
-    else p.items[key] = {songId, ins, status, objective:'', createdAt:todayStr(), lastWorked:null, workedCount:0, reachedCount:0};
-    saveProgress(studioWho); render();
-  };
+  document.querySelectorAll('.add-item-btn').forEach(btn => btn.onclick = () => {
+    const mid = midOf(btn), box = btn.closest('.add-item');
+    const songId = Number(box.querySelector('.add-item-song').value);
+    const ins = box.querySelector('.add-item-ins').value;
+    const status = box.querySelector('.add-item-status').value;
+    const key = songId+'|'+ins, by = studioWho;
+    updateProgress(mid, p => {
+      if(p.items[key]) p.items[key].status = status;
+      else p.items[key] = {songId, ins, status, objective:'', objectiveBy:null, createdAt:todayStr(), lastWorked:null, workedCount:0, reachedCount:0, addedBy:by};
+    });
+    render();
+  });
 }
 
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeAttr(s){ return escapeHtml(s); }
 
 function render(){
+  if(!SPACE) return;
   const app = document.getElementById('app');
   let content = '';
   if(activeTab==='repertoire') content = renderRepertoire();
   else if(activeTab==='setlist') content = renderSetlist();
   else if(activeTab==='studio') content = renderStudio();
+  else if(activeTab==='reglages') content = renderSettings();
   else content = renderGrille();
 
   app.innerHTML = `
-    <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div><h1>Répertoire</h1><p class="subtitle">Guitare, basse, batterie, clavier, chant — qui joue quoi, et ce qu'on travaille.</p></div>
-      <div class="row" style="flex-wrap:nowrap">
-        <button class="btn-ghost" id="export-csv-btn" style="white-space:nowrap">Exporter (CSV)</button>
-        <button class="btn-ghost" id="import-csv-btn" style="white-space:nowrap">Importer (CSV)</button>
-        <input type="file" id="import-csv-input" accept=".csv" style="display:none">
-      </div>
-    </div>
-    ${saveError ? `<div class="note" style="border-color:var(--drm);color:var(--drm)">${escapeHtml(saveError)}</div>` : ''}
-    ${importError ? `<div class="note" style="border-color:var(--drm);color:var(--drm)">${escapeHtml(importError)}</div>` : ''}
-    ${pendingImport ? `
-      <div class="note" style="border-color:var(--gtr)">
-        Importer ${pendingImport.songs.length} morceaux et ${pendingImport.musicians.length} musicien(s) (${pendingImport.musicians.map(m=>escapeHtml(m.name)).join(', ')}) ?
-        Ça remplace entièrement le répertoire et les grilles actuels. Irréversible.
-        <div class="row" style="margin-top:8px">
-          <input type="text" inputmode="numeric" id="import-code-input" placeholder="Code" style="width:90px;background:var(--bg-raised-2);border:1px solid var(--line);color:var(--cream);padding:9px 10px;border-radius:6px;font-family:inherit;font-size:0.85rem">
-          <button class="btn" id="confirm-import-csv">Oui, remplacer</button>
-          <button class="btn-ghost" id="cancel-import-csv">Annuler</button>
-        </div>
-        ${importCodeError ? `<p style="color:var(--drm);font-size:0.8rem;margin:8px 0 0">${escapeHtml(importCodeError)}</p>` : ''}
-      </div>` : ''}
-    ${renderTabs()}
-    <div id="tab-content">${content}</div>
+    <header class="appbar">
+      <div class="brand">SetlistAS${DEMO ? ' <small>démo</small>' : ''}</div>
+      ${renderTabs()}
+    </header>
+    <main class="page">
+      ${saveError ? `<p class="note warn" role="alert">${escapeHtml(saveError)}</p>` : ''}
+      ${importError ? `<p class="note warn" role="alert">${escapeHtml(importError)}</p>` : ''}
+      ${importBusy ? `<p class="note">Import en cours…</p>` : ''}
+      ${pendingImport ? `
+        <div class="note warn">
+          Importer ${pendingImport.songs.length} morceaux et ${pendingImport.musicians.length} musicien(s) (${pendingImport.musicians.map(m=>escapeHtml(m.name)).join(', ')}) ?
+          Le répertoire et les grilles actuels seront remplacés. Une sauvegarde est faite juste avant, et la progression du Studio est conservée.
+          <div class="row" style="margin-top:10px">
+            <button class="btn" id="confirm-import-csv">Remplacer par ce fichier</button>
+            <button class="btn-ghost" id="cancel-import-csv">Annuler</button>
+          </div>
+        </div>` : ''}
+      <div id="tab-content">${content}</div>
+    </main>
     ${renderToast()}
   `;
   attachEvents();
   attachStudioEvents();
+  attachGigEvents();
+  attachSettingsEvents();
 }
 
 function csvEscape(val){
@@ -1506,7 +1757,6 @@ function handleImportFile(file){
       if(newSongs.length === 0) throw new Error('aucun morceau reconnu dans le fichier');
 
       importError = null;
-      importCodeError = null;
       pendingImport = {musicians:newMusicians, songs:newSongs, mastery:newMastery};
       render();
     }catch(err){
@@ -1520,6 +1770,7 @@ function handleImportFile(file){
 }
 
 function attachEvents(){
+  attachSongEditors();
   const exportBtn = document.getElementById('export-csv-btn');
   if(exportBtn) exportBtn.onclick = exportCSV;
 
@@ -1535,33 +1786,38 @@ function attachEvents(){
   }
 
   const cancelImportBtn = document.getElementById('cancel-import-csv');
-  if(cancelImportBtn) cancelImportBtn.onclick = () => { pendingImport = null; importCodeError = null; render(); };
+  if(cancelImportBtn) cancelImportBtn.onclick = () => { pendingImport = null; render(); };
 
   const confirmImportBtn = document.getElementById('confirm-import-csv');
   if(confirmImportBtn) confirmImportBtn.onclick = async () => {
-    const codeInput = document.getElementById('import-code-input');
-    if(!codeInput || codeInput.value.trim() !== '2206'){
-      importCodeError = 'Code incorrect.';
-      render();
-      return;
-    }
     const data = pendingImport;
     if(!data) return;
-    songs = data.songs;
-    musicians = data.musicians;
-    mastery = data.mastery;
-    selectedForSetlist = new Set();
-    selectedGridMusician = null;
-    pendingImport = null;
-    importCodeError = null;
-    render();
-    // Écritures en série (pas en parallèle) pour éviter de saturer le stockage sur un gros import.
-    await safeSet('songs', songs);
-    await safeSet('musicians', musicians);
-    for(const m of musicians){
-      await safeSet('mastery:'+m.id, mastery[m.id]);
-    }
-    render();
+    pendingImport = null; importBusy = true; render();
+    try{
+      await manualBackup('avant-import');
+      // La progression suit les morceaux par leur titre, même si l'import les renumérote.
+      const titleToNewId = {};
+      data.songs.forEach(x => titleToNewId[normTitle(x.title)] = x.id);
+      const remap = (oldId) => { const old = songById(oldId); return old ? titleToNewId[normTitle(old.title)] : undefined; };
+      const newProgress = {};
+      Object.entries(progress).forEach(([mid, p]) => {
+        const np = clone(p); np.items = {};
+        Object.values(p.items).forEach(it => { const nid = remap(it.songId); if(nid!=null){ const k = nid+'|'+it.ins; np.items[k] = {...it, songId:nid}; } });
+        np.sessions = p.sessions.map(se => ({...se,
+          items: (se.items||[]).map(i => { const [sid,ins] = i.key.split('|'); const nid = remap(sid); return nid!=null ? {...i, key:nid+'|'+ins} : null; }).filter(Boolean),
+          recordings: (se.recordings||[]).map(r => { const nid = remap(r.songId); return nid!=null ? {...r, songId:nid} : null; }).filter(Boolean)}));
+        newProgress[mid] = np;
+      });
+      const newGigs = clone(gigs);
+      Object.values(newGigs).forEach(g => g.songIds = (g.songIds||[]).map(remap).filter(x => x!=null));
+      await store.set('songs', data.songs);
+      await store.set('musicians', data.musicians);
+      for(const m of data.musicians) await store.set('mastery:'+m.id, data.mastery[m.id]);
+      for(const [mid,p] of Object.entries(newProgress)) if(data.musicians.some(m=>m.id===mid)) await store.set('progress:'+mid, p);
+      await store.set('gigs', newGigs);
+      selectedForSetlist = new Set(data.musicians.filter(m=>!m.universal).map(m=>m.id));
+    }catch(e){ importError = "L'import a échoué en cours de route. Une sauvegarde a été faite juste avant : restaure-la depuis Réglages."; }
+    importBusy = false; render();
   };
 
   document.querySelectorAll('.tab').forEach(t => t.onclick = () => { activeTab = t.dataset.tab; render(); });
@@ -1591,7 +1847,8 @@ function attachEvents(){
     songs.push({id:newId, title, artist});
     addSongFormOpen = false;
     renderPartial();
-    safeSet('songs', songs).then(ok => { if(!ok) renderPartial(); });
+    save('songs', cur => { cur = cur || []; if(cur.some(x => normTitle(x.title)===normTitle(title) && normTitle(x.artist)===normTitle(artist))) return cur;
+      cur.push({id: cur.length ? Math.max(...cur.map(x=>x.id))+1 : 1, title, artist}); return cur; });
   };
 
   document.querySelectorAll('.chip').forEach(c => c.onclick = () => {
@@ -1601,7 +1858,7 @@ function attachEvents(){
   });
 
   const musicianSelect = document.getElementById('musician-select');
-  if(musicianSelect) musicianSelect.onchange = (e) => { selectedGridMusician = e.target.value || null; render(); };
+  if(musicianSelect) musicianSelect.onchange = (e) => { selectedGridMusician = e.target.value || null; if(selectedGridMusician){ studioWho = selectedGridMusician; lsSet('setlistas-who', studioWho); } render(); };
 
   const newMusicianBtn = document.getElementById('new-musician-btn');
   if(newMusicianBtn) newMusicianBtn.onclick = () => {
@@ -1619,36 +1876,28 @@ function attachEvents(){
     musicians.push(newMusician);
     mastery[id] = {};
     selectedGridMusician = id;
+    studioWho = id; lsSet('setlistas-who', id);
     render();
-    const ok = await safeSet('musicians', musicians);
-    if(!ok) render();
-    await safeSet('mastery:'+id, {});
+    await save('musicians', cur => { cur = cur || []; if(!cur.some(m=>m.id===id)) cur.push(newMusician); return cur; });
+    await save('mastery:'+id, cur => cur || {});
   };
 
   const deleteBtn = document.getElementById('delete-musician-btn');
-  if(deleteBtn) deleteBtn.onclick = () => { pendingDeleteMusician = selectedGridMusician; deleteCodeError = null; render(); };
+  if(deleteBtn) deleteBtn.onclick = () => { pendingDeleteMusician = selectedGridMusician; render(); };
 
   const cancelDeleteBtn = document.getElementById('cancel-delete-musician');
-  if(cancelDeleteBtn) cancelDeleteBtn.onclick = () => { pendingDeleteMusician = null; deleteCodeError = null; render(); };
+  if(cancelDeleteBtn) cancelDeleteBtn.onclick = () => { pendingDeleteMusician = null; render(); };
 
   const confirmDeleteBtn = document.getElementById('confirm-delete-musician');
-  if(confirmDeleteBtn) confirmDeleteBtn.onclick = () => {
-    const codeInput = document.getElementById('delete-code-input');
-    if(!codeInput || codeInput.value.trim() !== '2206'){
-      deleteCodeError = 'Code incorrect.';
-      render();
-      return;
-    }
+  if(confirmDeleteBtn) confirmDeleteBtn.onclick = async () => {
     const id = pendingDeleteMusician;
-    musicians = musicians.filter(m=>m.id!==id);
-    delete mastery[id];
-    selectedForSetlist.delete(id);
-    selectedGridMusician = null;
-    pendingDeleteMusician = null;
-    deleteCodeError = null;
+    pendingDeleteMusician = null; selectedGridMusician = null; selectedForSetlist.delete(id);
+    if(studioWho===id){ studioWho = null; lsSet('setlistas-who', null); }
     render();
-    safeSet('musicians', musicians).then(ok => { if(!ok) render(); });
-    window.storage.delete('mastery:'+id, true).catch(()=>{});
+    await manualBackup('avant-suppression-'+id);
+    await save('musicians', cur => (cur||[]).filter(m => m.id!==id));
+    await store.remove('mastery:'+id).catch(()=>{});
+    await store.remove('progress:'+id).catch(()=>{});
   };
 
   document.querySelectorAll('.toggle-btn').forEach(btn => btn.onclick = () => {
@@ -1659,8 +1908,9 @@ function attachEvents(){
     const idx = current.indexOf(ins);
     if(idx>=0) current.splice(idx,1); else current.push(ins);
     mastery[selectedGridMusician][songId] = current;
+    const mid = selectedGridMusician, on = idx < 0;
     render();
-    queueSet('mastery:'+selectedGridMusician, mastery[selectedGridMusician]);
+    save('mastery:'+mid, m => { m = m || {}; const a = (m[songId]||[]).filter(x => x!==ins); if(on) a.push(ins); m[songId] = a; return m; });
   });
 }
 
@@ -1675,7 +1925,281 @@ function renderPartial(focusSearch){
   }
 }
 
-init();
+// =====================================================================
+// FICHES MORCEAUX
+// =====================================================================
+let editingSong = null;
+function parseDur(s){ const m = String(s||'').trim().match(/^(\d+):(\d{1,2})$/); return m ? Number(m[1])*60+Number(m[2]) : 0; }
+function fmtDur(sec){ if(!sec) return ''; const h = Math.floor(sec/3600), m = Math.floor(sec%3600/60), s2 = sec%60; return (h? h+' h ' : '') + (h ? String(m).padStart(2,'0') : m) + ' min' + (s2 && !h ? ' ' + String(s2).padStart(2,'0') + ' s' : ''); }
+function songEditForm(song){
+  return `<form class="song-edit" data-songform="${song.id}">
+    <div class="form-grid">
+      <label class="field"><span>Titre</span><input name="title" value="${escapeAttr(song.title)}" required></label>
+      <label class="field"><span>Artiste</span><input name="artist" value="${escapeAttr(song.artist||'')}"></label>
+      <label class="field"><span>Tonalité</span><input name="key" value="${escapeAttr(song.key||'')}" placeholder="ex. La mineur"></label>
+      <label class="field"><span>Durée</span><input name="duration" value="${escapeAttr(song.duration||'')}" placeholder="4:30" pattern="\\d+:\\d{1,2}"></label>
+      <label class="field wide"><span>Lien du backing (Moises)</span><input name="moises" type="url" value="${escapeAttr(song.moises||'')}" placeholder="https://studio.moises.ai/…"></label>
+      <label class="field wide"><span>Lien de la partition (Newzik)</span><input name="newzik" type="url" value="${escapeAttr(song.newzik||'')}" placeholder="https://web.newzik.com/pieces/…"></label>
+    </div>
+    <div class="row"><button class="btn" type="submit">Enregistrer</button><button class="btn-ghost" type="button" data-canceledit>Annuler</button></div>
+  </form>`;
+}
+function attachSongEditors(){
+  document.querySelectorAll('[data-editsong]').forEach(b => b.onclick = () => { editingSong = Number(b.dataset.editsong); renderPartial(); });
+  document.querySelectorAll('[data-canceledit]').forEach(b => b.onclick = () => { editingSong = null; renderPartial(); });
+  document.querySelectorAll('[data-songform]').forEach(f => f.onsubmit = (e) => {
+    e.preventDefault();
+    const id = Number(f.dataset.songform), fd = new FormData(f);
+    const patch = {}; ['title','artist','key','duration','moises','newzik'].forEach(k => patch[k] = String(fd.get(k)||'').trim());
+    if(!patch.title) return;
+    if(patch.duration && !parseDur(patch.duration)) patch.duration = '';
+    songs = songs.map(x => x.id===id ? {...x, ...patch} : x);
+    editingSong = null; renderPartial();
+    save('songs', cur => (cur||[]).map(x => x.id===id ? {...x, ...patch} : x));
+  });
+}
+
+// =====================================================================
+// SETLISTS DE CONCERT
+// =====================================================================
+let openGig = null;
+function gigList(){ return Object.entries(gigs).map(([id,g]) => ({id, ...g})).sort((a,b)=>(b.date||'').localeCompare(a.date||'') || (a.name||'').localeCompare(b.name||'')); }
+function coverageFor(song, mids){
+  const parts = INSTRUMENTS.map(ins => {
+    const names = musicians.filter(m => mids.includes(m.id) && !m.universal && (mastery[m.id][song.id]||[]).includes(ins.key)).map(m=>m.name);
+    return names.length ? `${ins.abbr} ${names.join('/')}` : null;
+  }).filter(Boolean);
+  return parts.join(', ');
+}
+function renderGigs(){
+  const list = gigList();
+  if(openGig && gigs[openGig]) return renderGigEditor(openGig);
+  return `<section class="gigs">
+    <h2 class="section-title">Setlists de concert</h2>
+    ${list.length ? `<ul class="gig-list">${list.map(g => {
+      const dur = (g.songIds||[]).reduce((n,id)=>n+parseDur(songById(id)?.duration),0);
+      return `<li><button class="gig-open" data-opengig="${g.id}"><span class="gig-name">${escapeHtml(g.name||'Sans titre')}</span><span class="gig-meta">${g.date ? parseDay(g.date).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})+', ' : ''}${(g.songIds||[]).length} morceaux${dur?', '+fmtDur(dur):''}</span></button></li>`;
+    }).join('')}</ul>` : '<p class="empty">Aucune setlist pour l’instant.</p>'}
+    <form class="row" id="new-gig-form">
+      <input name="name" placeholder="Nom (ex. Fête de la musique)" required style="flex:1;min-width:180px">
+      <input name="date" type="date">
+      <button class="btn" type="submit">Créer avec les musiciens sélectionnés</button>
+    </form>
+  </section>`;
+}
+function renderGigEditor(id){
+  const g = gigs[id], mids = g.musicianIds || [];
+  const results = computeSetlistFor(mids);
+  const playable = new Set(results.filter(r=>r.playable).map(r=>r.song.id));
+  const items = (g.songIds||[]).map(sid => songById(sid)).filter(Boolean);
+  const dur = items.reduce((n,x)=>n+parseDur(x.duration),0);
+  const collator = new Intl.Collator('fr',{sensitivity:'base'});
+  const candidates = songs.filter(x => !(g.songIds||[]).includes(x.id)).sort((a,b)=>(playable.has(b.id)-playable.has(a.id)) || collator.compare(a.title,b.title));
+  const rows = items.map((x,i) => `<li class="gig-row">
+      <span class="gig-num">${i+1}</span>
+      <div class="grow"><span class="song-title">${escapeHtml(x.title)}</span> <span class="song-artist">${escapeHtml(x.artist)}</span>
+        <div class="meta">${[x.key, x.duration, coverageFor(x, mids)].filter(Boolean).map(escapeHtml).join(', ')}${playable.has(x.id)?'':' <span class="warn-text">incomplet avec ce groupe</span>'}</div></div>
+      <div class="gig-actions">
+        <button class="icon-btn" data-gigmove="${i}" data-dir="-1" ${i===0?'disabled':''} aria-label="Monter">↑</button>
+        <button class="icon-btn" data-gigmove="${i}" data-dir="1" ${i===items.length-1?'disabled':''} aria-label="Descendre">↓</button>
+        <button class="icon-btn" data-gigdel="${i}" aria-label="Retirer">✕</button>
+      </div></li>`).join('');
+  return `<section class="gig-editor">
+    <button class="link-btn" id="gig-back">← Toutes les setlists</button>
+    <div class="form-grid">
+      <label class="field wide"><span>Nom</span><input id="gig-name" value="${escapeAttr(g.name||'')}"></label>
+      <label class="field"><span>Date</span><input id="gig-date" type="date" value="${escapeAttr(g.date||'')}"></label>
+    </div>
+    <p class="meta-line">Avec ${mids.map(nameById).join(', ') || 'personne'}. ${items.length} morceaux${dur?`, ${fmtDur(dur)}`:''}.</p>
+    <ol class="gig-rows">${rows || '<p class="empty">Ajoute des morceaux ci-dessous.</p>'}</ol>
+    <div class="row">
+      <select id="gig-add-song" style="flex:1;min-width:200px" aria-label="Morceau à ajouter">${candidates.map(x=>`<option value="${x.id}">${playable.has(x.id)?'✓ ':''}${escapeHtml(x.title)} (${escapeHtml(x.artist)})</option>`).join('')}</select>
+      <button class="btn" id="gig-add">Ajouter</button>
+    </div>
+    <p class="hint">✓ = jouable avec ce groupe (guitare, basse et batterie couvertes).</p>
+    <div class="row" style="margin-top:20px">
+      <button class="btn-ghost" id="gig-print">Imprimer</button>
+      <button class="btn-ghost danger-text" id="gig-delete">Supprimer la setlist</button>
+    </div>
+    <div class="print-sheet" aria-hidden="true">
+      <h1>${escapeHtml(g.name||'Setlist')}</h1>
+      <p>${[g.date ? parseDay(g.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}) : '', dur ? fmtDur(dur) : ''].filter(Boolean).join(', ')}</p>
+      <ol>${items.map(x=>`<li><b>${escapeHtml(x.title)}</b>${x.key?` <em>${escapeHtml(x.key)}</em>`:''}<br><small>${escapeHtml(coverageFor(x, mids))}</small></li>`).join('')}</ol>
+    </div>
+  </section>`;
+}
+function saveGig(id, fn){
+  if(gigs[id]) fn(gigs[id]);
+  save('gigs', cur => { cur = cur || {}; if(!cur[id]) return cur; fn(cur[id]); return cur; });
+}
+function attachGigEvents(){
+  const f = document.getElementById('new-gig-form');
+  if(f) f.onsubmit = (e) => {
+    e.preventDefault();
+    const fd = new FormData(f), id = 'g' + Date.now().toString(36);
+    const g = {name: String(fd.get('name')).trim(), date: String(fd.get('date')||''), songIds: [], musicianIds: [...selectedForSetlist], createdAt: todayStr()};
+    gigs[id] = g; openGig = id; render();
+    save('gigs', cur => { cur = cur || {}; cur[id] = g; return cur; });
+  };
+  document.querySelectorAll('[data-opengig]').forEach(b => b.onclick = () => { openGig = b.dataset.opengig; render(); });
+  const back = document.getElementById('gig-back'); if(back) back.onclick = () => { openGig = null; render(); };
+  const gn = document.getElementById('gig-name'); if(gn) gn.onchange = () => { const v = gn.value.trim(); saveGig(openGig, g => g.name = v); };
+  const gd = document.getElementById('gig-date'); if(gd) gd.onchange = () => { const v = gd.value; saveGig(openGig, g => g.date = v); scheduleRender(); };
+  const add = document.getElementById('gig-add'); if(add) add.onclick = () => {
+    const sid = Number(document.getElementById('gig-add-song').value); if(!sid) return;
+    saveGig(openGig, g => { g.songIds = g.songIds || []; if(!g.songIds.includes(sid)) g.songIds.push(sid); }); render();
+  };
+  document.querySelectorAll('[data-gigmove]').forEach(b => b.onclick = () => {
+    const i = Number(b.dataset.gigmove), d = Number(b.dataset.dir), sid = gigs[openGig].songIds[i];
+    saveGig(openGig, g => { const j = g.songIds.indexOf(sid); const k = j+d; if(j<0||k<0||k>=g.songIds.length) return; [g.songIds[j], g.songIds[k]] = [g.songIds[k], g.songIds[j]]; }); render();
+  });
+  document.querySelectorAll('[data-gigdel]').forEach(b => b.onclick = () => {
+    const sid = gigs[openGig].songIds[Number(b.dataset.gigdel)];
+    saveGig(openGig, g => { g.songIds = g.songIds.filter(x => x!==sid); }); render();
+  });
+  const pr = document.getElementById('gig-print'); if(pr) pr.onclick = () => window.print();
+  const del = document.getElementById('gig-delete'); if(del) del.onclick = () => {
+    if(!confirm('Supprimer cette setlist ?')) return;
+    const id = openGig; delete gigs[id]; openGig = null; render();
+    save('gigs', cur => { cur = cur || {}; delete cur[id]; return cur; });
+  };
+}
+
+// =====================================================================
+// RÉGLAGES : sauvegardes, export, appareil
+// =====================================================================
+let lastAll = {};
+function renderSettings(){
+  const rules = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{space}/{docId} {
+      allow read, write: if space.matches('e_[0-9a-f]{32}');
+    }
+  }
+}`;
+  return `<section class="settings">
+    <h2 class="section-title">Sauvegardes</h2>
+    <p class="lede">Une sauvegarde est faite automatiquement chaque jour à la première ouverture (les 14 dernières sont gardées), et juste avant chaque import ou suppression de musicien.</p>
+    ${backups.length ? `<ul class="backup-list">${backups.map(k => {
+      const m = k.match(/^backup:(\d{4}-\d{2}-\d{2})-?([a-z-]*?)(?:-[a-z0-9]{6,})?$/);
+      const kinds = {'':'automatique', 'migration':'passage au mot de passe', 'avant-import':'avant un import', 'avant-restauration':'avant une restauration', 'manuelle':'manuelle'};
+      const label = m ? parseDay(m[1]).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}) + ', ' + (kinds[m[2]] || m[2].replace(/-/g,' ')) : k.replace('backup:','');
+      return `<li><span>${escapeHtml(label)}</span><button class="btn-ghost small" data-restore="${escapeAttr(k)}">Restaurer</button></li>`;
+    }).join('')}</ul>` : '<p class="empty">Pas encore de sauvegarde.</p>'}
+    <div class="row">
+      <button class="btn-ghost" id="backup-now">Sauvegarder maintenant</button>
+      <button class="btn-ghost" id="export-json">Télécharger toutes les données</button>
+    </div>
+    <h2 class="section-title">Cet appareil</h2>
+    <p class="lede">Le mot de passe est mémorisé ici${lsGet('setlistas-space') ? '' : ' pour cette session seulement'}.</p>
+    <button class="btn-ghost" id="forget-device">Oublier le mot de passe sur cet appareil</button>
+    <details class="tech">
+      <summary>Règles Firebase définitives</summary>
+      <p>Les données sont rangées sous un nom dérivé du mot de passe, impossible à deviner ou à lister. Une fois que tous les appareils utilisent cette version, tu peux fermer l'ancien emplacement en publiant ces règles dans la console Firebase (Firestore, onglet Règles).</p>
+      <pre>${escapeHtml(rules)}</pre>
+    </details>
+  </section>`;
+}
+function attachSettingsEvents(){
+  document.querySelectorAll('[data-restore]').forEach(b => b.onclick = async () => {
+    const k = b.dataset.restore, bk = lastAll[k];
+    if(!bk || !confirm(`Restaurer la sauvegarde ${k.replace('backup:','')} ? Les données actuelles seront remplacées (une sauvegarde de l'état actuel est faite avant).`)) return;
+    b.disabled = true; b.textContent = 'Restauration…';
+    await manualBackup('avant-restauration');
+    const data = bk.data || {};
+    const keep = new Set(Object.keys(data));
+    for(const [key,v] of Object.entries(data)) await store.set(key, v);
+    for(const key of Object.keys(lastAll)) if((key.startsWith('mastery:')||key.startsWith('progress:')) && !keep.has(key)) await store.remove(key);
+    b.textContent = 'Restaurée';
+  });
+  const bn = document.getElementById('backup-now'); if(bn) bn.onclick = async () => { bn.disabled = true; await manualBackup('manuelle'); bn.textContent = 'Sauvegarde faite'; };
+  const ex = document.getElementById('export-json'); if(ex) ex.onclick = () => {
+    const blob = new Blob([JSON.stringify(snapshotOf(lastAll), null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'setlistas-' + todayStr() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  const fg = document.getElementById('forget-device'); if(fg) fg.onclick = () => {
+    if(!confirm('Oublier le mot de passe ? Il faudra le ressaisir sur cet appareil.')) return;
+    lsSet('setlistas-space', null); try{ sessionStorage.removeItem('setlistas-space'); }catch(e){}
+    location.reload();
+  };
+}
+
+// =====================================================================
+// ACCÈS PAR MOT DE PASSE
+// =====================================================================
+let gate = {step:'login', error:null};
+function renderGate(){
+  const app = document.getElementById('app');
+  if(gate.step==='create'){
+    app.innerHTML = `<main class="gate">
+      <h1>Protéger l'appli</h1>
+      <p>Ce mot de passe n'existe pas encore. Si tu le confirmes, il deviendra le mot de passe du groupe et toutes les données actuelles y seront transférées.</p>
+      <form id="gate-form" autocomplete="on">
+        <input type="text" name="username" value="setlistas" autocomplete="username" hidden>
+        <label class="field"><span>Confirme le mot de passe</span><input type="password" id="gate-confirm" autocomplete="new-password" required autofocus></label>
+        <button class="btn big" type="submit">Protéger avec ce mot de passe</button>
+        <button class="link-btn" type="button" id="gate-back">C'était une faute de frappe</button>
+        ${gate.error ? `<p class="error" role="alert">${escapeHtml(gate.error)}</p>` : ''}
+      </form></main>`;
+    document.getElementById('gate-back').onclick = () => { gate = {step:'login', error:null}; renderGate(); };
+  } else {
+    app.innerHTML = `<main class="gate">
+      <h1>Répertoire</h1>
+      <p>Entre le mot de passe du groupe.</p>
+      <form id="gate-form" autocomplete="on">
+        <input type="text" name="username" value="setlistas" autocomplete="username" hidden>
+        <label class="field"><span>Mot de passe</span><input type="password" id="gate-pw" autocomplete="current-password" required autofocus></label>
+        <label class="check"><input type="checkbox" id="gate-remember" checked> Se souvenir sur cet appareil</label>
+        <button class="btn big" type="submit">Entrer</button>
+        ${gate.error ? `<p class="error" role="alert">${escapeHtml(gate.error)}</p>` : ''}
+      </form></main>`;
+  }
+  document.getElementById('gate-form').onsubmit = async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true;
+    try{
+      if(gate.step==='create'){
+        if(document.getElementById('gate-confirm').value.trim() !== gate.pw){ gate.error = 'Les deux saisies ne correspondent pas.'; return renderGate(); }
+        const legacy = gate.legacy, space = gate.space, now = new Date().toISOString();
+        await store.writeAll(space, {...legacy, meta:{createdAt:now, version:2}, ['backup:'+todayStr()+'-migration']:{at:now, data:legacy}});
+        await store.deleteLegacy(Object.keys(legacy));
+        enter(space, gate.remember);
+        return;
+      }
+      const pw = document.getElementById('gate-pw').value.trim();
+      const remember = document.getElementById('gate-remember').checked;
+      const space = await deriveSpace(pw);
+      if(await store.getMeta(space)) return enter(space, remember);
+      const legacy = await store.legacyAll();
+      if(legacy.songs){
+        if(pw.length < 6){ gate.error = 'Choisis un mot de passe d’au moins 6 caractères.'; return renderGate(); }
+        gate = {step:'create', error:null, pw, space, legacy, remember}; return renderGate();
+      }
+      gate.error = 'Mot de passe incorrect.'; renderGate();
+    }catch(err){
+      console.warn(err);
+      gate.error = (err && err.code==='permission-denied')
+        ? 'La base Firebase refuse l\u2019accès : les nouvelles règles de sécurité ne sont pas encore publiées.'
+        : 'Connexion impossible. Vérifie le réseau et réessaie.';
+      renderGate();
+    }
+  };
+}
+function enter(space, remember){
+  SPACE = space;
+  if(remember) lsSet('setlistas-space', space);
+  else { lsSet('setlistas-space', null); try{ sessionStorage.setItem('setlistas-space', space); }catch(e){} }
+  start();
+}
+function boot(){
+  let saved = lsGet('setlistas-space');
+  if(!saved){ try{ saved = sessionStorage.getItem('setlistas-space'); }catch(e){} }
+  if(saved){ SPACE = saved; start(); } else renderGate();
+}
+
+boot();
 </script>
 </body>
 </html>
