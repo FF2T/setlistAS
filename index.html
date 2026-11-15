@@ -340,6 +340,15 @@
   .parts{display:flex;flex-direction:column;gap:14px;margin-top:16px;}
   .part{padding:12px 14px;background:var(--console);border-radius:var(--r-m);}
   .part-head{display:flex;align-items:center;gap:8px;font-size:1.05rem;}
+  .card-actions{display:flex;gap:4px;align-items:center;}
+  .tones{margin:12px 0 4px;display:flex;flex-direction:column;gap:8px;}
+  .tone-row{display:grid;grid-template-columns:200px 1fr;gap:10px;}
+  .tone-row dt{font-size:.82rem;color:var(--amber);font-weight:600;}
+  .tone-row dd{margin:0;font-size:.92rem;color:var(--ink);line-height:1.45;}
+  .sound{margin-top:12px;background:var(--console);border-radius:var(--r-m);padding:10px 14px;}
+  .sound summary{color:var(--amber);font-weight:600;cursor:pointer;}
+  .sound .tones{margin-top:10px;}
+  @media (max-width:600px){ .tone-row{grid-template-columns:1fr;gap:2px;} }
   .promote{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:6px;}
   .promote p{margin:0 0 4px;color:var(--ink-dim);font-size:.9rem;}
   @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
@@ -554,6 +563,26 @@ function applyAll(all){
   if(!selectedGridMusician && studioWho && musicians.some(m=>m.id===studioWho)) selectedGridMusician = studioWho;
 }
 
+// Fiches son (tones.json, dans le dépôt) : chargées une fois, en lecture seule.
+let tones = {};
+fetch('tones.json?v=' + Date.now().toString(36).slice(0,-3)).then(r => r.ok ? r.json() : {}).then(t => { tones = t || {}; if(SPACE) scheduleRender(); }).catch(() => {});
+const TONE_LABELS = [['orig','Sur le disque'],['arthur','Arthur, SG → pédalier → SV20H'],['seb','Seb, Blues Junior + pédalier'],['tonex','ToneX Board'],['basse','Basse, Rumble'],['clavier','Clavier, Korg SV-2S'],['batterie','Batterie, TD-17']];
+function toneBlock(songId, keys){
+  const t = tones[String(songId)]; if(!t) return '';
+  const rows = TONE_LABELS.filter(([k]) => keys.includes(k) && t[k]).map(([k,l]) => `<div class="tone-row"><dt>${l}</dt><dd>${escapeHtml(t[k])}</dd></div>`).join('');
+  return rows ? `<dl class="tones">${rows}</dl>` : '';
+}
+// Le son utile pour la personne et l'instrument travaillés.
+function soundKeys(ins, mid){
+  if(ins==='Guitare') return mid==='arthur' ? ['arthur'] : mid==='seb' ? ['seb','tonex'] : ['arthur','seb','tonex'];
+  return {Basse:['basse'], Clavier:['clavier'], Batterie:['batterie']}[ins] || [];
+}
+function soundFor(songId, ins, mid, open){
+  const b = toneBlock(songId, soundKeys(ins, mid));
+  return b ? `<details class="sound" ${open?'open':''}><summary>Le son</summary>${b}</details>` : '';
+}
+let openTones = new Set();
+
 async function start(){
   document.getElementById('app').innerHTML = '<div class="loading">Chargement…</div>';
   store.subscribe(all => {
@@ -640,10 +669,12 @@ function renderRepertoire(){
     return `<div class="song-card">
       <div class="song-top">
         <div><span class="song-title">${escapeHtml(song.title)}</span>${groupByArtist ? '' : ` <span class="song-artist">${escapeHtml(song.artist)}</span>`}${extra ? ` <span class="song-extra">${extra}</span>` : ''}</div>
-        <button class="icon-btn" data-editsong="${song.id}" aria-label="Modifier ${escapeAttr(song.title)}">✎</button>
+        <div class="card-actions">${tones[String(song.id)] ? `<button class="btn-ghost small" data-tones="${song.id}" aria-expanded="${openTones.has(song.id)}">${openTones.has(song.id)?'Masquer les sons':'Sons'}</button>` : ''}
+        <button class="icon-btn" data-editsong="${song.id}" aria-label="Modifier ${escapeAttr(song.title)}">✎</button></div>
       </div>
       <div class="tags">${tags || '<span class="tag-empty">Personne ne l\u2019a encore coché.</span>'}</div>
       ${songLinks(song)}
+      ${openTones.has(song.id) ? toneBlock(song.id, TONE_LABELS.map(x=>x[0])) : ''}
     </div>`;
   };
 
@@ -1216,7 +1247,7 @@ function renderSeance(){
   let secondInner;
   if(plan.second){
     const s2 = songById(plan.second.songId);
-    secondInner = `${songHead(s2, plan.second)}${objBox(plan.second)}${songLinks(s2)}
+    secondInner = `${songHead(s2, plan.second)}${objBox(plan.second)}${songLinks(s2)}${soundFor(plan.second.songId, plan.second.ins, studioWho, false)}
       <p class="step-body">Joue-le en entier sur le backing, à vitesse normale. Repère l'endroit où ça casse : ce sera peut-être ton prochain objectif. ${sinceLabel(plan.second.lastWorked)[0].toUpperCase()+sinceLabel(plan.second.lastWorked).slice(1)}.</p>
       ${resultBtns(plan.second)}`;
   } else if(plan.review){
@@ -1256,6 +1287,7 @@ function renderSeance(){
     ${step(1,'warm',stepMin('warm'),'Échauffement',`<p class="step-body big">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`, '', escapeHtml(pr.ins.toLowerCase()))}
     ${step(2,'prio',stepMin('prio'),'Objectif prioritaire',`
       ${songHead(song, pr)}${objBox(pr)}${songLinks(song)}
+      ${soundFor(pr.songId, pr.ins, studioWho, true)}
       <p class="step-body">${METHOD[pr.ins]||METHOD.Guitare}</p>
       <p class="hint">${sinceLabel(pr.lastWorked)[0].toUpperCase()+sinceLabel(pr.lastWorked).slice(1)}.${plan.wip.length>1 ? ` <button class="link-btn" id="swap-link">Travailler un autre morceau</button>` : ''}</p>
       ${swapSel}
@@ -2137,6 +2169,7 @@ function renderDuo(){
       </div>` : '';
     return `<div class="part">
       <div class="part-head"><b>${escapeHtml(nameById(mid))}</b> ${insTag(it.ins)}</div>
+      ${soundFor(it.songId, it.ins, mid, false)}
       ${(it.objective||'').trim() ? `<p class="objective">${escapeHtml(it.objective)}</p>` : `<p class="objective missing-obj">Pas d'objectif écrit pour cette partie.</p>`}
       <div class="results">${[['reached','Objectif atteint'],['progress','Ça avance'],['skip','Pas travaillé']].map(([k,l])=>`<button class="res-btn ${r===k?'on':''}" data-dres="${mid}|${k}|${it.key}">${l}</button>`).join('')}</div>
       ${extra}</div>`;
@@ -2228,6 +2261,7 @@ function songEditForm(song){
   </form>`;
 }
 function attachSongEditors(){
+  document.querySelectorAll('[data-tones]').forEach(b => b.onclick = () => { const id = Number(b.dataset.tones); openTones.has(id) ? openTones.delete(id) : openTones.add(id); renderPartial(); });
   document.querySelectorAll('[data-editsong]').forEach(b => b.onclick = () => { editingSong = Number(b.dataset.editsong); renderPartial(); });
   document.querySelectorAll('[data-canceledit]').forEach(b => b.onclick = () => { editingSong = null; renderPartial(); });
   document.querySelectorAll('[data-songform]').forEach(f => f.onsubmit = (e) => {

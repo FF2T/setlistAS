@@ -1,0 +1,347 @@
+{
+  "_meta": {
+    "date": "2026-11-15",
+    "note": "Matériel d'origine donné de mémoire : à confirmer. Presets ToneX : noms exacts du catalogue, à charger depuis la bibliothèque ToneX s'ils ne sont pas sur le Board. Réglages ampli sur 10, à ajuster à l'oreille.",
+    "chains": {
+      "arthur": "SG Standard '61 → pédalier 1 (Keeley Comp, SD-1, TS9, Nano Clone, RV-6, wah V847) → Marshall SV20H",
+      "seb": "Guitare → pédalier 2 (Keeley Comp, RC Booster, AC Booster, BB Preamp, DD-8) → Blues Junior",
+      "tonex": "Guitare → ToneX Board → ToneX Cab",
+      "basse": "Precision 60 ou Jazz Player Plus → Rumble 100",
+      "clavier": "KORG SV-2S, favoris A à E du 15/11/2026",
+      "batterie": "Roland TD-17"
+    }
+  },
+  "1": {
+    "orig": "Angus : SG → Marshall Super Lead, peu de gain. Malcolm : Gretsch, son très clair.",
+    "arthur": "SG, micro chevalet, volume guitare à 10. SV20H en 5 W, entrée High Treble : Vol 7, Tr 6, Mid 7, Bass 4, Prés 5. Aucune pédale : tout le crunch vient de l'ampli. Si ça bave, baisse le volume de la SG à 8.",
+    "seb": "SG Ebony, micro chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 8, Bass 4, Fat off. AC Booster (gain 11 h, volume 1 h) toujours allumé. Peu de gain, beaucoup d'attaque : c'est le médium qui fait AC/DC.",
+    "tonex": "SG Ebony chevalet. « TSR JTM Jumped » (JTM Pack, H) : Marshall 60s chaud et gras. Repli : « TSR - Mars 800SL Chnl 1 Drive » (Mars 800SL, H), plus mordant.",
+    "basse": "Precision, médiator. Rumble : Gain 4, Bass 5, Low Mid 5, High Mid 4, Treble 4, Vintage on. Croches régulières sur la fondamentale, rien d'autre.",
+    "clavier": "Pas de clavier sur le disque. Sans bassiste : D8 (basse | piano, split C3) pour tenir les fondamentales.",
+    "batterie": "Rock binaire ultra simple, 95 bpm : grosse caisse 1 et 3, caisse claire 2 et 4, charleston en croches légèrement ouvert. Kit rock sec, peu de reverb."
+  },
+  "2": {
+    "orig": "Même rig AC/DC : SG + Marshall Super Lead, crunch modéré. Cloche en intro.",
+    "arthur": "SG chevalet. SV20H 5 W, High Treble : Vol 7, Tr 5, Mid 7, Bass 5, Prés 4. Intro arpégée : volume guitare à 6 pour nettoyer, puis 10 au riff.",
+    "seb": "SG Ebony chevalet. BJ : Vol 5, Master 4, Tr 5, Mid 8, Bass 5, Fat off. AC Booster gain 11 h. Intro au volume guitare à 6.",
+    "tonex": "« TSR JTM Jumped » (JTM, H). Repli : « TSR - Mars 800SL Chnl 1&2 Drive » (H), plus rond pour l'intro.",
+    "basse": "Precision au médiator. Rumble : Gain 4, Bass 6, mids neutres, Treble 4, Vintage on. Notes longues et lourdes, tempo lent.",
+    "clavier": "Pas de clavier. Pour la cloche d'intro, rien de prévu dans tes favoris.",
+    "batterie": "Rock lent, 108 bpm, très carré. Charleston fermé en croches, caisse claire grosse et pleine sur 2 et 4. Kit rock avec une caisse claire grave."
+  },
+  "3": {
+    "orig": "Joan Jett : Gibson Melody Maker / Les Paul Junior simple bobinage → Marshall, crunch rock.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 6, Mid 6, Bass 5, Prés 5. Pédalier : SD-1 gain 10 h, level 2 h pour pousser le riff.",
+    "seb": "Les Paul 50s P90, micro chevalet (le plus proche du Junior). BJ : Vol 5, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 11 h.",
+    "tonex": "Les Paul P90. « TSR - Mars 800SL Chnl 1&2 Drive » (H). Repli : « TSR JTM Jumped » (H).",
+    "basse": "Precision médiator, croches. Rumble : Gain 4, Bass 5, Low Mid 6, Treble 5, Vintage on.",
+    "clavier": "Pas de clavier sur le disque.",
+    "batterie": "Rock glam en croches, 95 bpm, avec les frappes de mains sur 2 et 4 du refrain (handclaps du TD-17 si ton kit en a). Kit rock 80s."
+  },
+  "4": {
+    "orig": "Clapton : SG « The Fool » → Marshall Plexi poussé, micro manche, tonalité guitare à 0 (« woman tone »).",
+    "arthur": "SG micro manche, tone à 0, volume 10. SV20H 5 W : Vol 8, Tr 5, Mid 7, Bass 5, Prés 4. TS9 drive 10 h, level 2 h pour le chant de la note. Le woman tone, c'est le tone fermé, pas l'ampli.",
+    "seb": "SG Ebony micro manche, tone à 0. BJ : Vol 6, Master 4, Tr 5, Mid 8, Bass 5, Fat on. BB Preamp gain 1 h + AC Booster en boost.",
+    "tonex": "SG manche, tone à 0. « TSR JTM Klone Lead » (JTM, H) : JTM45 + Klon, lead chantant. Repli : « TSR JTM Jumped » (H).",
+    "basse": "Jazz Bass, micro manche. Rumble : Gain 5, Bass 6, Low Mid 6, Treble 3. Le riff est doublé guitare/basse : joue-le au même endroit, même attaque.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Tom-toms en boucle façon Ginger Baker, 116 bpm, accent sur les temps 1 et 3 aux toms basses. Kit vintage, toms graves et ronds."
+  },
+  "5": {
+    "orig": "Téléphone, Louis Bertignac : guitare Gibson → Marshall, crunch rock français fin 70s.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 6, Mid 6, Bass 5, Prés 5. SD-1 gain 11 h pour le solo.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 7, Bass 5. AC Booster gain 12 h en permanence, RC Booster en plus pour le solo.",
+    "tonex": "« TSR - Silver J - Rhythm Clip » (Silver J, H). Repli : « TSR - Mars SLT60 - Drive 1 » (H).",
+    "basse": "Precision médiator. Rumble : Gain 5, Bass 5, Low Mid 5, High Mid 5, Treble 5. Corine Marienneau joue très mélodique : soigne les lignes de passage.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock binaire nerveux, 95 bpm en double croches au charleston sur les couplets. Kit rock sec."
+  },
+  "6": {
+    "orig": "AC/DC : SG + Marshall Super Lead, crunch, Malcolm sur Gretsch.",
+    "arthur": "SG chevalet, volume 10. SV20H 5 W, High Treble : Vol 7, Tr 6, Mid 7, Bass 4, Prés 5. Pas de pédale. Solo : volume ampli inchangé, attaque plus fort.",
+    "seb": "SG Ebony chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 8, Bass 4. AC Booster gain 11 h ; ajoute RC Booster pour le solo.",
+    "tonex": "« TSR JTM Jumped » (JTM, H). Repli : « TSR - Mars 800SL Chnl 1 Drive » (H).",
+    "basse": "Precision médiator, croches sur la fondamentale. Rumble : Gain 4, Bass 5, Low Mid 5, Treble 4, Vintage on.",
+    "clavier": "Pas de clavier. Sans bassiste : D8.",
+    "batterie": "Rock binaire 117 bpm, Phil Rudd : rien d'inutile, charleston en croches, crash sur les 1 du refrain."
+  },
+  "7": {
+    "orig": "Muddy Waters : Telecaster dans un petit Fender tweed. Riff stop-time, shuffle.",
+    "arthur": "Epiphone ES-339 micro manche (ou SG manche, tone à 6). SV20H 5 W : Vol 5, Tr 5, Mid 6, Bass 5, Prés 4, à la limite du crunch. RV-6 en spring, très léger.",
+    "seb": "Tele AM Vintage II 1951, micro chevalet. BJ : Vol 6, Master 3, Tr 6, Mid 6, Bass 5, Fat off, reverb 3. Rien d'autre : le Blues Junior est déjà un tweed.",
+    "tonex": "Tele 51 chevalet. « TSR D13 Breakup » (D13 Best Tweed Ever, H) : tweed sensible au toucher. Repli : « TSR D13 Drive » (M).",
+    "basse": "Precision aux doigts, son rond. Rumble : Gain 4, Bass 6, Low Mid 5, High Mid 4, Treble 3, Vintage on. Notes du riff à l'unisson de la guitare.",
+    "clavier": "D3 (piano blues de Chicago), à la Otis Spann : trilles dans l'aigu, ne jamais doubler la guitare.",
+    "batterie": "Shuffle lent, 72 bpm, avec les arrêts du riff (stop-time) bien nets. Caisse claire légère, ride ou charleston en ternaire. Kit jazz/vintage."
+  },
+  "8": {
+    "orig": "Knopfler : Les Paul → Laney, wah pédale bloquée à mi-course. Intro synthé.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 5, Mid 8, Bass 5, Prés 4. Wah V847 bloquée aux deux tiers (cherche le point le plus nasal) + SD-1 gain 11 h.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 5, Master 4, Tr 4, Mid 10, Bass 4. BB Preamp gain 1 h. Pas de wah sur ton pédalier : pousse les médiums et baisse les aigus pour imiter la wah bloquée.",
+    "tonex": "« TSR - Mars 800SL Chnl 1&2 OD » (H), rock classique riche. Ajoute une EQ médium sur le Board pour le côté wah bloquée. Repli : « TSR Ironlung Crunch » (H, capture d'un Laney Ironheart).",
+    "basse": "Precision médiator. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 5. Croches à l'unisson du riff.",
+    "clavier": "Intro : E6 (nappe années 80). Le son exact du disque n'est pas dans tes favoris.",
+    "batterie": "Intro aux toms puis rock binaire lourd, 134 bpm (moitié de tempo dans le ressenti). Kit années 80, caisse claire avec reverb."
+  },
+  "9": {
+    "orig": "Blackmore : Strat → Marshall Major modifié, crunch brillant. Orgue Hammond de Jon Lord saturé.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 7, Mid 6, Bass 4, Prés 6. SD-1 gain 10 h. Riff en quartes, attaque aux doigts possible.",
+    "seb": "Strat AM Vintage II 61, micro chevalet. BJ : Vol 6, Master 4, Tr 7, Mid 6, Bass 4. AC Booster gain 12 h + BB Preamp pour le solo.",
+    "tonex": "Strat 61 chevalet. « TSR - Mars 800SL Chnl 1 OD » (H), crunch brillant. Repli : « TSR - Jimi H 20 - Drive 1 » (H).",
+    "basse": "Precision médiator. Rumble : Gain 6 (un peu d'overdrive), Bass 5, Low Mid 6, Treble 5. Croches sur sol à l'entrée du riff.",
+    "clavier": "D1 (Hammond rock saturé). Cabine en lent sur le riff, rapide sur les montées.",
+    "batterie": "Rock binaire 115 bpm, entrée progressive : charleston seul puis caisse claire, puis tout le kit. Kit rock 70s."
+  },
+  "10": {
+    "orig": "Page : 12 cordes et acoustique, solo sur Telecaster « Dragon » → Supro. Piano électrique Hohner et flûtes Mellotron.",
+    "arthur": "SG manche pour l'intro, volume 5 (son clair) ; chevalet volume 10 pour le solo. SV20H 5 W : Vol 6, Tr 6, Mid 6, Bass 5, Prés 5. RV-6 légère. Solo : TS9 drive 11 h.",
+    "seb": "Intro : Martin 000-28. Solo : Tele AM Vintage II 63 chevalet. BJ : Vol 7, Master 3, Tr 6, Mid 7, Bass 5 (petit ampli à fond, comme le Supro). RC Booster pour le solo.",
+    "tonex": "Tele 63. Solo : « TSR D13 Drive » (D13, M), tweed qui aboie, proche d'un petit Supro poussé. Arpèges électriques : « TSR - Fender Twin Clean » (H).",
+    "basse": "Jazz Bass doigts, n'entre qu'au milieu. Rumble : Gain 4, Bass 6, mids neutres, Treble 4.",
+    "clavier": "E4 (piano électrique Hohner) pour les parties électriques ; E3 (Mellotron) pour les flûtes de l'intro.",
+    "batterie": "Entrée de Bonham à 6:44 seulement, 82 bpm, puis rock lourd jusqu'à la fin. Kit rock 70s, grosse caisse énorme, beaucoup de room."
+  },
+  "11": {
+    "orig": "B.B. King : Gibson ES-355 « Lucille », son clair avec du mordant, beaucoup de vibrato. Cordes sur le disque.",
+    "arthur": "Epiphone ES-339 micro manche (ou SG manche). SV20H 5 W : Vol 5, Tr 6, Mid 6, Bass 5, Prés 5, juste au bord du crunch. Keeley Comp léger + RV-6 hall léger. Peu de notes, gros vibrato.",
+    "seb": "ES-335 micro manche. BJ : Vol 4, Master 6, Tr 6, Mid 6, Bass 5, reverb 3. Keeley Comp sustain 10 h. BB Preamp gain 9 h pour le mordant.",
+    "tonex": "ES-335 manche. « TSR - Fender Twin + Blues Breake » (Silverface, H) : clean Fender + overdrive léger, le bon équilibre pour B.B. Repli : « TSR Amp Nation WOD Clean 2 Boost » (H).",
+    "basse": "Jazz Bass doigts. Rumble : Gain 4, Bass 6, Low Mid 5, Treble 3. Notes longues, laisse de la place.",
+    "clavier": "C8 (nappe Solina) pour les cordes, très bas dans le mix. Ou B2 (Rhodes + cordes).",
+    "batterie": "Groove lent en 4/4 avec un léger ternaire, 91 bpm. Cercle de caisse claire (cross-stick) sur les couplets. Kit vintage, peu de cymbales."
+  },
+  "12": {
+    "orig": "AC/DC : SG, riff en hammer-on/pull-off au clair-crunch, Marshall.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 6, Tr 6, Mid 7, Bass 4, Prés 5. Riff d'intro : volume guitare à 8, tout en pull-off main gauche. Keeley Comp léger aide la régularité.",
+    "seb": "SG Ebony chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 8, Bass 4. AC Booster gain 11 h. Keeley Comp sustain 10 h pour l'intro.",
+    "tonex": "« TSR - Mars 800SL Chnl 1&2 Drive » (H). Repli : « TSR JTM Jumped » (H).",
+    "basse": "Precision médiator, tapis de croches sur si. Rumble : Gain 4, Bass 5, Low Mid 5, Treble 4.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock binaire 134 bpm, entrée à la fin de l'intro guitare. Charleston en croches, crash sur chaque « Thunder ». Kit rock."
+  },
+  "13": {
+    "orig": "AC/DC : SG + Marshall, crunch modéré, riff très aéré.",
+    "arthur": "SG chevalet, volume 10. SV20H 5 W, High Treble : Vol 7, Tr 6, Mid 7, Bass 4, Prés 5. Pas de pédale. Les silences du riff comptent autant que les notes.",
+    "seb": "SG Ebony chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 8, Bass 4. AC Booster gain 11 h.",
+    "tonex": "« TSR JTM Jumped » (H). Repli : « TSR - Mars 800SL Chnl 1 Drive » (H).",
+    "basse": "Precision médiator. Rumble : Gain 4, Bass 5, Low Mid 5, Treble 4, Vintage on.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock binaire 126 bpm. Les « Oi ! » tombent sur les temps : garde la caisse claire très régulière."
+  },
+  "14": {
+    "orig": "Knopfler : Strat en position intermédiaire, son clair. Riff à l'orgue (son type accordéon).",
+    "arthur": "SG micro manche, volume 6 pour un son clair. SV20H 5 W : Vol 4, Tr 7, Mid 5, Bass 4, Prés 6. Keeley Comp + RV-6 légère.",
+    "seb": "Strat AM Vintage II 61, position 4 (manche + milieu). BJ : Vol 3, Master 7, Tr 7, Mid 5, Bass 4, reverb 3. Keeley Comp sustain 11 h. Jeu aux doigts, comme Knopfler.",
+    "tonex": "Strat position 4. « TSR - Fender Twin Clean » (Silverface, H). Repli : « TSR - Dlux Verb II - Cln Bright » (M).",
+    "basse": "Precision doigts. Rumble : Gain 4, Bass 5, Low Mid 5, High Mid 5, Treble 5. Ligne country en alternance fondamentale/quinte.",
+    "clavier": "C6 (orgue « accordéon ») pour le riff, C7 (Hammond | riff, split C4) pour les couplets.",
+    "batterie": "Train beat country-rock, 172 bpm : caisse claire en double croches légères, accents sur 2 et 4. Kit pop 80s."
+  },
+  "15": {
+    "orig": "Clapton : Gibson (ES-335 ou SG) → Marshall, wah très présente.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 5, Mid 7, Bass 5, Prés 4. Wah V847 sur les parties lead et sur le refrain, TS9 drive 10 h.",
+    "seb": "ES-335 chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 12 h. Pas de wah sur ton pédalier : emprunte celle du pédalier d'Arthur pour les leads.",
+    "tonex": "ES-335. « TSR JTM Jumped » (H). Le ToneX Board n'a pas de vraie wah : pour les leads, « TSR JTM Klone Lead » (H) et joue les phrases sans wah.",
+    "basse": "Jazz Bass doigts. Rumble : Gain 5, Bass 6, Low Mid 6, Treble 4. Mesure en 5/4 dans l'intro, compte bien.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Intro en 5/4 puis 4/4, 110 bpm. Toms à la Ginger Baker dans l'intro. Kit vintage."
+  },
+  "16": {
+    "orig": "AC/DC : SG + Marshall, riff ouvert en sol, crunch.",
+    "arthur": "SG chevalet. SV20H 5 W, High Treble : Vol 7, Tr 6, Mid 7, Bass 4, Prés 5. Pas de pédale.",
+    "seb": "SG Ebony chevalet. BJ : Vol 5, Master 4, Tr 6, Mid 8, Bass 4. AC Booster gain 11 h, RC Booster en plus pour le solo.",
+    "tonex": "« TSR JTM Jumped » (H). Repli : « TSR - Mars 800SL Chnl 1&2 Drive » (H).",
+    "basse": "Precision médiator, croches. Rumble : Gain 4, Bass 5, Low Mid 5, Treble 4.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock binaire 130 bpm, très droit. Charleston légèrement ouvert sur le refrain."
+  },
+  "17": {
+    "orig": "Peter Green (Fleetwood Mac, 1968) : Les Paul, son clair-crunch chaud et feutré. La version de Santana ajoute l'orgue.",
+    "arthur": "Epiphone Les Paul micro manche, volume 7. SV20H 5 W : Vol 5, Tr 5, Mid 7, Bass 5, Prés 4. RV-6 room. Joue doux : le son vient du toucher.",
+    "seb": "Les Paul 60s micro manche. BJ : Vol 4, Master 6, Tr 5, Mid 7, Bass 5, reverb 3. BB Preamp gain 10 h.",
+    "tonex": "Les Paul 60s manche. « TSR JTM Clean(ish) » (JTM, H) : Marshall vintage au bord du crunch. Hypothèse, à valider à l'oreille. Repli : « TSR Amp Nation WOD Drive 1 » (H), plus Santana.",
+    "basse": "Jazz Bass doigts. Rumble : Gain 4, Bass 6, Low Mid 5, Treble 4. Ligne en ré mineur, latin léger.",
+    "clavier": "D2 (Hammond blues) si vous jouez la version Santana. Pas d'orgue chez Peter Green.",
+    "batterie": "Groove latin-rock 130 bpm (Santana) ou rock-blues plus droit (Peter Green). Cloche si ton kit en a une."
+  },
+  "18": {
+    "orig": "Beatles : guitares sur Vox AC30, son clair-crunch. Piano électrique sur le disque. Basse très en avant.",
+    "arthur": "SG micro manche, volume 7. SV20H 5 W : Vol 5, Tr 6, Mid 6, Bass 5, Prés 5. TS9 drive 9 h pour le solo.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 5, Master 5, Tr 6, Mid 6, Bass 5. AC Booster gain 10 h ; RC Booster pour le solo.",
+    "tonex": "« TSR Socks DC30 - Clean ish » (British Chime, H). Solo : « TSR Socks DC30 » (H).",
+    "basse": "Precision doigts, la ligne la plus importante du morceau. Rumble : Gain 4, Bass 7, Low Mid 6, High Mid 4, Treble 3. Glissés lents, laisse résonner.",
+    "clavier": "E5 (Rhodes sec), comme sur le disque.",
+    "batterie": "Groove lent 83 bpm, toms joués en boucle sur le motif d'intro. Kit vintage très mat (sourdines)."
+  },
+  "19": {
+    "orig": "Beatles : guitares sur Vox AC30, riff clair-crunch doublé basse.",
+    "arthur": "SG micro chevalet. SV20H 5 W : Vol 6, Tr 7, Mid 6, Bass 4, Prés 6. SD-1 gain 9 h.",
+    "seb": "Tele AM Vintage II 63, chevalet. BJ : Vol 5, Master 4, Tr 7, Mid 6, Bass 4. AC Booster gain 11 h.",
+    "tonex": "Tele 63 chevalet. « TSR Socks DC30 » (British Chime, H). Repli : « TSR CAT CUB Breakup 1 » (H).",
+    "basse": "Precision médiator, riff à l'unisson de la guitare. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 5.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock 60s 137 bpm, tambourin dans les mains si possible. Kit vintage."
+  },
+  "20": {
+    "orig": "Joe Bonamassa : Les Paul → amplis boutique (Two-Rock, Marshall), drive chantant.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 5, Mid 7, Bass 5, Prés 4. TS9 drive 11 h, level 2 h.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 6, Master 4, Tr 5, Mid 7, Bass 5. BB Preamp gain 1 h + RC Booster pour le lead.",
+    "tonex": "Les Paul 60s. « TSR TWO ROK Bloom Drive » (Two-Rock Bloomfield, H). Lead : « TSR TWO ROK Bloom Drive 2 » (H).",
+    "basse": "Precision médiator. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 5.",
+    "clavier": "D2 (Hammond blues et gospel) en nappe. Je ne suis pas sûr qu'il y ait de l'orgue sur le disque : écoute avant.",
+    "batterie": "Rock-blues 126 bpm, gros backbeat. Kit rock moderne."
+  },
+  "21": {
+    "orig": "Chuck Berry : Gibson ES-350T, son clair légèrement poussé, écho court. Piano boogie de Johnnie Johnson.",
+    "arthur": "Epiphone ES-339 micro chevalet. SV20H 5 W : Vol 6, Tr 7, Mid 6, Bass 4, Prés 5. SD-1 gain 9 h, RV-6 en spring.",
+    "seb": "ES-335 chevalet. BJ : Vol 5, Master 5, Tr 7, Mid 6, Bass 4, reverb 2. DD-8 en slapback : time 9 h (environ 100 ms), feedback 0, level 10 h.",
+    "tonex": "ES-335. « TSR D13 Breakup » (D13 tweed, H) + delay court du Board. Repli : « TSR - Fender Twin + Blues Driver » (H).",
+    "basse": "Jazz Bass doigts, walking blues. Rumble : Gain 4, Bass 6, Low Mid 5, Treble 4.",
+    "clavier": "A4 (honky-tonk), boogie main gauche, triolets main droite.",
+    "batterie": "Shuffle rapide 167 bpm, ou rock'n'roll en croches droites. Caisse claire sèche, ride. Kit vintage."
+  },
+  "22": {
+    "orig": "Guns N' Roses : Slash sur Les Paul → Marshall, accordage un demi-ton plus bas. Original de Dylan.",
+    "arthur": "SG chevalet, accordée un demi-ton plus bas. SV20H 5 W : Vol 7, Tr 5, Mid 7, Bass 5, Prés 4. TS9 pour le solo.",
+    "seb": "Les Paul 60s, accordée un demi-ton plus bas. BJ : Vol 6, Master 4, Tr 5, Mid 7, Bass 5. BB Preamp gain 12 h, RC Booster pour le solo. Sinon, transpose le backing d'un demi-ton dans Moises.",
+    "tonex": "Les Paul 60s. « TSR - Silver J Chnl 2 Mid Gain » (Silver Jubilee, H). Repli : « TSR - Mars 800SL Chnl 1&2 OD » (H).",
+    "basse": "Precision médiator. Rumble : Gain 5, Bass 6, Low Mid 5, Treble 4. Accordage un demi-ton plus bas aussi.",
+    "clavier": "A6 (orgue gospel + cabine) très discret sur les refrains. À confirmer à l'écoute de la version jouée.",
+    "batterie": "Ballade rock 66 bpm, reggae sur le pont de la version GN'R. Kit rock."
+  },
+  "23": {
+    "orig": "Billy Gibbons : Les Paul « Pearly Gates » → Marshall, crunch avec harmoniques pincées. Boogie à la John Lee Hooker.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 6, Mid 7, Bass 5, Prés 5. TS9 drive 10 h pour le solo. Les harmoniques pincées viennent du pouce qui frôle la corde.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 12 h + AC Booster.",
+    "tonex": "« TSR - Reinguard T-36 - Brit Grit » (H), crunch Plexi. Repli : « TSR JTM River Drive » (H).",
+    "basse": "Precision médiator, boogie en croches pointées. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 4.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Shuffle boogie 162 bpm, charleston sur le contretemps dans l'intro, puis plein kit. Réglé en shuffle dans l'appli."
+  },
+  "24": {
+    "orig": "Tony Iommi : SG → Laney Supergroup, treble booster, saturation épaisse.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 8, Tr 6, Mid 6, Bass 6, Prés 5. TS9 drive 1 h, level 2 h. Palm mute sur le riff.",
+    "seb": "SG Ebony chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 6, Bass 6, Fat on. BB Preamp gain 2 h + AC Booster.",
+    "tonex": "« TSR Ironlung Crunch » (British Rock, H, capture d'un Laney Ironheart). Repli : « TSR - Mars 800SL Ch 1 Full Beans » (H).",
+    "basse": "Precision médiator, croches en mi. Rumble : Gain 6 (overdrive), Bass 6, Low Mid 6, Treble 5.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock rapide 163 bpm, charleston en croches. Kit rock 70s."
+  },
+  "25": {
+    "orig": "Beatles : Rickenbacker 12 cordes (Harrison) et Epiphone Casino (Lennon) sur Vox AC30.",
+    "arthur": "SG micro manche + chevalet, volume 7 (son clair qui sonne). SV20H 5 W : Vol 5, Tr 7, Mid 5, Bass 4, Prés 6. Keeley Comp pour l'effet carillon.",
+    "seb": "Pas de 12 cordes : Jazzmaster AM Vintage II 66 ou Tele 63, position milieu. BJ : Vol 4, Master 6, Tr 7, Mid 5, Bass 4. Keeley Comp sustain 11 h.",
+    "tonex": "« TSR CAT CUB Clean 1 » (Bad Cat Cub, H), clean classe A chimey. Repli : « ML VX30 '64 Clean » (ML Essentials, M).",
+    "basse": "Precision médiator. Rumble : Gain 4, Bass 5, Low Mid 5, Treble 5.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rythme claudicant de Ringo, 124 bpm : figure de toms et caisse claire décalée sur le riff. Kit vintage."
+  },
+  "26": {
+    "orig": "Queen et Bowie : ligne de basse culte, guitare de Brian May discrète (Red Special, AC30), piano.",
+    "arthur": "SG micro manche, volume 6. SV20H 5 W : Vol 5, Tr 6, Mid 6, Bass 4, Prés 5. Pour les accents saturés de la fin, volume guitare à 10.",
+    "seb": "Strat AM Vintage II 61, position 2. BJ : Vol 4, Master 6, Tr 6, Mid 6, Bass 5. AC Booster pour les montées.",
+    "tonex": "« TSR Socks DC30 - Clean ish » (British Chime, H). Montées saturées : « TSR Socks DC30 » (H). « Brian May » (preset isolé, B) : hypothèse, à valider à l'oreille.",
+    "basse": "Precision doigts, la ligne de John Deacon tient tout le morceau : régularité absolue. Rumble : Gain 4, Bass 6, Low Mid 6, High Mid 5, Treble 4.",
+    "clavier": "E2 (grand piano rock), accords en croches.",
+    "batterie": "Groove pop 113 bpm, caisse claire sur 2 et 4, entrée progressive. Kit pop-rock."
+  },
+  "27": {
+    "orig": "Joe Bonamassa : Les Paul → Marshall, hard blues-rock.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 8, Tr 6, Mid 7, Bass 5, Prés 5. TS9 drive 11 h, level 2 h.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 1 h + RC Booster en lead.",
+    "tonex": "« TSR - Silver J Chnl 2 Mid Gain » (Silver Jubilee, H). Repli : « TSR TWO ROK Bloom Drive » (H).",
+    "basse": "Precision médiator. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 5. Riff en ré mineur à l'unisson.",
+    "clavier": "D2 (Hammond blues) en nappe. Je ne suis pas sûr qu'il y ait de l'orgue sur le disque : écoute avant.",
+    "batterie": "Hard rock 94 bpm, gros backbeat lourd. Kit rock moderne."
+  },
+  "28": {
+    "orig": "Metallica : Gibson / ESP → Mesa Boogie, haut gain, palm mute.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 9, Tr 6, Mid 5, Bass 6, Prés 6. TS9 drive 9 h, level 3 h (le TS resserre le grave). Palm mute.",
+    "seb": "SG Ebony chevalet. BJ : Vol 7, Master 4, Tr 6, Mid 5, Bass 6, Fat on. BB Preamp gain 3 h + RC Booster. Le Blues Junior n'est pas fait pour ce gain : préfère la voie ToneX.",
+    "tonex": "SG Ebony. « TSR - Rectified - Vintage 1 » (Mesa Dual Rectifier, H). Repli : « TSR Friedman Full Beans 3 » (H).",
+    "basse": "Jazz Bass médiator. Rumble : Gain 6, Bass 6, Low Mid 5, High Mid 6, Treble 6, overdrive léger.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Metal mid-tempo 124 bpm, grosse caisse précise sur le riff. Kit rock moderne, gros son."
+  },
+  "29": {
+    "orig": "Billy Gibbons : Les Paul → Marshall, slide, shuffle boogie.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 6, Mid 7, Bass 5, Prés 5. TS9 drive 11 h pour le solo au slide. Slide au majeur.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 12 h, RC Booster pour le solo.",
+    "tonex": "« TSR JTM River Drive » (JTM, H), crunch rock 70s. Repli : « TSR - Reinguard T-36 - Brit Grit » (H).",
+    "basse": "Precision médiator, boogie shuffle. Rumble : Gain 5, Bass 5, Low Mid 6, Treble 4.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Shuffle 145 bpm, réglé en shuffle dans l'appli. Kit rock 70s."
+  },
+  "30": {
+    "orig": "Joe Satriani : guitare Ibanez, son clair, tapping à deux mains.",
+    "arthur": "SG micro manche, volume 6 pour rester clair. SV20H 5 W : Vol 4, Tr 6, Mid 5, Bass 4, Prés 5. Keeley Comp sustain 1 h pour égaliser le tapping.",
+    "seb": "Strat AM Pro II, micro manche. BJ : Vol 3, Master 7, Tr 6, Mid 5, Bass 4, reverb 3. Keeley Comp sustain 1 h, DD-8 en écho discret.",
+    "tonex": "Strat Pro II manche. « TSR - Fender Twin Clean » (H) + compresseur et reverb du Board. Repli : « TSR - JC - Bright Clean » (Jazz Chorus, H).",
+    "basse": "Pas de basse sur le disque.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Pas de batterie sur le disque."
+  },
+  "31": {
+    "orig": "Knopfler : National resonator (dobro), jeu aux doigts. Version studio 1980.",
+    "arthur": "Fender acoustique d'Arthur, ou SG micro manche en son clair (volume 5). SV20H 5 W : Vol 4, Tr 6, Mid 5, Bass 4. RV-6 room.",
+    "seb": "Pas de resonator : Martin 000-28, ou Tele AM Vintage II 63 chevalet en clair très brillant. BJ : Vol 3, Master 7, Tr 7, Mid 5, Bass 4, reverb 3. Keeley Comp.",
+    "tonex": "Tele 63. « TSR - Fender Twin Clean » (H). Repli : « TSR - JC - Medium Clean » (H).",
+    "basse": "Jazz Bass doigts, notes longues. Rumble : Gain 4, Bass 6, Low Mid 5, Treble 4.",
+    "clavier": "B3 (piano + Rhodes) très discret. Je ne suis pas sûr de la partie exacte du disque.",
+    "batterie": "Ballade 87 bpm, balais ou cross-stick. Kit vintage."
+  },
+  "32": {
+    "orig": "Supertramp : Wurlitzer de Rick Davies en moteur, guitare de Roger Hodgson en solo final.",
+    "arthur": "SG chevalet pour le solo final. SV20H 5 W : Vol 7, Tr 6, Mid 7, Bass 5, Prés 5. TS9 drive 11 h.",
+    "seb": "Les Paul 60s chevalet pour le solo. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 1 h. Couplets : Strat position 2 au clair si tu doubles le Wurlitzer.",
+    "tonex": "« TSR - Mars SLT60 - Drive 1 » (H) pour le solo. Couplets : « TSR - Fender Twin Clean » (H).",
+    "basse": "Precision doigts. Rumble : Gain 4, Bass 6, Low Mid 5, High Mid 5, Treble 4.",
+    "clavier": "C4 (Wurlitzer) sur les couplets, C5 (Hammond | Wurly) sur les refrains. Pense à régler le point de split de C5.",
+    "batterie": "Pop-rock 126 bpm, charleston très régulier en croches. Kit pop 70s."
+  },
+  "33": {
+    "orig": "Knopfler : Strat (ou guitare Schecter type Strat), son clair légèrement compressé. Nappes de synthé.",
+    "arthur": "SG micro manche, volume 6. SV20H 5 W : Vol 5, Tr 6, Mid 6, Bass 4, Prés 5. Keeley Comp + RV-6 légère.",
+    "seb": "Strat AM Vintage II 61, position 4. BJ : Vol 4, Master 6, Tr 6, Mid 6, Bass 4, reverb 3. Keeley Comp sustain 11 h, DD-8 discret. Doigts, comme Knopfler.",
+    "tonex": "Strat 61 position 4. « TSR - Dlux Verb II - Warm Rhythm » (M). Repli : « TSR - Fender Twin Clean » (H).",
+    "basse": "Precision doigts. Rumble : Gain 4, Bass 6, Low Mid 5, High Mid 4, Treble 4. Notes longues.",
+    "clavier": "E6 (nappe années 80).",
+    "batterie": "Mid-tempo 114 bpm, grosse caisse et caisse claire avec reverb 80s. Kit pop 80s."
+  },
+  "34": {
+    "orig": "Toto : Steve Lukather (guitare type Les Paul → Marshall), piano percussif de David Paich, cuivres synthé.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 6, Mid 7, Bass 5, Prés 5. SD-1 gain 11 h sur les refrains, TS9 pour le solo.",
+    "seb": "Les Paul 60s chevalet. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 12 h, RC Booster pour le solo.",
+    "tonex": "« TSR - Silver J - Rhythm Clip » (H) pour les accords. Solo : « TSR - Silver J Chnl 2 Mid Gain » (H).",
+    "basse": "Precision médiator, croches serrées. Rumble : Gain 5, Bass 5, Low Mid 5, High Mid 5, Treble 5.",
+    "clavier": "C2 (piano percussif) sur les couplets et le riff, C3 (piano + cuivres synthé) sur les refrains.",
+    "batterie": "Shuffle droit (half-time shuffle) de Jeff Porcaro, 95 bpm : charleston en ternaire, notes fantômes à la caisse claire. Le cœur du morceau."
+  },
+  "35": {
+    "orig": "Michael Jackson (Off the Wall) : guitare funk claire très compressée, Rhodes, synthé lead.",
+    "arthur": "SG micro chevalet, volume 7. SV20H 5 W : Vol 4, Tr 7, Mid 5, Bass 3, Prés 6. Keeley Comp sustain 1 h. Grattage funk en double croches étouffées.",
+    "seb": "Strat AM Pro II, position 4. BJ : Vol 3, Master 7, Tr 7, Mid 5, Bass 3, Fat off. Keeley Comp sustain 1 h, attack 9 h.",
+    "tonex": "Strat Pro II position 4. « TSR - Fender Twin Clean » (H) + compresseur du Board. Repli : « TSR - JC - Bright Clean » (H).",
+    "basse": "Jazz Bass doigts, groove disco. Rumble : Gain 4, Bass 6, Low Mid 4, High Mid 5, Treble 5, Bright on.",
+    "clavier": "C1 (Rhodes | lead Sine). Pense à régler le point de split de C1.",
+    "batterie": "Disco 115 bpm : grosse caisse sur tous les temps, charleston ouvert sur le contretemps. Kit funk/disco sec."
+  },
+  "36": {
+    "orig": "Axel Bauer : Stratocaster, rock funky saturé, riff très rythmique. Synthés 80s.",
+    "arthur": "SG chevalet. SV20H 5 W : Vol 7, Tr 7, Mid 6, Bass 4, Prés 6. SD-1 gain 11 h. Riff en double croches.",
+    "seb": "Strat AM Pro II, chevalet. BJ : Vol 5, Master 4, Tr 7, Mid 7, Bass 4. AC Booster gain 12 h + BB Preamp pour le solo.",
+    "tonex": "Strat chevalet. « TSR - Super S Low Burn » (Super-Sonic, H). Repli : « TSR - Silver J - Rhythm Clip » (H).",
+    "basse": "Precision médiator, croches. Rumble : Gain 5, Bass 5, Low Mid 5, High Mid 6, Treble 5.",
+    "clavier": "E7 (cuivres synthé) ou B8 (lead synthé) pour les parties synthé. Je ne connais pas précisément l'arrangement du disque.",
+    "batterie": "Rock 80s 146 bpm, caisse claire avec gros reverb. Kit 80s."
+  },
+  "40": {
+    "orig": "Hendrix : Stratocaster → Marshall, Fuzz Face, wah Vox, accordage un demi-ton plus bas.",
+    "arthur": "SG chevalet, accordée un demi-ton plus bas. SV20H 5 W : Vol 8, Tr 6, Mid 7, Bass 5, Prés 5. Wah V847 pour l'intro, TS9 drive 1 h pour le riff.",
+    "seb": "Strat AM Vintage II 61 chevalet, accordée un demi-ton plus bas. BJ : Vol 6, Master 4, Tr 6, Mid 7, Bass 5. BB Preamp gain 2 h + RC Booster. Wah : emprunte celle d'Arthur.",
+    "tonex": "Strat 61. « TSR Buxom Betty Fuzzface » (Ample Betty, H, Fuzz Face signature Hendrix). Repli : « TSR - Jimi H 20 - Drive 2 » (H). Pas de vraie wah sur le Board.",
+    "basse": "Precision médiator, accordage un demi-ton plus bas. Rumble : Gain 6, Bass 6, Low Mid 6, Treble 4.",
+    "clavier": "Pas de clavier.",
+    "batterie": "Rock 88 bpm façon Mitch Mitchell : beaucoup de roulements et de cymbales, jeu libre. Kit vintage."
+  }
+}
