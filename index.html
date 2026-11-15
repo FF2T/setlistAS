@@ -365,6 +365,7 @@ const fireStore = {
   async writeAll(space, all){ for(const [k,v] of Object.entries(all)) await setDoc(doc(db, space, k), {value:v}); },
   async deleteLegacy(keys){ for(const k of keys) await deleteDoc(doc(db, LEGACY, k)); },
   async set(k, v){ await setDoc(doc(db, SPACE, k), {value:v}); },
+  async removeIn(space, k){ await deleteDoc(doc(db, space, k)); },
   async remove(k){ await deleteDoc(doc(db, SPACE, k)); },
   async mutate(k, fn){
     return runTransaction(db, async tx => {
@@ -399,6 +400,7 @@ const demoStore = {
   async writeAll(space, all){ for(const [k,v] of Object.entries(all)) localStorage.setItem(demoKey(space,k), JSON.stringify(v)); },
   async deleteLegacy(keys){ keys.forEach(k => localStorage.removeItem('demo:'+k)); },
   async set(k, v){ localStorage.setItem(demoKey(SPACE,k), JSON.stringify(v)); demoNotify(); },
+  async removeIn(space, k){ localStorage.removeItem(demoKey(space,k)); },
   async remove(k){ localStorage.removeItem(demoKey(SPACE,k)); demoNotify(); },
   async mutate(k, fn){
     const cur = localStorage.getItem(demoKey(SPACE,k));
@@ -462,6 +464,7 @@ let gigs = {};
 let backups = [];
 let meta = null;
 let firstSnapshot = true;
+let changingPassword = false;
 
 // Écriture sûre : relit la dernière version, applique la modification, réessaie en cas d'échec.
 async function save(key, fn){
@@ -503,6 +506,14 @@ function applyAll(all){
 async function start(){
   document.getElementById('app').innerHTML = '<div class="loading">Chargement…</div>';
   store.subscribe(all => {
+    if(changingPassword) return;
+    if(!all.meta){
+      // Espace vide : le mot de passe a été changé sur un autre appareil.
+      if(lsGet('setlistas-space')===SPACE) lsSet('setlistas-space', null);
+      try{ if(sessionStorage.getItem('setlistas-space')===SPACE) sessionStorage.removeItem('setlistas-space'); }catch(e){}
+      SPACE = null; gate = {step:'login', error:'Le mot de passe a été changé. Entre le nouveau.'}; renderGate();
+      return;
+    }
     applyAll(all);
     if(firstSnapshot){
       firstSnapshot = false;
@@ -2094,6 +2105,14 @@ service cloud.firestore {
     <h2 class="section-title">Cet appareil</h2>
     <p class="lede">Le mot de passe est mémorisé ici${lsGet('setlistas-space') ? '' : ' pour cette session seulement'}.</p>
     <button class="btn-ghost" id="forget-device">Oublier le mot de passe sur cet appareil</button>
+    <h2 class="section-title">Changer le mot de passe</h2>
+    <p class="lede">Les données passent sous le nouveau mot de passe. Les autres appareils devront le saisir à leur prochaine ouverture.</p>
+    <form id="pw-change" class="form-grid" autocomplete="on">
+      <input type="text" name="username" value="setlistas" autocomplete="username" hidden>
+      <label class="field"><span>Nouveau mot de passe</span><input type="password" id="pw-new" autocomplete="new-password" minlength="6" required></label>
+      <label class="field"><span>Confirmation</span><input type="password" id="pw-new2" autocomplete="new-password" minlength="6" required></label>
+      <div class="field wide"><div class="row"><button class="btn" type="submit">Changer le mot de passe</button><span id="pw-msg" class="hint" role="status"></span></div></div>
+    </form>
     <details class="tech">
       <summary>Règles Firebase définitives</summary>
       <p>Les données sont rangées sous un nom dérivé du mot de passe, impossible à deviner ou à lister. Une fois que tous les appareils utilisent cette version, tu peux fermer l'ancien emplacement en publiant ces règles dans la console Firebase (Firestore, onglet Règles).</p>
@@ -2118,6 +2137,31 @@ function attachSettingsEvents(){
     const blob = new Blob([JSON.stringify(snapshotOf(lastAll), null, 2)], {type:'application/json'});
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'setlistas-' + todayStr() + '.json';
     document.body.appendChild(a); a.click(); a.remove();
+  };
+  const pf = document.getElementById('pw-change');
+  if(pf) pf.onsubmit = async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('pw-msg'), btn = pf.querySelector('button');
+    const a = document.getElementById('pw-new').value.trim(), b = document.getElementById('pw-new2').value.trim();
+    if(a.length < 6){ msg.textContent = 'Au moins 6 caractères.'; return; }
+    if(a !== b){ msg.textContent = 'Les deux saisies ne correspondent pas.'; return; }
+    const newSpace = await deriveSpace(a), oldSpace = SPACE;
+    if(newSpace === oldSpace){ msg.textContent = 'C\u2019est déjà le mot de passe actuel.'; return; }
+    if(await store.getMeta(newSpace)){ msg.textContent = 'Ce mot de passe est déjà utilisé par un autre espace.'; return; }
+    btn.disabled = true; msg.textContent = 'Transfert en cours…'; changingPassword = true;
+    try{
+      const all = clone(lastAll);
+      await store.writeAll(newSpace, {...all, meta:{...(all.meta||{}), passwordChangedAt:new Date().toISOString()}});
+      const remember = !!lsGet('setlistas-space');
+      // L'ancien espace est vidé ; la méta en dernier, pour que les autres appareils basculent proprement.
+      for(const k of Object.keys(all)) if(k!=='meta') await store.removeIn(oldSpace, k);
+      await store.removeIn(oldSpace, 'meta');
+      if(remember) lsSet('setlistas-space', newSpace); else { try{ sessionStorage.setItem('setlistas-space', newSpace); }catch(e){} }
+      location.reload();
+    }catch(err){
+      console.warn(err); btn.disabled = false; changingPassword = false;
+      msg.textContent = 'Échec du changement. Rien n\u2019a été perdu : réessaie.';
+    }
   };
   const fg = document.getElementById('forget-device'); if(fg) fg.onclick = () => {
     if(!confirm('Oublier le mot de passe ? Il faudra le ressaisir sur cet appareil.')) return;
