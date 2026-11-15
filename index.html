@@ -229,6 +229,8 @@
   .tp-bpm{display:flex;align-items:baseline;gap:3px;min-width:70px;justify-content:center;}
   .tp-bpm output{font-stretch:70%;font-weight:800;font-size:1.7rem;}
   .tp-bpm small{color:var(--ink-dim);font-size:.75rem;}
+  .tp-feel{background:none;border:1px solid var(--rule);border-radius:var(--r-s);padding:8px 10px;color:var(--ink-dim);cursor:pointer;min-width:70px;}
+  .seg.duration{margin:0 0 6px;}
   .tp-click{background:var(--panel-2);border:0;border-radius:var(--r-s);padding:9px 12px;color:var(--ink);cursor:pointer;font-weight:600;}
   .tp-click.on{background:var(--amber);color:var(--amber-ink);}
   .tp-finish{white-space:nowrap;}
@@ -334,6 +336,11 @@
   .toast h2{font-size:1.9rem;margin-bottom:4px;}
   .toast .xp{color:var(--amber);font-stretch:75%;font-weight:800;font-size:1.4rem;margin-bottom:10px;}
   .toast .badge{background:var(--panel-2);margin:8px 0;}
+  .parts{display:flex;flex-direction:column;gap:14px;margin-top:16px;}
+  .part{padding:12px 14px;background:var(--console);border-radius:var(--r-m);}
+  .part-head{display:flex;align-items:center;gap:8px;font-size:1.05rem;}
+  .promote{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:6px;}
+  .promote p{margin:0 0 4px;color:var(--ink-dim);font-size:.9rem;}
   @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
   @media (prefers-reduced-motion: reduce){ *{animation:none !important;transition:none !important;} }
 
@@ -487,7 +494,12 @@ let timerInterval = null;
 let toast = null;
 let recDraft = {songId:null, ins:[]};
 let activeStep = 'warm';
-const STEP_DEF = {warm:{title:'Échauffement',min:5}, prio:{title:'Objectif prioritaire',min:15}, second:{title:'Deuxième morceau',min:7}, free:{title:'Jeu libre',min:0}, rec:{title:'Enregistrement',min:0}};
+let shortMode = lsGet('setlistas-short')==='1';
+const STEP_TITLES = {warm:'Échauffement', prio:'Objectif prioritaire', second:'Deuxième morceau', free:'Jeu libre', rec:'Enregistrement'};
+function stepOrder(){ return shortMode ? ['warm','prio','free'] : ['warm','prio','second','free']; }
+function stepMin(id){ return (shortMode ? {warm:3, prio:10} : {warm:5, prio:15, second:7})[id] || 0; }
+let duo = (()=>{ try{ return JSON.parse(lsGet('setlistas-duo')); }catch(e){ return null; } })();
+function saveDuo(){ lsSet('setlistas-duo', duo ? JSON.stringify(duo) : null); }
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -620,7 +632,7 @@ function renderRepertoire(){
       if(names.length===0) return '';
       return `<span class="tag ${ins.cls}"><span class="dot"></span>${ins.abbr} <span class="names">${names.join(', ')}</span></span>`;
     }).join('');
-    const extra = [song.key, song.duration].filter(Boolean).map(escapeHtml).join(', ');
+    const extra = [song.key, song.duration, song.bpm ? song.bpm+' bpm' : '', song.feel==='shuffle' ? 'shuffle' : ''].filter(Boolean).map(escapeHtml).join(', ');
     return `<div class="song-card">
       <div class="song-top">
         <div><span class="song-title">${escapeHtml(song.title)}</span>${groupByArtist ? '' : ` <span class="song-artist">${escapeHtml(song.artist)}</span>`}${extra ? ` <span class="song-extra">${extra}</span>` : ''}</div>
@@ -848,7 +860,7 @@ const ONCE = [
   {id:'precise', ico:'✍️', name:'Objectifs clairs', desc:'Au moins 2 morceaux en cours, tous avec un objectif précis'},
 ];
 const ALL_BADGES_COUNT = TIERED.length + REPEAT.length + ONCE.length;
-const XP = {session:10, progress:15, reached:30, mastered:60, tier:10, once:10, record:15, teacher:15};
+const XP = {session:10, progress:15, reached:30, mastered:60, tier:10, once:10, record:15, teacher:15, duo:10};
 
 // Même défi pour Seb et Arthur, il change chaque lundi.
 const CHALLENGES = [
@@ -865,7 +877,7 @@ function weekChallenge(day=todayStr()){
 }
 function challengeProgress(mid){
   const wk = weekKey(todayStr()), ch = weekChallenge();
-  const ws = (progress[mid]?.sessions||[]).filter(s => weekKey(s.date)===wk);
+  const ws = (progress[mid]?.sessions||[]).filter(s => weekKey(s.date)===wk && !s.capped);
   return {ch, cur: Math.min(ch.cur(ws), ch.goal), done: !!(progress[mid]?.challenges||{})[wk]};
 }
 
@@ -907,7 +919,8 @@ function weekStreakMax(mid){
   return best;
 }
 function stats(mid){
-  const p = progress[mid] || emptyProgress();
+  const p0 = progress[mid] || emptyProgress();
+  const p = {...p0, sessions: p0.sessions.filter(x => !x.capped)};
   const results = p.sessions.flatMap(s=>s.items||[]);
   const perWeek = {};
   p.sessions.forEach(s => { const k=weekKey(s.date); perWeek[k]=(perWeek[k]||0)+1; });
@@ -1106,9 +1119,9 @@ function renderStudio(){
       </div>
     </div>
     <nav class="subtabs" aria-label="Studio">
-      ${[['seance','Séance du jour'],['morceaux','Mes morceaux'],['badges','Badges'],['groupe','Le groupe']].map(([k,l])=>`<button class="subtab ${studioView===k?'active':''}" data-sv="${k}">${l}</button>`).join('')}
+      ${[['seance','Séance du jour'],['duo','À deux'],['morceaux','Mes morceaux'],['badges','Badges'],['groupe','Le groupe']].map(([k,l])=>`<button class="subtab ${studioView===k?'active':''}" data-sv="${k}">${l}</button>`).join('')}
     </nav>`;
-  const body = studioView==='morceaux' ? renderMyItems() : studioView==='badges' ? renderBadges() : studioView==='groupe' ? renderGroup() : renderSeance();
+  const body = studioView==='morceaux' ? renderMyItems() : studioView==='badges' ? renderBadges() : studioView==='groupe' ? renderGroup() : studioView==='duo' ? renderDuo() : renderSeance();
   return head + body;
 }
 
@@ -1174,8 +1187,7 @@ function renderSeance(){
   const pr = plan.priority, song = songById(pr.songId);
   if(metro.key !== pr.key && !metro.running){
     const last = pr.tempoLog?.length ? pr.tempoLog[pr.tempoLog.length-1].bpm : null;
-    metro.bpm = last || (pr.tempoTarget ? Math.round(pr.tempoTarget*0.75/5)*5 : 80);
-    metro.key = pr.key;
+    metroPrepare(pr.key, last, pr.tempoTarget || song.bpm, song.feel);
   }
   const swapSel = swapOpen && plan.wip.length>1 ? `<select id="swap-select" aria-label="Morceau prioritaire">${plan.wip.map(i=>`<option value="${i.key}" ${i.key===pr.key?'selected':''}>${escapeHtml(songById(i.songId).title)} (${i.ins})</option>`).join('')}</select>` : '';
   const done = new Set(s?.doneSteps||[]);
@@ -1226,57 +1238,77 @@ function renderSeance(){
       <button class="btn-ghost" id="rec-add" ${recDraft.ins.length?'':'disabled'}>Noter l'enregistrement</button>
       ${(s?.recordings||[]).length ? `<ul class="rec-list">${s.recordings.map((r,idx)=>`<li><span>${escapeHtml(songById(r.songId)?.title||'?')} : ${r.ins.join(' + ')}</span><button class="x-btn" data-recdel="${idx}" aria-label="Retirer">✕</button></li>`).join('')}</ul>` : ''}`;
 
-  const order = ['warm','prio','second','free'];
-  const idx = Math.max(0, order.indexOf(activeStep));
-  const cur = STEP_DEF[activeStep] || STEP_DEF.warm;
-  const tLeft = timer.step===activeStep ? (timer.endAt ? (timer.endAt-Date.now())/1000 : timer.remaining) : (cur.min*60);
-  const running = timer.step===activeStep && !!timer.endAt;
-  const transport = `<div class="transport" role="region" aria-label="Transport">
-    <div class="tp-step"><span class="tp-idx">${activeStep==='rec' ? 'Bonus' : `Étape ${idx+1} sur 4`}</span><span class="tp-name">${cur.title}</span></div>
-    <div class="tp-main">
-      <button class="tp-btn" data-nav="-1" ${idx===0&&activeStep!=='rec'?'disabled':''} aria-label="Étape précédente">⏮</button>
-      ${cur.min ? `<button class="tp-play ${running?'on':''}" data-timer="${activeStep}" data-min="${cur.min}" aria-label="${running?'Pause':'Lancer le minuteur'}">${running?'❚❚':'▶'}</button>
-      <output class="tp-time ${running?'on':''}" id="transport-time">${fmtTime(tLeft)}</output>` : `<output class="tp-time idle">--:--</output>`}
-      <button class="tp-btn" data-nav="1" ${idx===3?'disabled':''} aria-label="Étape suivante">⏭</button>
-    </div>
-    <div class="tp-metro" aria-label="Métronome">
-      <button class="tp-btn small" data-metro="-5" aria-label="Moins 5 bpm">−</button>
-      <span class="tp-bpm"><output id="metro-bpm">${metro.bpm}</output><small>bpm</small></span>
-      <button class="tp-btn small" data-metro="5" aria-label="Plus 5 bpm">+</button>
-      <button class="tp-click ${metro.running?'on':''}" id="metro-toggle" aria-pressed="${metro.running}">${metro.running?'Stop':'Clic'}</button>
-      <span id="metro-dot" class="metro-dot" aria-hidden="true"></span>
-    </div>
-    <button class="btn tp-finish" id="finish-session" ${canFinish?'':'disabled'} title="${canFinish?'':'Note au moins un bilan ou un enregistrement'}">Terminer</button>
-  </div>`;
+  const transport = transportBar(canFinish, 'finish-session');
+  const num = id => stepOrder().indexOf(id)+1;
   return `
     ${challengeCard}
-    ${lastToday ? `<p class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</p>` : ''}
+    ${durationSwitch()}
+    ${lastToday >= DAILY_REWARDED ? `<p class="note">Déjà ${lastToday} séances aujourd'hui : une nouvelle sera enregistrée, mais ne rapportera pas de points.</p>` : lastToday ? `<p class="note">Déjà ${lastToday} séance aujourd'hui. Tu peux en refaire une.</p>` : ''}
     <div class="track">
-    ${step(1,'warm',5,'Échauffement',`<p class="step-body big">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`, '', escapeHtml(pr.ins.toLowerCase()))}
-    ${step(2,'prio',15,'Objectif prioritaire',`
+    ${step(1,'warm',stepMin('warm'),'Échauffement',`<p class="step-body big">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`, '', escapeHtml(pr.ins.toLowerCase()))}
+    ${step(2,'prio',stepMin('prio'),'Objectif prioritaire',`
       ${songHead(song, pr)}${objBox(pr)}${songLinks(song)}
       <p class="step-body">${METHOD[pr.ins]||METHOD.Guitare}</p>
       <p class="hint">${sinceLabel(pr.lastWorked)[0].toUpperCase()+sinceLabel(pr.lastWorked).slice(1)}.${plan.wip.length>1 ? ` <button class="link-btn" id="swap-link">Travailler un autre morceau</button>` : ''}</p>
       ${swapSel}
       ${resultBtns(pr)}`,'prio', sum(song))}
-    ${step(3,'second',7, plan.second ? 'Deuxième morceau' : 'Morceau du répertoire', secondInner, '', sum(plan.second ? songById(plan.second.songId) : plan.review?.song))}
-    ${step(4,'free',0,'Jeu libre',`<p class="step-body big">Joue ce que tu veux, c'est la récompense. Pense à terminer la séance pour compter tes points.</p>`)}
+    ${shortMode ? '' : step(3,'second',stepMin('second'), plan.second ? 'Deuxième morceau' : 'Morceau du répertoire', secondInner, '', sum(plan.second ? songById(plan.second.songId) : plan.review?.song))}
+    ${step(num('free'),'free',0,'Jeu libre',`<p class="step-body big">Joue ce que tu veux, c'est la récompense. Pense à terminer la séance pour compter tes points.</p>`)}
     ${step('+','rec',0,'Enregistrement, en bonus', recInner, 'bonus', (s?.recordings||[]).length ? `${s.recordings.length} noté${s.recordings.length>1?'s':''}` : '')}
     </div>
     ${transport}
   `;
 }
 
+function durationSwitch(){
+  return `<div class="seg duration" role="group" aria-label="Durée de la séance">
+    <button class="seg-btn ${shortMode?'':'on'}" data-short="0">Séance complète, 30 min</button>
+    <button class="seg-btn ${shortMode?'on':''}" data-short="1">Séance courte, 15 min</button></div>`;
+}
+function transportBar(canFinish, finishId, titles=STEP_TITLES){
+  const order = stepOrder();
+  const idx = Math.max(0, order.indexOf(activeStep));
+  const min = stepMin(activeStep);
+  const tLeft = timer.step===activeStep ? (timer.endAt ? (timer.endAt-Date.now())/1000 : timer.remaining) : (min*60);
+  const running = timer.step===activeStep && !!timer.endAt;
+  return `<div class="transport" role="region" aria-label="Transport">
+    <div class="tp-step"><span class="tp-idx">${activeStep==='rec' ? 'Bonus' : `Étape ${idx+1} sur ${order.length}`}</span><span class="tp-name">${titles[activeStep]||''}</span></div>
+    <div class="tp-main">
+      <button class="tp-btn" data-nav="-1" ${idx===0&&activeStep!=='rec'?'disabled':''} aria-label="Étape précédente">⏮</button>
+      ${min ? `<button class="tp-play ${running?'on':''}" data-timer="${activeStep}" data-min="${min}" aria-label="${running?'Pause':'Lancer le minuteur'}">${running?'❚❚':'▶'}</button>
+      <output class="tp-time ${running?'on':''}" id="transport-time">${fmtTime(tLeft)}</output>` : `<output class="tp-time idle">--:--</output>`}
+      <button class="tp-btn" data-nav="1" ${idx===order.length-1?'disabled':''} aria-label="Étape suivante">⏭</button>
+    </div>
+    <div class="tp-metro" aria-label="Métronome">
+      <button class="tp-btn small" data-metro="-5" aria-label="Moins 5 bpm">−</button>
+      <span class="tp-bpm"><output id="metro-bpm">${metro.bpm}</output><small>bpm</small></span>
+      <button class="tp-btn small" data-metro="5" aria-label="Plus 5 bpm">+</button>
+      <button class="tp-feel" id="metro-feel" aria-label="Rythme du clic">${metro.feel==='shuffle'?'Shuffle':'Droit'}</button>
+      <button class="tp-click ${metro.running?'on':''}" id="metro-toggle" aria-pressed="${metro.running}">${metro.running?'Stop':'Clic'}</button>
+      <span id="metro-dot" class="metro-dot" aria-hidden="true"></span>
+    </div>
+    <button class="btn tp-finish" id="${finishId}" ${canFinish?'':'disabled'} title="${canFinish?'':'Note au moins un bilan'}">Terminer</button>
+  </div>`;
+}
+// Tempo de départ : dernier tempo noté, sinon 75 % du tempo cible ou original.
+function metroPrepare(key, last, target, feel){
+  if(metro.running || metro.key===key) return;
+  metro.bpm = last || (target ? Math.max(40, Math.round(target*0.75/5)*5) : 80);
+  metro.feel = feel==='shuffle' ? 'shuffle' : 'straight';
+  metro.key = key;
+}
+
 // ---------- Métronome ----------
-const metro = {running:false, bpm:80, ctx:null, next:0, beat:0, timer:null, key:null, usedKey:null};
-function metroClick(time, accent){
+const metro = {running:false, bpm:80, feel:'straight', ctx:null, next:0, beat:0, timer:null, key:null, usedKey:null};
+function metroClick(time, accent, soft){
   const c = metro.ctx, o = c.createOscillator(), g = c.createGain();
-  o.frequency.value = accent ? 1600 : 1050;
+  o.frequency.value = soft ? 800 : accent ? 1600 : 1050;
   g.gain.setValueAtTime(0.0001, time);
-  g.gain.exponentialRampToValueAtTime(accent ? 0.5 : 0.3, time + 0.002);
+  g.gain.exponentialRampToValueAtTime(soft ? 0.12 : accent ? 0.5 : 0.3, time + 0.002);
   g.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
   o.connect(g); g.connect(c.destination); o.start(time); o.stop(time + 0.06);
   const delay = Math.max(0, (time - c.currentTime) * 1000);
+  if(soft) return;
   setTimeout(() => {
     const d = document.getElementById('metro-dot'); if(!d) return;
     d.classList.toggle('accent', accent); d.classList.remove('tick'); void d.offsetWidth; d.classList.add('tick');
@@ -1284,8 +1316,10 @@ function metroClick(time, accent){
 }
 function metroSchedule(){
   while(metro.next < metro.ctx.currentTime + 0.12){
+    const beat = 60 / metro.bpm;
     metroClick(metro.next, metro.beat % 4 === 0);
-    metro.next += 60 / metro.bpm; metro.beat++;
+    if(metro.feel==='shuffle') metroClick(metro.next + beat*2/3, false, true);   // croche ternaire
+    metro.next += beat; metro.beat++;
   }
 }
 function metroStart(){
@@ -1323,8 +1357,9 @@ function sparkline(log, target){
 }
 function tempoLabel(it){
   const last = it.tempoLog?.length ? it.tempoLog[it.tempoLog.length-1].bpm : null;
-  if(!last && !it.tempoTarget) return '';
-  return `<span class="tempo-badge">♩ ${last ?? '–'}${it.tempoTarget ? ` / ${it.tempoTarget}` : ''} bpm</span>`;
+  const target = it.tempoTarget || songById(it.songId)?.bpm;
+  if(!last && !target) return '';
+  return `<span class="tempo-badge">♩ ${last ?? '–'}${target ? ` / ${target}` : ''} bpm</span>`;
 }
 function songLinks(song){
   if(!song) return '';
@@ -1351,7 +1386,7 @@ function renderItems(mid, teacher){
       </div>
       ${it.status!=='done' ? `<div class="item-edit">
         <label class="field grow"><span>Objectif ${objectiveAuthor(it, mid)}</span><input type="text" class="obj-input" data-mid="${mid}" data-key="${it.key}" placeholder="Un passage et un tempo, ex. solo mesures 9 à 16 à 90 bpm" value="${escapeAttr(it.objective||'')}"></label>
-        <label class="field"><span>Tempo cible</span><input type="number" inputmode="numeric" min="30" max="260" class="tempo-input" data-mid="${mid}" data-key="${it.key}" placeholder="bpm" value="${it.tempoTarget||''}"></label>
+        <label class="field"><span>Tempo cible</span><input type="number" inputmode="numeric" min="30" max="260" class="tempo-input" data-mid="${mid}" data-key="${it.key}" placeholder="${songById(it.songId)?.bpm ? 'orig. '+songById(it.songId).bpm : 'bpm'}" value="${it.tempoTarget||''}"></label>
       </div>` : ''}
     </div>`;
   };
@@ -1432,10 +1467,11 @@ function renderToast(){
   if(!toast) return '';
   return `<div class="toast-back"><div class="toast">
     <h2>${toast.title}</h2>
-    <div class="xp">+${toast.xp} XP${toast.levelUp ? ` · niveau ${toast.levelUp} atteint !` : ''}</div>
+    ${toast.xp!=null ? `<div class="xp">+${toast.xp} XP` : '<div class="xp">'}${toast.levelUp ? ` · niveau ${toast.levelUp} atteint !` : ''}</div>
     ${toast.msg ? `<p style="color:var(--ink-dim);font-size:0.9rem;margin:0 0 12px">${toast.msg}</p>` : ''}
     ${toast.badges.map(b=>`<div class="badge earned"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${b.desc}</div></div>`).join('')}
     ${toast.next ? `<p style="color:var(--ink-dim);font-size:0.8rem;margin:12px 0 0">Prochain palier : ${toast.next}</p>` : ''}
+    ${(toast.promote||[]).length ? `<div class="promote"><p>Un morceau se libère. Passer en cours :</p>${toast.promote.map(o=>`<button class="btn-ghost" data-promote="${o.mid}|${escapeAttr(o.key)}">${escapeHtml(o.label)}</button>`).join('')}</div>` : ''}
     <button class="btn" id="toast-ok" style="margin-top:14px">${toast.cta||'Continuer'}</button>
   </div></div>`;
 }
@@ -1468,21 +1504,21 @@ function addMastery(mid, songId, ins){
   save('mastery:'+mid, m => { m = m || {}; const a = m[String(songId)] || []; if(!a.includes(ins)) a.push(ins); m[String(songId)] = a; return m; });
 }
 
-function finishSession(){
-  const s = currentSession(); if(!s) return;
-  const who = s.who, today = todayStr();
-  const worked = Object.entries(s.results).filter(([k,r]) => (r==='reached'||r==='progress') && progress[who]?.items[k]);
+// Applique une séance (solo ou duo) à la progression d'un musicien. Renvoie le bilan.
+const DAILY_REWARDED = 2;
+function applySession(who, s, ts, opts={}){
+  const today = todayStr();
+  const worked = Object.entries(s.results||{}).filter(([k,r]) => (r==='reached'||r==='progress') && progress[who]?.items[k]);
   const recs = (s.recordings||[]).filter(r => songById(r.songId) && r.ins.length);
-  if(!worked.length && !recs.length) return;
-  const ts = new Date().toISOString();
-  const levelBefore = levelOf(progress[who].xp||0);
-  const res = updateProgress(who, p => {
+  if(!worked.length && !recs.length) return null;
+  return updateProgress(who, p => {
     if(p.sessions.some(x => x.ts===ts)) return null;   // déjà appliquée
     const xpBefore = p.xp||0;
+    // Au-delà de deux séances dans la journée : enregistrée, mais sans points ni statistiques.
+    const capped = p.sessions.filter(x => x.date===today && !x.capped).length >= DAILY_REWARDED;
     const prevDays = [...new Set(p.sessions.map(x=>x.date))].filter(d => d!==today).sort();
-    const comeback = prevDays.length && daysBetween(prevDays[prevDays.length-1], today) >= 7;
-    let xp = XP.session; const msgs = []; const mastered = [];
-    // Enregistrements : multiplicateur = nombre d'instruments réunis sur le morceau (tous musiciens).
+    const comeback = !capped && prevDays.length && daysBetween(prevDays[prevDays.length-1], today) >= 7;
+    let xp = XP.session + (opts.duo ? XP.duo : 0); const msgs = []; const mastered = [];
     const known = recordedBySong(); let bestMult = 1;
     recs.forEach(r => {
       const set = new Set(known[r.songId] || []);
@@ -1491,14 +1527,15 @@ function finishSession(){
     });
     worked.forEach(([k,r]) => {
       const it = p.items[k]; if(!it) return;
-      if(it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
+      if(!capped && it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
       it.lastWorked = today;
       it.workedCount = (it.workedCount||0)+1;
       const bpm = Number(s.tempos?.[k]);
       if(bpm > 0){
         it.tempoLog = [...(it.tempoLog||[]), {date:today, bpm}].slice(-60);
-        if(it.tempoBest && bpm > it.tempoBest){ p.tempoRecords = (p.tempoRecords||0)+1; msgs.push(`🚀 Record de tempo sur ${songById(it.songId).title} : ${bpm} bpm.`); }
-        if(it.tempoTarget && bpm >= it.tempoTarget && !(it.tempoBest >= it.tempoTarget)) msgs.push(`Tempo cible atteint sur ${songById(it.songId).title} !`);
+        if(!capped && it.tempoBest && bpm > it.tempoBest){ p.tempoRecords = (p.tempoRecords||0)+1; msgs.push(`🚀 Record de tempo sur ${songById(it.songId).title} : ${bpm} bpm.`); }
+        const target = it.tempoTarget || songById(it.songId)?.bpm;
+        if(target && bpm >= target && !(it.tempoBest >= target)) msgs.push(`Tempo cible atteint sur ${songById(it.songId).title} !`);
         it.tempoBest = Math.max(it.tempoBest||0, bpm);
       }
       if(r==='reached'){
@@ -1506,32 +1543,50 @@ function finishSession(){
         if(it.objectiveBy && it.objectiveBy !== who){ xp += XP.teacher; msgs.push(`🎓 Objectif de ${nameById(it.objectiveBy)} atteint : +${XP.teacher} XP bonus.`); }
         it.reachedCount = (it.reachedCount||0)+1;
         it.lastReached = it.objective || '';
-        if(s.mastered[k]){ it.status = 'done'; it.masteredAt = today; xp += XP.mastered; mastered.push(it); }
-        else { it.objective = (s.newObjectives[k]||'').trim(); it.objectiveBy = it.objective ? who : null; it.objectiveAt = today; }
+        if(s.mastered?.[k]){
+          it.status = 'done';
+          if(!it.masteredAt){ it.masteredAt = today; xp += XP.mastered; }   // une seule fois par morceau
+          mastered.push({...it});
+        } else { it.objective = (s.newObjectives?.[k]||'').trim(); it.objectiveBy = it.objective ? who : null; it.objectiveAt = today; }
       } else xp += XP.progress;
     });
     p.sessions.push({
-      date: today, ts,
+      date: today, ts, capped, duo: opts.duo ? opts.with : undefined,
       items: worked.map(([k,r]) => ({key:k, result:r})),
       followedPlan: !s.swapped && !!s.proposedKey && worked.some(([k]) => k===s.proposedKey),
       recordings: recs.map(r => ({songId:r.songId, ins:[...r.ins]})),
     });
+    if(capped){
+      msgs.unshift(`Séance enregistrée. Les points comptent pour ${DAILY_REWARDED} séances par jour : celle-ci n'en rapporte pas, mais elle compte pour tes morceaux.`);
+      return {comeback:false, msgs, mastered, fresh:Object.assign([], {xp:0}), gain:0, capped};
+    }
     p.xp = xpBefore + xp;
     const cp = challengeProgress(who);
     if(!cp.done && cp.cur >= cp.ch.goal){ p.challenges[weekKey(today)] = today; msgs.push('⭐ Défi de la semaine relevé !'); }
-    else if(!cp.done) msgs.push(`Défi de la semaine : ${cp.ch.text} (${cp.cur}/${cp.ch.goal}).`);
+    else if(!cp.done) msgs.push(`Défi de la semaine : ${cp.ch.text.toLowerCase()} (${cp.cur}/${cp.ch.goal}).`);
     if(bestMult > 1) msgs.unshift(`🎚️ Multiplicateur ×${bestMult} sur l'enregistrement.`);
+    if(opts.duo) msgs.unshift(`🤝 Séance à deux : +${XP.duo} XP.`);
     if(comeback) msgs.unshift('Content de te revoir au studio !');
     const fresh = checkBadges(who);
-    return {comeback, msgs, mastered, fresh, gain: p.xp - xpBefore};
+    return {comeback, msgs, mastered, fresh, gain: p.xp - xpBefore, capped};
   });
+}
+function promoteOffers(mid){
+  return itemsOf(mid).filter(i => i.status==='todo').slice(0,3).map(i => ({mid, key:i.key, label:`${songById(i.songId).title} (${i.ins})`}));
+}
+
+function finishSession(){
+  const s = currentSession(); if(!s) return;
+  const who = s.who, ts = new Date().toISOString();
+  const levelBefore = levelOf(progress[who].xp||0);
+  const res = applySession(who, s, ts);
   if(!res) return;
   res.mastered.forEach(it => addMastery(who, it.songId, it.ins));
-  // Duo, morceau en boîte… peuvent aussi se débloquer pour l'autre.
   studioMusicians().forEach(m => { if(m.id!==who) updateProgress(m.id, () => checkBadges(m.id)); });
   const levelAfter = levelOf(progress[who].xp);
-  toast = {title: res.comeback ? 'Content de te revoir !' : res.fresh.length ? 'Bravo !' : 'Bien joué !', msg: res.msgs.join(' '), xp: res.gain, badges: res.fresh, next: nextGoal(who),
-    levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre'};
+  toast = {title: res.capped ? 'Séance enregistrée' : res.comeback ? 'Content de te revoir !' : res.fresh.length ? 'Bravo !' : 'Bien joué !', msg: res.msgs.join(' '), xp: res.gain, badges: res.fresh, next: nextGoal(who),
+    levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre',
+    promote: res.mastered.length ? promoteOffers(who) : []};
   session = null; saveSession();
   stopTimer(); metroStop(); activeStep = 'warm';
   render();
@@ -1551,9 +1606,9 @@ function tick(){
   const el = document.getElementById('transport-time');
   if(rem <= 0){
     beep(); const id = timer.step; stopTimer();
-    const s = ensureSession(buildPlan(studioWho));
-    s.doneSteps = [...new Set([...(s.doneSteps||[]), id])]; saveSession();
-    const order = ['warm','prio','second','free'], i = order.indexOf(id);
+    if(studioView==='duo' && duo){ duo.doneSteps = [...new Set([...(duo.doneSteps||[]), id])]; saveDuo(); }
+    else { const s = ensureSession(buildPlan(studioWho)); s.doneSteps = [...new Set([...(s.doneSteps||[]), id])]; saveSession(); }
+    const order = stepOrder(), i = order.indexOf(id);
     if(activeStep===id && i>=0 && i<order.length-1) activeStep = order[i+1];
     scheduleRender(); return;
   }
@@ -1563,13 +1618,19 @@ function tick(){
 function attachStudioEvents(){
   const toastOk = document.getElementById('toast-ok');
   if(toastOk) toastOk.onclick = () => { toast = null; render(); };
+  document.querySelectorAll('[data-promote]').forEach(b => b.onclick = () => {
+    const [mid, key] = b.dataset.promote.split(/\|(.+)/);
+    updateProgress(mid, p => { if(p.items[key]) p.items[key].status = 'wip'; });
+    toast.promote = toast.promote.filter(o => !(o.mid===mid && o.key===key));
+    b.replaceWith(Object.assign(document.createElement('p'), {className:'hint', textContent:`C'est fait, à toi de lui donner un objectif.`}));
+  });
   if(activeTab!=='studio') return;
 
   document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
     studioWho = b.dataset.who; lsSet('setlistas-who', studioWho); selectedGridMusician = studioWho;
     swapOpen = false; recDraft = {songId:null, ins:[]}; activeStep = 'warm'; stopTimer(); metroStop(); render();
   });
-  document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { studioView = b.dataset.sv; render(); });
+  document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { if(studioView!==b.dataset.sv){ activeStep = 'warm'; stopTimer(); } studioView = b.dataset.sv; render(); });
 
   // Minuteurs
   document.querySelectorAll('[data-timer]').forEach(b => b.onclick = () => {
@@ -1585,12 +1646,23 @@ function attachStudioEvents(){
   // Étapes
   document.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { activeStep = b.dataset.step; render(); });
   document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
-    const order = ['warm','prio','second','free'];
-    let i = order.indexOf(activeStep); if(i<0) i = 3;
-    const j = Math.min(3, Math.max(0, i + Number(b.dataset.nav)));
-    if(j>i){ const s = ensureSession(buildPlan(studioWho)); s.doneSteps = [...new Set([...(s.doneSteps||[]), activeStep])]; saveSession(); }
+    const order = stepOrder();
+    let i = order.indexOf(activeStep); if(i<0) i = order.length-1;
+    const j = Math.min(order.length-1, Math.max(0, i + Number(b.dataset.nav)));
+    if(j>i){
+      if(studioView==='duo' && duo){ duo.doneSteps = [...new Set([...(duo.doneSteps||[]), activeStep])]; saveDuo(); }
+      else { const s = ensureSession(buildPlan(studioWho)); s.doneSteps = [...new Set([...(s.doneSteps||[]), activeStep])]; saveSession(); }
+    }
     activeStep = order[j]; render();
   });
+
+  document.querySelectorAll('[data-short]').forEach(b => b.onclick = () => {
+    shortMode = b.dataset.short==='1'; lsSet('setlistas-short', shortMode ? '1' : '0');
+    if(!stepOrder().includes(activeStep) && activeStep!=='rec') activeStep = 'prio';
+    stopTimer(); render();
+  });
+  const mf = document.getElementById('metro-feel');
+  if(mf) mf.onclick = () => { metro.feel = metro.feel==='shuffle' ? 'straight' : 'shuffle'; mf.textContent = metro.feel==='shuffle' ? 'Shuffle' : 'Droit'; };
 
   // Métronome
   document.querySelectorAll('[data-metro]').forEach(b => b.onclick = () => {
@@ -1675,12 +1747,13 @@ function attachItemEditors(defaultMid){
     const res = updateProgress(mid, p => {
       const it = p.items[key]; if(!it) return null;
       const was = it.status; it.status = status; let gained = 0;
-      if(status==='done' && was!=='done'){ it.masteredAt = todayStr(); p.xp = (p.xp||0) + XP.mastered; gained = XP.mastered; }
+      if(status==='done' && was!=='done' && !it.masteredAt){ it.masteredAt = todayStr(); p.xp = (p.xp||0) + XP.mastered; gained = XP.mastered; }
       const fresh = checkBadges(mid);
       return {gained, fresh, it:{...it}};
     });
     if(res && status==='done') addMastery(mid, res.it.songId, res.it.ins);
-    if(res && mid===studioWho && (res.gained || res.fresh.length)) toast = {title: status==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: res.gained + res.fresh.xp, badges: res.fresh, next: nextGoal(mid)};
+    if(res && status==='done' && (res.gained || res.fresh.length || promoteOffers(mid).length)) toast = {title: res.gained ? 'Morceau maîtrisé 🏆' : 'Morceau maîtrisé', xp: res.gained + res.fresh.xp, badges: res.fresh, next: nextGoal(mid), promote: promoteOffers(mid)};
+    else if(res && mid===studioWho && res.fresh.length) toast = {title:'Badge débloqué', xp: res.fresh.xp, badges: res.fresh, next: nextGoal(mid)};
     render();
   });
   document.querySelectorAll('[data-delitem]').forEach(b => b.onclick = () => {
@@ -1722,7 +1795,7 @@ function render(){
       <div class="brand">SetlistAS${DEMO ? ' <small>démo</small>' : ''}</div>
       ${renderTabs()}
     </header>
-    <main class="page ${activeTab==='studio' && studioView==='seance' && musicians.find(m=>m.id===studioWho && !m.universal) ? 'has-transport' : ''}">
+    <main class="page ${activeTab==='studio' && (studioView==='seance'||studioView==='duo') && musicians.find(m=>m.id===studioWho && !m.universal) ? 'has-transport' : ''}">
       ${saveError ? `<p class="note warn" role="alert">${escapeHtml(saveError)}</p>` : ''}
       ${importError ? `<p class="note warn" role="alert">${escapeHtml(importError)}</p>` : ''}
       ${importBusy ? `<p class="note">Import en cours…</p>` : ''}
@@ -1741,6 +1814,7 @@ function render(){
   `;
   attachEvents();
   attachStudioEvents();
+  attachDuoEvents();
   attachGigEvents();
   attachSettingsEvents();
 }
@@ -2009,6 +2083,121 @@ function renderPartial(focusSearch){
 }
 
 // =====================================================================
+// SÉANCE À DEUX : morceaux communs, bilan par musicien
+// =====================================================================
+function duoState(){
+  const ids = studioMusicians().map(m=>m.id);
+  if(!duo || duo.date!==todayStr()) duo = {date:todayStr(), who: ids.slice(0,2), results:{}, tempos:{}, mastered:{}, newObjectives:{}, doneSteps:[], pick:null};
+  duo.who = duo.who.filter(id => ids.includes(id));
+  return duo;
+}
+// Morceaux où au moins deux des musiciens présents ont une partie en cours ou à travailler.
+function commonSongs(ids){
+  const bySong = {};
+  ids.forEach(mid => itemsOf(mid).filter(i => i.status!=='done').forEach(it => {
+    (bySong[it.songId] = bySong[it.songId] || {}); (bySong[it.songId][mid] = bySong[it.songId][mid] || []).push(it);
+  }));
+  return Object.entries(bySong).filter(([,m]) => Object.keys(m).length >= 2).map(([sid, parts]) => {
+    const all = Object.values(parts).flat();
+    return {songId:Number(sid), parts, allWip: all.every(i=>i.status==='wip'), last: all.map(i=>i.lastWorked||'').sort()[0]};
+  }).sort((a,b) => (b.allWip - a.allWip) || a.last.localeCompare(b.last));
+}
+function renderDuo(){
+  const d = duoState(), students = studioMusicians();
+  if(students.length < 2) return '<p class="empty">Il faut au moins deux musiciens pour une séance à deux.</p>';
+  const common = commonSongs(d.who);
+  const chips = `<div class="seg" role="group" aria-label="Qui est là ?">${students.map(m=>`<button class="seg-btn ${d.who.includes(m.id)?'on':''}" data-duowho="${m.id}" aria-pressed="${d.who.includes(m.id)}">${escapeHtml(m.name)}</button>`).join('')}</div>`;
+  if(d.who.length < 2) return `<p class="lede">Choisis qui joue.</p>${chips}`;
+  if(!common.length) return `${chips}<div class="empty-state"><h2>Pas de morceau en commun</h2><p>Ajoutez le même morceau dans vos morceaux, chacun avec son instrument : il apparaîtra ici.</p></div>`;
+  let first = common.find(c => c.songId===d.pick) || common[0];
+  const second = common.find(c => c.songId!==first.songId);
+  const done = new Set(d.doneSteps||[]);
+  const step = (n, id, min, title, inner, summary='') => {
+    const open = activeStep===id;
+    return `<section class="step ${open?'open':''} ${done.has(id)?'done':''}">
+      <button class="step-head" data-step="${id}" aria-expanded="${open}"><span class="step-num">${done.has(id)?'✓':n}</span><span class="step-title">${title}</span>
+      ${!open && summary ? `<span class="step-summary">${summary}</span>` : ''}<span class="step-dur">${min ? min+' min' : ''}</span></button>
+      ${open ? `<div class="step-inner">${inner}</div>` : ''}</section>`;
+  };
+  const partsBlock = (c) => d.who.filter(mid => c.parts[mid]).map(mid => c.parts[mid].map(it => {
+    const r = d.results[mid]?.[it.key];
+    const extra = (r==='reached'||r==='progress') ? `<div class="after-result">
+        <label class="field inline"><span>Tempo atteint</span><input type="number" inputmode="numeric" class="duo-tempo" data-mid="${mid}" data-key="${it.key}" value="${d.tempos[mid]?.[it.key] ?? (metro.usedKey==='duo-'+c.songId ? metro.bpm : '')}" placeholder="bpm"></label>
+        ${r==='reached' ? `<label class="check"><input type="checkbox" class="duo-master" data-mid="${mid}" data-key="${it.key}" ${d.mastered[mid]?.[it.key]?'checked':''}> Maîtrisé</label>
+        ${d.mastered[mid]?.[it.key] ? '' : `<label class="field"><span>Prochain objectif</span><input type="text" class="duo-obj" data-mid="${mid}" data-key="${it.key}" value="${escapeAttr(d.newObjectives[mid]?.[it.key]||'')}"></label>`}` : ''}
+      </div>` : '';
+    return `<div class="part">
+      <div class="part-head"><b>${escapeHtml(nameById(mid))}</b> ${insTag(it.ins)}</div>
+      ${(it.objective||'').trim() ? `<p class="objective">${escapeHtml(it.objective)}</p>` : `<p class="objective missing-obj">Pas d'objectif écrit pour cette partie.</p>`}
+      <div class="results">${[['reached','Objectif atteint'],['progress','Ça avance'],['skip','Pas travaillé']].map(([k,l])=>`<button class="res-btn ${r===k?'on':''}" data-dres="${mid}|${k}|${it.key}">${l}</button>`).join('')}</div>
+      ${extra}</div>`;
+  }).join('')).join('');
+  const song1 = songById(first.songId), song2 = second && songById(second.songId);
+  metroPrepare('duo-'+first.songId, null, song1.bpm, song1.feel);
+  const canFinish = d.who.some(mid => Object.values(d.results[mid]||{}).some(r => r==='reached'||r==='progress'));
+  const swap = common.length > 1 ? `<label class="field"><span>Morceau principal</span><select id="duo-pick">${common.map(c=>`<option value="${c.songId}" ${c.songId===first.songId?'selected':''}>${escapeHtml(songById(c.songId).title)}</option>`).join('')}</select></label>` : '';
+  const order = stepOrder(); const num = id => order.indexOf(id)+1;
+  return `
+    <p class="lede">Une séance pour jouer ensemble : l'appli prend les morceaux où vous avez chacun une partie, et le bilan est crédité à chacun (+${XP.duo} XP de bonus).</p>
+    ${chips}
+    ${durationSwitch()}
+    <div class="track">
+      ${step(1,'warm',stepMin('warm'),'Échauffement ensemble',`<p class="step-body big">Calez-vous au métronome sur le groove de ${escapeHtml(song1.title)}, lentement : une personne compte, l'autre suit. Ensuite, deux tours complets sans s'arrêter, même avec des fautes.</p>`)}
+      ${step(2,'prio',stepMin('prio'),'Morceau principal',`
+        <div class="step-song"><span class="song-title">${escapeHtml(song1.title)}</span> <span class="song-artist">${escapeHtml(song1.artist)}</span>${song1.key?` <span class="song-extra">en ${escapeHtml(song1.key)}</span>`:''}</div>
+        ${songLinks(song1)}
+        <p class="step-body">Travaillez d'abord le passage le plus fragile des deux objectifs, au ralenti, puis enchaînez le morceau entier sur le backing, la partie de chacun coupée dans Moises.</p>
+        ${swap}
+        <div class="parts">${partsBlock(first)}</div>`, escapeHtml(song1.title))}
+      ${!shortMode && second ? step(3,'second',stepMin('second'),'Deuxième morceau',`
+        <div class="step-song"><span class="song-title">${escapeHtml(song2.title)}</span> <span class="song-artist">${escapeHtml(song2.artist)}</span></div>${songLinks(song2)}
+        <p class="step-body">Jouez-le en entier, sans vous arrêter. Notez où ça décroche.</p>
+        <div class="parts">${partsBlock(second)}</div>`, escapeHtml(song2.title)) : ''}
+      ${step(num('free'),'free',0,'Jam libre',`<p class="step-body big">Un blues en douze mesures, chacun son tour en solo. Pensez à terminer la séance pour créditer vos points.</p>`)}
+    </div>
+    ${transportBar(canFinish, 'finish-duo', {warm:'Échauffement ensemble', prio:'Morceau principal', second:'Deuxième morceau', free:'Jam libre'})}`;
+}
+function attachDuoEvents(){
+  if(activeTab!=='studio' || studioView!=='duo') return;
+  const d = duoState();
+  document.querySelectorAll('[data-duowho]').forEach(b => b.onclick = () => {
+    const id = b.dataset.duowho; d.who = d.who.includes(id) ? d.who.filter(x=>x!==id) : [...d.who, id]; saveDuo(); render();
+  });
+  const pk = document.getElementById('duo-pick'); if(pk) pk.onchange = () => { d.pick = Number(pk.value); saveDuo(); render(); };
+  document.querySelectorAll('[data-dres]').forEach(b => b.onclick = () => {
+    const [mid, res, key] = b.dataset.dres.split(/\|/).length > 3 ? [b.dataset.dres.split('|')[0], b.dataset.dres.split('|')[1], b.dataset.dres.split('|').slice(2).join('|')] : b.dataset.dres.split('|');
+    d.results[mid] = d.results[mid] || {};
+    if(d.results[mid][key]===res) delete d.results[mid][key]; else d.results[mid][key] = res;
+    saveDuo(); render();
+  });
+  const set = (cls, field, val) => document.querySelectorAll(cls).forEach(el => el[el.type==='checkbox'?'onchange':'oninput'] = () => {
+    const mid = el.dataset.mid, key = el.dataset.key; d[field][mid] = d[field][mid] || {}; d[field][mid][key] = val(el); saveDuo(); if(el.type==='checkbox') render();
+  });
+  set('.duo-tempo','tempos', el => el.value);
+  set('.duo-master','mastered', el => el.checked);
+  set('.duo-obj','newObjectives', el => el.value);
+  const fin = document.getElementById('finish-duo'); if(fin) fin.onclick = finishDuo;
+}
+function finishDuo(){
+  const d = duoState(), ts = new Date().toISOString();
+  const lines = [], badges = [];
+  let promote = [];
+  d.who.forEach(mid => {
+    const res = applySession(mid, {results:d.results[mid]||{}, tempos:d.tempos[mid]||{}, mastered:d.mastered[mid]||{}, newObjectives:d.newObjectives[mid]||{}, recordings:[]}, ts, {duo:true, with:d.who.filter(x=>x!==mid)});
+    if(!res) return;
+    res.mastered.forEach(it => addMastery(mid, it.songId, it.ins));
+    if(res.mastered.length) promote = promote.concat(promoteOffers(mid));
+    lines.push(`${nameById(mid)} : ${res.capped ? 'enregistrée sans points (déjà 2 séances aujourd’hui)' : '+'+res.gain+' XP'}`);
+    res.fresh.forEach(b => badges.push({...b, name: `${nameById(mid)} : ${b.name}`}));
+  });
+  if(!lines.length) return;
+  studioMusicians().forEach(m => { if(!d.who.includes(m.id)) updateProgress(m.id, () => checkBadges(m.id)); });
+  toast = {title:'Séance à deux enregistrée', msg: lines.join('. ') + '.', xp: null, badges, promote, cta:'Place à la jam'};
+  duo = null; saveDuo(); stopTimer(); metroStop(); activeStep = 'warm';
+  render();
+}
+
+// =====================================================================
 // FICHES MORCEAUX
 // =====================================================================
 let editingSong = null;
@@ -2021,6 +2210,8 @@ function songEditForm(song){
       <label class="field"><span>Artiste</span><input name="artist" value="${escapeAttr(song.artist||'')}"></label>
       <label class="field"><span>Tonalité</span><input name="key" value="${escapeAttr(song.key||'')}" placeholder="ex. La mineur"></label>
       <label class="field"><span>Durée</span><input name="duration" value="${escapeAttr(song.duration||'')}" placeholder="4:30" pattern="\\d+:\\d{1,2}"></label>
+      <label class="field"><span>Tempo original (bpm)</span><input name="bpm" type="number" inputmode="numeric" min="30" max="260" value="${song.bpm||''}"></label>
+      <label class="field"><span>Rythme</span><select name="feel"><option value="straight" ${song.feel!=='shuffle'?'selected':''}>Binaire (droit)</option><option value="shuffle" ${song.feel==='shuffle'?'selected':''}>Shuffle (ternaire)</option></select></label>
       <label class="field wide"><span>Lien du backing (Moises)</span><input name="moises" type="url" value="${escapeAttr(song.moises||'')}" placeholder="https://studio.moises.ai/…"></label>
       <label class="field wide"><span>Lien de la partition (Newzik)</span><input name="newzik" type="url" value="${escapeAttr(song.newzik||'')}" placeholder="https://web.newzik.com/pieces/…"></label>
     </div>
@@ -2033,7 +2224,8 @@ function attachSongEditors(){
   document.querySelectorAll('[data-songform]').forEach(f => f.onsubmit = (e) => {
     e.preventDefault();
     const id = Number(f.dataset.songform), fd = new FormData(f);
-    const patch = {}; ['title','artist','key','duration','moises','newzik'].forEach(k => patch[k] = String(fd.get(k)||'').trim());
+    const patch = {}; ['title','artist','key','duration','moises','newzik','feel'].forEach(k => patch[k] = String(fd.get(k)||'').trim());
+    patch.bpm = Math.round(Number(fd.get('bpm'))) || null;
     if(!patch.title) return;
     if(patch.duration && !parseDur(patch.duration)) patch.duration = '';
     songs = songs.map(x => x.id===id ? {...x, ...patch} : x);
