@@ -115,12 +115,13 @@
   .tag-empty{color:var(--ink-dim);font-size:.85rem;}
 
   /* ---------- Fiches morceaux ---------- */
-  .song-card{background:var(--panel);border-radius:var(--r-m);padding:12px 14px;margin-bottom:8px;}
+  .song-card{padding:12px 2px;border-bottom:1px solid var(--rule);}
+  .song-card.editing{background:var(--panel);border-radius:var(--r-m);padding:14px;border:0;margin:6px 0;}
   .song-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
   .song-title{font-weight:700;}
   .song-artist{color:var(--ink-dim);}
   .song-extra{color:var(--ink-dim);font-size:.85rem;margin-left:6px;}
-  .artist-header{font-stretch:80%;font-weight:700;font-size:1.1rem;color:var(--ink-dim);margin:22px 0 8px;}
+  .artist-header{font-stretch:80%;font-weight:700;font-size:1.2rem;color:var(--amber);margin:26px 0 0;padding-bottom:6px;}
   .links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:.88rem;align-items:center;}
   .links .ext{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(240,164,58,.4);}
   .song-key{color:var(--ink-dim);}
@@ -172,49 +173,81 @@
   .bar > div{height:100%;background:var(--amber);}
   .bar.thin{height:4px;margin-top:8px;}
 
-  /* ---------- Séance ---------- */
-  .challenge{display:flex;gap:14px;align-items:center;background:var(--panel);border-radius:var(--r-m);padding:12px 16px;margin-bottom:16px;}
-  .challenge .ico{font-size:1.4rem;}
+  /* ---------- Séance : une piste, une barre de transport ---------- */
+  .challenge{display:flex;gap:12px;align-items:center;padding:4px 0 14px;margin-bottom:6px;border-bottom:1px solid var(--rule);}
+  .challenge .ico{font-size:1.2rem;}
   .challenge .ct{font-weight:600;}
   .challenge .cs{font-size:.85rem;color:var(--ink-dim);}
-  .steps{display:flex;flex-direction:column;gap:10px;}
-  .step{background:var(--panel);border-radius:var(--r-m);padding:16px 18px;}
-  .step.prio{background:var(--panel-2);box-shadow:inset 4px 0 0 var(--amber);}
-  .step.bonus{background:none;border:1px dashed var(--rule);}
-  .step-head{display:flex;justify-content:space-between;align-items:center;gap:12px;}
-  .step-head h3{font-size:1.15rem;display:flex;align-items:baseline;gap:10px;}
-  .step-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--rule);font-size:.85rem;font-stretch:100%;color:var(--ink-dim);flex:none;}
-  .step.prio .step-num{background:var(--amber);color:var(--amber-ink);border-color:var(--amber);}
-  .step-song{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:1.1rem;}
-  .step-body{color:var(--ink-dim);margin:10px 0 0;max-width:68ch;}
-  .objective{margin:10px 0 0;padding:10px 14px;border-radius:var(--r-s);background:var(--ivory);color:var(--ivory-ink);font-weight:600;}
+  .track{display:flex;flex-direction:column;}
+  .step{border-bottom:1px solid var(--rule);}
+  .step-head{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:14px;width:100%;padding:14px 4px;cursor:pointer;}
+  .step-head:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+  .step-num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--rule);font-size:.9rem;font-weight:700;color:var(--ink-dim);flex:none;}
+  .step.done .step-num{background:var(--ok);border-color:var(--ok);color:#10200f;}
+  .step-title{font-stretch:80%;font-weight:700;font-size:1.15rem;}
+  .step-summary{color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+  .step-dur{margin-left:auto;color:var(--ink-dim);font-size:.9rem;white-space:nowrap;}
+  .step.open{border-bottom:0;margin:6px -16px 10px;padding:0 16px 18px;background:var(--panel);border-radius:var(--r-l);}
+  .step.open .step-num{background:var(--amber);border-color:var(--amber);color:var(--amber-ink);}
+  .step.open .step-title{font-size:1.55rem;}
+  .step.open.done .step-num{background:var(--ok);border-color:var(--ok);color:#10200f;}
+  .step.bonus .step-num{border-style:dashed;}
+  .step-inner{padding:0 4px 0 48px;}
+  .step-song{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:1.35rem;margin-top:2px;}
+  .step-song .song-title{font-stretch:85%;font-weight:800;}
+  .step-body{color:var(--ink-dim);margin:12px 0 0;max-width:64ch;}
+  .step-body.big{font-size:1.2rem;color:var(--ink);line-height:1.55;}
+  .objective{margin:12px 0 0;padding:12px 16px;border-radius:var(--r-s);background:var(--ivory);color:var(--ivory-ink);font-weight:700;font-size:1.15rem;}
   .objective .tempo-badge{background:rgba(0,0,0,.08);color:var(--ivory-ink);}
   .objective .by{font-weight:400;font-size:.82rem;opacity:.7;margin-left:6px;}
-  .objective.missing-obj{background:none;color:var(--amber);border:1px dashed var(--amber);font-weight:400;}
-  .timer-btn{background:var(--console);border:1px solid var(--rule);color:var(--ink);border-radius:var(--r-s);padding:8px 12px;min-width:96px;cursor:pointer;font-weight:600;white-space:nowrap;}
-  .timer-btn.running{background:var(--ok);color:#10200f;border-color:var(--ok);}
-  .results{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
-  .res-btn{padding:9px 14px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;}
+  .objective.missing-obj{background:none;color:var(--amber);border:1px dashed var(--amber);font-weight:400;font-size:1rem;}
+  .results{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px;}
+  .res-btn{padding:11px 16px;border-radius:var(--r-s);border:1px solid var(--rule);background:var(--console);color:var(--ink);cursor:pointer;font-weight:500;}
   .res-btn.on{background:var(--ink);color:var(--console);border-color:var(--ink);font-weight:700;}
-  .after-result{display:flex;flex-direction:column;gap:10px;margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);}
-  .finish-bar{display:flex;justify-content:flex-end;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;}
-  .finish-bar .hint{margin:0;}
+  .after-result{display:flex;flex-direction:column;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--rule);}
   .empty-state{text-align:center;padding:40px 20px;background:var(--panel);border-radius:var(--r-l);}
   .empty-state h2{font-size:1.5rem;margin-bottom:6px;}
   .empty-state p{color:var(--ink-dim);margin:0 auto 16px;max-width:44ch;}
+  .page.has-transport{padding-bottom:150px;}
 
-  /* Métronome */
-  .metro{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding:8px;background:var(--console);border-radius:var(--r-m);width:fit-content;}
-  .metro-btn{width:44px;height:40px;border-radius:var(--r-s);border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;font-weight:600;}
-  .metro-bpm{min-width:92px;text-align:center;color:var(--ink-dim);}
-  .metro-bpm output{font-stretch:75%;font-weight:800;font-size:1.7rem;color:var(--ink);margin-right:3px;}
-  .metro-toggle{background:var(--panel-2);border:0;border-radius:var(--r-s);padding:10px 16px;color:var(--ink);cursor:pointer;font-weight:600;}
-  .metro-toggle.on{background:var(--amber);color:var(--amber-ink);}
-  .metro-dot{width:14px;height:14px;border-radius:50%;background:#3d2b14;margin:0 4px;}
+  /* Barre de transport : l'élément qu'on lit depuis le pupitre */
+  .transport{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#151A17;border-top:1px solid var(--rule);
+    display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:16px;padding:12px max(16px, calc((100vw - 980px)/2)) calc(12px + env(safe-area-inset-bottom));}
+  .tp-step{display:flex;flex-direction:column;min-width:0;}
+  .tp-idx{font-size:.75rem;color:var(--ink-dim);}
+  .tp-name{font-stretch:80%;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tp-main{display:flex;align-items:center;gap:10px;}
+  .tp-time{font-stretch:62%;font-weight:800;font-size:3.4rem;line-height:1;letter-spacing:.01em;background:var(--ivory);color:var(--ivory-ink);padding:4px 14px 2px;border-radius:var(--r-s);min-width:5ch;text-align:center;box-shadow:inset 0 2px 0 rgba(0,0,0,.12);}
+  .tp-time.on{background:var(--amber);color:var(--amber-ink);}
+  .tp-time.idle{opacity:.35;}
+  .tp-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:none;color:var(--ink);cursor:pointer;font-size:1rem;}
+  .tp-btn.small{width:36px;height:36px;border-radius:var(--r-s);font-size:1.1rem;}
+  .tp-btn:disabled{opacity:.3;cursor:default;}
+  .tp-play{width:58px;height:58px;border-radius:50%;border:0;background:var(--ink);color:var(--console);font-size:1.3rem;cursor:pointer;}
+  .tp-play.on{background:var(--amber);color:var(--amber-ink);}
+  .tp-metro{display:flex;align-items:center;gap:6px;justify-self:end;}
+  .tp-bpm{display:flex;align-items:baseline;gap:3px;min-width:70px;justify-content:center;}
+  .tp-bpm output{font-stretch:70%;font-weight:800;font-size:1.7rem;}
+  .tp-bpm small{color:var(--ink-dim);font-size:.75rem;}
+  .tp-click{background:var(--panel-2);border:0;border-radius:var(--r-s);padding:9px 12px;color:var(--ink);cursor:pointer;font-weight:600;}
+  .tp-click.on{background:var(--amber);color:var(--amber-ink);}
+  .tp-finish{white-space:nowrap;}
+  .metro-dot{width:12px;height:12px;border-radius:50%;background:#3d2b14;}
   .metro-dot.tick{animation:led .12s ease-out;}
   .metro-dot.tick.accent{animation-name:ledred;}
   @keyframes led{from{background:var(--amber);box-shadow:0 0 10px var(--amber);}to{background:#3d2b14;}}
   @keyframes ledred{from{background:var(--red);box-shadow:0 0 12px var(--red);}to{background:#3d2b14;}}
+  @media (max-width:760px){
+    .transport{grid-template-columns:1fr auto;grid-template-areas:"main main" "metro finish";gap:8px 12px;}
+    .tp-step{display:none;}
+    .tp-main{grid-area:main;justify-content:center;}
+    .tp-metro{grid-area:metro;justify-self:start;}
+    .tp-finish{grid-area:finish;}
+    .tp-time{font-size:2.6rem;}
+    .step-inner{padding-left:4px;}
+    .step.open .step-title{font-size:1.3rem;}
+    .page.has-transport{padding-bottom:190px;}
+  }
 
   /* Enregistrement */
   .rec-chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
@@ -224,7 +257,7 @@
   .rec-list li{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--rule);font-size:.92rem;}
 
   /* ---------- Mes morceaux ---------- */
-  .item-row{display:grid;grid-template-columns:1fr auto;gap:8px 12px;background:var(--panel);border-radius:var(--r-m);padding:12px 14px;margin-bottom:8px;}
+  .item-row{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:14px 2px;border-bottom:1px solid var(--rule);}
   .item-main{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;}
   .item-row .meta{width:100%;font-size:.82rem;color:var(--ink-dim);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;}
   .item-actions{display:flex;gap:4px;align-items:flex-start;}
@@ -453,6 +486,8 @@ let timer = {step:null, endAt:null, remaining:null};
 let timerInterval = null;
 let toast = null;
 let recDraft = {songId:null, ins:[]};
+let activeStep = 'warm';
+const STEP_DEF = {warm:{title:'Échauffement',min:5}, prio:{title:'Objectif prioritaire',min:15}, second:{title:'Deuxième morceau',min:7}, free:{title:'Jeu libre',min:0}, rec:{title:'Enregistrement',min:0}};
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -1143,11 +1178,20 @@ function renderSeance(){
     metro.key = pr.key;
   }
   const swapSel = swapOpen && plan.wip.length>1 ? `<select id="swap-select" aria-label="Morceau prioritaire">${plan.wip.map(i=>`<option value="${i.key}" ${i.key===pr.key?'selected':''}>${escapeHtml(songById(i.songId).title)} (${i.ins})</option>`).join('')}</select>` : '';
-  const step = (n, id, min, title, inner, cls='') => `<section class="step ${cls}">
-      <header class="step-head"><h3><span class="step-num">${n}</span>${title}</h3>
-        ${min ? `<button class="timer-btn ${timer.step===id&&timer.endAt?'running':''}" data-timer="${id}" data-min="${min}" id="timer-${id}" aria-label="Minuteur ${min} minutes">${timerLabel(id,min)}</button>` : ''}</header>
-      ${inner}</section>`;
-  const songHead = (sg, it) => `<div class="step-song"><span class="song-title">${escapeHtml(sg.title)}</span> <span class="song-artist">${escapeHtml(sg.artist)}</span> ${insTag(it.ins)}</div>`;
+  const done = new Set(s?.doneSteps||[]);
+  const step = (n, id, min, title, inner, cls='', summary='') => {
+    const open = activeStep===id;
+    return `<section class="step ${cls} ${open?'open':''} ${done.has(id)?'done':''}" id="step-${id}">
+      <button class="step-head" data-step="${id}" aria-expanded="${open}">
+        <span class="step-num">${done.has(id)?'✓':n}</span>
+        <span class="step-title">${title}</span>
+        ${!open && summary ? `<span class="step-summary">${summary}</span>` : ''}
+        <span class="step-dur">${min ? min+' min' : ''}</span>
+      </button>
+      ${open ? `<div class="step-inner">${inner}</div>` : ''}</section>`;
+  };
+  const songHead = (sg, it) => `<div class="step-song"><span class="song-title">${escapeHtml(sg.title)}</span> <span class="song-artist">${escapeHtml(sg.artist)}</span> ${insTag(it.ins)}${sg.key?` <span class="song-extra">en ${escapeHtml(sg.key)}</span>`:''}</div>`;
+  const sum = (sg) => sg ? escapeHtml(sg.title) : '';
 
   let secondInner;
   if(plan.second){
@@ -1181,33 +1225,45 @@ function renderSeance(){
       <div class="rec-chips">${INSTRUMENTS.map(i=>`<button class="rec-chip ${recDraft.ins.includes(i.key)?'on':''}" data-recins="${i.key}" aria-pressed="${recDraft.ins.includes(i.key)}">${i.key}</button>`).join('')}</div>
       <button class="btn-ghost" id="rec-add" ${recDraft.ins.length?'':'disabled'}>Noter l'enregistrement</button>
       ${(s?.recordings||[]).length ? `<ul class="rec-list">${s.recordings.map((r,idx)=>`<li><span>${escapeHtml(songById(r.songId)?.title||'?')} : ${r.ins.join(' + ')}</span><button class="x-btn" data-recdel="${idx}" aria-label="Retirer">✕</button></li>`).join('')}</ul>` : ''}`;
-  const metroUI = `<div class="metro" aria-label="Métronome">
-      <button class="metro-btn" data-metro="-5" aria-label="Moins 5 bpm">−5</button>
-      <span class="metro-bpm"><output id="metro-bpm">${metro.bpm}</output> bpm</span>
-      <button class="metro-btn" data-metro="5" aria-label="Plus 5 bpm">+5</button>
-      <button class="metro-toggle ${metro.running?'on':''}" id="metro-toggle">${metro.running?'Arrêter':'Métronome'}</button>
+
+  const order = ['warm','prio','second','free'];
+  const idx = Math.max(0, order.indexOf(activeStep));
+  const cur = STEP_DEF[activeStep] || STEP_DEF.warm;
+  const tLeft = timer.step===activeStep ? (timer.endAt ? (timer.endAt-Date.now())/1000 : timer.remaining) : (cur.min*60);
+  const running = timer.step===activeStep && !!timer.endAt;
+  const transport = `<div class="transport" role="region" aria-label="Transport">
+    <div class="tp-step"><span class="tp-idx">${activeStep==='rec' ? 'Bonus' : `Étape ${idx+1} sur 4`}</span><span class="tp-name">${cur.title}</span></div>
+    <div class="tp-main">
+      <button class="tp-btn" data-nav="-1" ${idx===0&&activeStep!=='rec'?'disabled':''} aria-label="Étape précédente">⏮</button>
+      ${cur.min ? `<button class="tp-play ${running?'on':''}" data-timer="${activeStep}" data-min="${cur.min}" aria-label="${running?'Pause':'Lancer le minuteur'}">${running?'❚❚':'▶'}</button>
+      <output class="tp-time ${running?'on':''}" id="transport-time">${fmtTime(tLeft)}</output>` : `<output class="tp-time idle">--:--</output>`}
+      <button class="tp-btn" data-nav="1" ${idx===3?'disabled':''} aria-label="Étape suivante">⏭</button>
+    </div>
+    <div class="tp-metro" aria-label="Métronome">
+      <button class="tp-btn small" data-metro="-5" aria-label="Moins 5 bpm">−</button>
+      <span class="tp-bpm"><output id="metro-bpm">${metro.bpm}</output><small>bpm</small></span>
+      <button class="tp-btn small" data-metro="5" aria-label="Plus 5 bpm">+</button>
+      <button class="tp-click ${metro.running?'on':''}" id="metro-toggle" aria-pressed="${metro.running}">${metro.running?'Stop':'Clic'}</button>
       <span id="metro-dot" class="metro-dot" aria-hidden="true"></span>
-    </div>`;
+    </div>
+    <button class="btn tp-finish" id="finish-session" ${canFinish?'':'disabled'} title="${canFinish?'':'Note au moins un bilan ou un enregistrement'}">Terminer</button>
+  </div>`;
   return `
     ${challengeCard}
     ${lastToday ? `<p class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</p>` : ''}
-    <div class="steps">
-    ${step(1,'warm',5,'Échauffement',`<p class="step-body">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`)}
+    <div class="track">
+    ${step(1,'warm',5,'Échauffement',`<p class="step-body big">${WARMUP[pr.ins]||WARMUP.Guitare}</p>`, '', escapeHtml(pr.ins.toLowerCase()))}
     ${step(2,'prio',15,'Objectif prioritaire',`
       ${songHead(song, pr)}${objBox(pr)}${songLinks(song)}
-      ${metroUI}
       <p class="step-body">${METHOD[pr.ins]||METHOD.Guitare}</p>
       <p class="hint">${sinceLabel(pr.lastWorked)[0].toUpperCase()+sinceLabel(pr.lastWorked).slice(1)}.${plan.wip.length>1 ? ` <button class="link-btn" id="swap-link">Travailler un autre morceau</button>` : ''}</p>
       ${swapSel}
-      ${resultBtns(pr)}`,'prio')}
-    ${step(3,'second',7, plan.second ? 'Deuxième morceau' : 'Morceau du répertoire', secondInner)}
-    ${step(4,'free',0,'Jeu libre',`<p class="step-body">Joue ce que tu veux, c'est la récompense. Termine d'abord la séance pour compter tes points.</p>`)}
-    ${step('+','rec',0,'Enregistrement, en bonus', recInner, 'bonus')}
+      ${resultBtns(pr)}`,'prio', sum(song))}
+    ${step(3,'second',7, plan.second ? 'Deuxième morceau' : 'Morceau du répertoire', secondInner, '', sum(plan.second ? songById(plan.second.songId) : plan.review?.song))}
+    ${step(4,'free',0,'Jeu libre',`<p class="step-body big">Joue ce que tu veux, c'est la récompense. Pense à terminer la séance pour compter tes points.</p>`)}
+    ${step('+','rec',0,'Enregistrement, en bonus', recInner, 'bonus', (s?.recordings||[]).length ? `${s.recordings.length} noté${s.recordings.length>1?'s':''}` : '')}
     </div>
-    <div class="finish-bar">
-      ${canFinish ? '' : `<p class="hint">Note au moins un bilan ou un enregistrement pour terminer.</p>`}
-      <button class="btn big" id="finish-session" ${canFinish?'':'disabled'}>Terminer la séance</button>
-    </div>
+    ${transport}
   `;
 }
 
@@ -1275,7 +1331,6 @@ function songLinks(song){
   const l = [];
   if(song.moises) l.push(`<a class="ext" href="${escapeAttr(song.moises)}" target="_blank" rel="noopener">Backing (Moises)</a>`);
   if(song.newzik) l.push(`<a class="ext" href="${escapeAttr(song.newzik)}" target="_blank" rel="noopener">Partition (Newzik)</a>`);
-  if(song.key) l.push(`<span class="song-key">Tonalité : ${escapeHtml(song.key)}</span>`);
   return l.length ? `<div class="links">${l.join('')}</div>` : '';
 }
 function objectiveAuthor(it, mid){
@@ -1478,7 +1533,7 @@ function finishSession(){
   toast = {title: res.comeback ? 'Content de te revoir !' : res.fresh.length ? 'Bravo !' : 'Bien joué !', msg: res.msgs.join(' '), xp: res.gain, badges: res.fresh, next: nextGoal(who),
     levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre'};
   session = null; saveSession();
-  stopTimer(); metroStop();
+  stopTimer(); metroStop(); activeStep = 'warm';
   render();
 }
 
@@ -1493,9 +1548,16 @@ function beep(){
 function tick(){
   if(!timer.step || !timer.endAt) return;
   const rem = (timer.endAt - Date.now())/1000;
-  const el = document.getElementById('timer-'+timer.step);
-  if(rem <= 0){ beep(); const id=timer.step; stopTimer(); const e2=document.getElementById('timer-'+id); if(e2){ e2.textContent='✓ terminé'; e2.classList.remove('running'); } return; }
-  if(el) el.textContent = '⏸ ' + fmtTime(rem);
+  const el = document.getElementById('transport-time');
+  if(rem <= 0){
+    beep(); const id = timer.step; stopTimer();
+    const s = ensureSession(buildPlan(studioWho));
+    s.doneSteps = [...new Set([...(s.doneSteps||[]), id])]; saveSession();
+    const order = ['warm','prio','second','free'], i = order.indexOf(id);
+    if(activeStep===id && i>=0 && i<order.length-1) activeStep = order[i+1];
+    scheduleRender(); return;
+  }
+  if(el && timer.step===activeStep) el.textContent = fmtTime(rem);
 }
 
 function attachStudioEvents(){
@@ -1505,7 +1567,7 @@ function attachStudioEvents(){
 
   document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
     studioWho = b.dataset.who; lsSet('setlistas-who', studioWho); selectedGridMusician = studioWho;
-    swapOpen = false; recDraft = {songId:null, ins:[]}; stopTimer(); metroStop(); render();
+    swapOpen = false; recDraft = {songId:null, ins:[]}; activeStep = 'warm'; stopTimer(); metroStop(); render();
   });
   document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { studioView = b.dataset.sv; render(); });
 
@@ -1518,6 +1580,16 @@ function attachStudioEvents(){
     else { timer = {step:id, endAt:Date.now()+min*60000, remaining:null}; }
     if(!timerInterval) timerInterval = setInterval(tick, 500);
     wakeLockUpdate(); render();
+  });
+
+  // Étapes
+  document.querySelectorAll('[data-step]').forEach(b => b.onclick = () => { activeStep = b.dataset.step; render(); });
+  document.querySelectorAll('[data-nav]').forEach(b => b.onclick = () => {
+    const order = ['warm','prio','second','free'];
+    let i = order.indexOf(activeStep); if(i<0) i = 3;
+    const j = Math.min(3, Math.max(0, i + Number(b.dataset.nav)));
+    if(j>i){ const s = ensureSession(buildPlan(studioWho)); s.doneSteps = [...new Set([...(s.doneSteps||[]), activeStep])]; saveSession(); }
+    activeStep = order[j]; render();
   });
 
   // Métronome
@@ -1650,7 +1722,7 @@ function render(){
       <div class="brand">SetlistAS${DEMO ? ' <small>démo</small>' : ''}</div>
       ${renderTabs()}
     </header>
-    <main class="page">
+    <main class="page ${activeTab==='studio' && studioView==='seance' && musicians.find(m=>m.id===studioWho && !m.universal) ? 'has-transport' : ''}">
       ${saveError ? `<p class="note warn" role="alert">${escapeHtml(saveError)}</p>` : ''}
       ${importError ? `<p class="note warn" role="alert">${escapeHtml(importError)}</p>` : ''}
       ${importBusy ? `<p class="note">Import en cours…</p>` : ''}
