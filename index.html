@@ -20,6 +20,7 @@
     --drm: #C1443C;
     --vox: #3E6E8E;
     --ok: #6E9B6E;
+    --keys: #9B7BB8;
   }
   *{box-sizing:border-box;}
   body{
@@ -148,6 +149,67 @@
   }
   .add-musician-form.open{display:flex;}
   label.check{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--cream-dim);}
+  .tag.keys{background:rgba(155,123,184,.16);color:var(--keys);}
+  .tag.keys .dot{background:var(--keys);}
+  .toggle-btn.on.keys{background:var(--keys);border-color:var(--keys);color:#1b1620;}
+
+  /* ---------- Studio ---------- */
+  .studio-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+  .who-chips{display:flex;gap:8px;}
+  .who-chip{padding:10px 18px;border-radius:24px;border:1px solid var(--line);background:var(--bg-raised);color:var(--cream);font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;}
+  .who-chip.selected{background:var(--gtr);border-color:var(--gtr);color:#221B17;}
+  .who-big{display:flex;gap:14px;justify-content:center;margin:40px 0;}
+  .who-big .who-chip{font-size:1.3rem;padding:22px 40px;border-radius:14px;}
+  .level-box{min-width:200px;flex:1;max-width:320px;}
+  .level-line{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--cream-dim);margin-bottom:5px;}
+  .level-line b{color:var(--cream);}
+  .bar{height:8px;border-radius:6px;background:var(--bg-raised-2);overflow:hidden;}
+  .bar > div{height:100%;background:linear-gradient(90deg,var(--gtr),#E8C46A);border-radius:6px;}
+  .subtabs{display:flex;gap:6px;margin-bottom:16px;}
+  .subtab{padding:7px 14px;border-radius:20px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.85rem;cursor:pointer;}
+  .subtab.active{background:var(--bg-raised-2);color:var(--cream);border-color:var(--cream-dim);}
+  .step{background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+  .step.prio{border-color:var(--gtr);}
+  .step-head{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .step-num{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--cream-dim);margin-right:6px;}
+  .step-title{font-weight:600;}
+  .step-min{font-size:0.8rem;color:var(--cream-dim);}
+  .step-body{font-size:0.88rem;color:var(--cream-dim);line-height:1.55;margin-top:8px;}
+  .step-song{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--cream);margin-top:8px;}
+  .objective{margin-top:8px;padding:9px 12px;border-radius:8px;background:var(--bg-raised-2);font-size:0.92rem;color:var(--cream);}
+  .objective.missing-obj{color:var(--drm);border:1px dashed var(--drm);background:none;}
+  .timer-btn{font-family:'IBM Plex Mono',monospace;font-size:0.9rem;min-width:92px;white-space:nowrap;}
+  .timer-btn.running{background:var(--ok);color:#16200f;}
+  .results{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .res-btn{padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.85rem;cursor:pointer;}
+  .res-btn.on{background:var(--cream);color:#221B17;border-color:var(--cream);font-weight:600;}
+  .finish-bar{margin-top:16px;display:flex;justify-content:flex-end;}
+  .btn:disabled{opacity:.4;cursor:default;filter:none;}
+  .item-row{display:grid;grid-template-columns:1fr auto;gap:8px;background:var(--bg-raised);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;}
+  .item-row .meta{font-size:0.75rem;color:var(--cream-dim);margin-top:3px;}
+  .item-row input[type=text]{padding:8px 10px;font-size:0.85rem;margin-top:8px;grid-column:1 / -1;}
+  .item-actions{display:flex;gap:6px;align-items:flex-start;}
+  .item-actions select{padding:6px 8px;font-size:0.8rem;}
+  .x-btn{background:none;border:none;color:var(--cream-dim);cursor:pointer;font-size:1rem;padding:4px 6px;}
+  .section-label{font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cream-dim);margin:20px 0 8px;}
+  .badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  .badge{background:var(--bg-raised);border:1px solid var(--line);border-radius:10px;padding:14px 10px;text-align:center;}
+  .badge .ico{font-size:2rem;line-height:1;}
+  .badge .bn{font-weight:600;font-size:0.88rem;margin-top:8px;}
+  .badge .bd{font-size:0.75rem;color:var(--cream-dim);margin-top:4px;line-height:1.4;}
+  .badge.locked{opacity:.38;}
+  .badge.locked .ico{filter:grayscale(1);}
+  .badge.earned{border-color:var(--gtr);}
+  .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;}
+  .stat{background:var(--bg-raised);border-radius:8px;padding:10px 12px;}
+  .stat b{display:block;font-family:'Fraunces',serif;font-size:1.4rem;}
+  .stat span{font-size:0.75rem;color:var(--cream-dim);}
+  .toast-back{position:fixed;inset:0;background:rgba(10,8,6,.72);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .toast{background:var(--bg-raised);border:1px solid var(--gtr);border-radius:14px;padding:24px;max-width:380px;width:100%;text-align:center;animation:pop .35s ease-out;}
+  .toast h2{font-family:'Fraunces',serif;margin:0 0 6px;}
+  .toast .xp{color:var(--gtr);font-weight:600;margin-bottom:14px;}
+  .toast .badge{margin:8px 0;}
+  @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
@@ -171,7 +233,17 @@ const db = getFirestore(firebaseApp);
 // Remplace le window.storage propre à l'environnement artifact Claude par un
 // shim de même interface, adossé à Firestore — tout le reste du code de
 // l'appli (safeGet/safeSet/queueSet, etc.) n'a besoin d'aucun changement.
-window.storage = {
+// ?demo dans l'URL : stockage local au navigateur, pour tester sans toucher aux vraies données.
+const DEMO = new URLSearchParams(location.search).has('demo');
+window.storage = DEMO ? {
+  async get(key){
+    const v = localStorage.getItem('demo:'+key);
+    if(v === null) throw new Error('not found');
+    return {key, value: v};
+  },
+  async set(key, value){ localStorage.setItem('demo:'+key, value); return {key}; },
+  async delete(key){ localStorage.removeItem('demo:'+key); return {key, deleted:true}; }
+} : {
   async get(key){
     const snap = await getDoc(doc(db, 'app_data', key));
     if(!snap.exists()) throw new Error('not found');
@@ -191,6 +263,7 @@ const INSTRUMENTS = [
   {key:'Guitare', abbr:'Guitare', cls:'gtr'},
   {key:'Basse', abbr:'Basse', cls:'bass'},
   {key:'Batterie', abbr:'Batterie', cls:'drm'},
+  {key:'Clavier', abbr:'Clavier', cls:'keys'},
   {key:'Chant', abbr:'Voix', cls:'vox'},
 ];
 const REQUIRED = ['Guitare','Basse','Batterie'];
@@ -259,6 +332,19 @@ let selectedGridMusician = null;
 let pendingDeleteMusician = null;
 let deleteCodeError = null;
 let addSongFormOpen = false;
+
+// ---------- Studio : état ----------
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v); }catch(e){} }
+let progress = {};
+let progressError = false;
+let studioWho = lsGet('setlistas-who');
+let studioView = 'seance';
+let session = (()=>{ try{ return JSON.parse(lsGet('setlistas-session')); }catch(e){ return null; } })();
+let swapOpen = false;
+let timer = {step:null, endAt:null, remaining:null};
+let timerInterval = null;
+let toast = null;
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -344,7 +430,80 @@ async function init(){
     }
     mastery[mus.id] = data;
   }
+  await loadProgress();
+  if(location.hash === '#studio' || (studioWho && musicians.some(m=>m.id===studioWho))) activeTab = 'studio';
   render();
+}
+
+// ---------- Studio : chargement + pré-remplissage ----------
+// Lecture stricte : distingue « n'existe pas » (on peut initialiser) d'une erreur réseau
+// (on ne touche à rien, sinon on écraserait la progression existante).
+async function strictGet(key){
+  for(let i=0;i<3;i++){
+    try{
+      const res = await window.storage.get(key, true);
+      return {ok:true, value: JSON.parse(res.value)};
+    }catch(e){
+      if(e && e.message === 'not found') return {ok:true, value:null};
+      await sleep(500);
+    }
+  }
+  return {ok:false, value:null};
+}
+
+function studioMusicians(){ return musicians.filter(m => !m.universal); }
+
+async function loadProgress(){
+  const missing = [];
+  for(const m of studioMusicians()){
+    const r = await strictGet('progress:'+m.id);
+    if(!r.ok){ progressError = true; return; }
+    if(r.value){ progress[m.id] = normalizeProgress(r.value); }
+    else { progress[m.id] = emptyProgress(); missing.push(m.id); }
+  }
+  if(missing.includes('seb') && missing.includes('arthur')) await seedProgress();
+}
+
+function emptyProgress(){ return {items:{}, sessions:[], badges:{}, xp:0, dustCount:0}; }
+function normalizeProgress(p){ return Object.assign(emptyProgress(), p, {items:p.items||{}, sessions:p.sessions||[], badges:p.badges||{}}); }
+
+function normTitle(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,''); }
+function ensureSong(title, artist){
+  let s = songs.find(x => normTitle(x.title) === normTitle(title));
+  if(!s){
+    s = {id: songs.length ? Math.max(...songs.map(x=>x.id))+1 : 1, title, artist};
+    songs.push(s);
+  }
+  return s;
+}
+
+// Morceaux en cours au 15 novembre 2026, tels que Seb les a décrits.
+async function seedProgress(){
+  const before = songs.length;
+  const gs = ensureSong('Goodbye Stranger','Supertramp');
+  const sfa = ensureSong('So Far Away','Dire Straits');
+  const htl = ensureSong('Hold the Line','Toto');
+  const rwy = ensureSong('Rock With You','Michael Jackson');
+  const tush = ensureSong('Tush','ZZ Top');
+  ensureSong('Éteins la lumière','Axel Bauer');
+  const today = todayStr();
+  const add = (mid, song, ins, status, objective='') => {
+    if(!progress[mid]) return;
+    progress[mid].items[song.id+'|'+ins] = {songId:song.id, ins, status, objective, createdAt:today, lastWorked:null, workedCount:0, reachedCount:0};
+  };
+  add('seb', gs, 'Clavier', 'wip');
+  add('seb', sfa, 'Guitare', 'wip');
+  add('seb', sfa, 'Chant', 'wip');
+  add('seb', htl, 'Basse', 'wip');
+  add('seb', rwy, 'Guitare', 'wip');
+  add('seb', rwy, 'Clavier', 'todo');
+  add('arthur', gs, 'Basse', 'wip');
+  add('arthur', tush, 'Guitare', 'wip', 'Le solo');
+  add('arthur', sfa, 'Basse', 'wip');
+  add('arthur', htl, 'Guitare', 'wip');
+  add('arthur', rwy, 'Guitare', 'todo');
+  if(songs.length !== before) await safeSet('songs', songs);
+  for(const mid of ['seb','arthur']) if(progress[mid]) await safeSet('progress:'+mid, progress[mid]);
 }
 
 function nameById(id){ const m = musicians.find(x=>x.id===id); return m ? m.name : id; }
@@ -355,6 +514,7 @@ function songMastersFor(songId, instrumentKey){
 
 function renderTabs(){
   return `<div class="tabs">
+    <button class="tab ${activeTab==='studio'?'active':''}" data-tab="studio">Studio</button>
     <button class="tab ${activeTab==='repertoire'?'active':''}" data-tab="repertoire">Répertoire</button>
     <button class="tab ${activeTab==='setlist'?'active':''}" data-tab="setlist">Setlist</button>
     <button class="tab ${activeTab==='grille'?'active':''}" data-tab="grille">Ma grille</button>
@@ -469,6 +629,7 @@ function renderSetlist(){
     let voxItem;
     if(voxNames.length) voxItem = `<span class="coverage-item"><b>Chant:</b> ${voxNames.join(', ')}</span>`;
     else voxItem = `<span class="coverage-item missing"><b>Chant:</b> —</span>`;
+    if(r.coverage['Clavier'].length) voxItem += `<span class="coverage-item"><b>Clavier:</b> ${r.coverage['Clavier'].join(', ')}</span>`;
     return `<div class="song-card">
       <div class="song-top"><div><span class="song-num">#${r.song.id}</span> <span class="song-title">${escapeHtml(r.song.title)}</span> <span class="song-artist">— ${escapeHtml(r.song.artist)}</span></div></div>
       <div class="coverage-row">${covRow}${voxItem}</div>
@@ -552,6 +713,461 @@ function renderGrille(){
   `;
 }
 
+// =====================================================================
+// STUDIO — morceaux à travailler, séance proposée, badges
+// =====================================================================
+const STATUS = {todo:'À travailler', wip:'En cours', done:'Maîtrisé'};
+const INS_CLS = Object.fromEntries(INSTRUMENTS.map(i=>[i.key,i.cls]));
+
+const WARMUP = {
+  Guitare: "Chromatique 1-2-3-4 sur toutes les cordes au métronome (60 → 80 bpm), puis 10 bends d'un ton en vérifiant que tu atteins vraiment la note cible.",
+  Basse: "Gamme majeure puis pentatonique sur deux octaves au métronome, en alternant index et majeur. Finis par une minute de noires bien régulières sur une seule note.",
+  Clavier: "Enchaîne lentement les accords du morceau, main gauche seule puis deux mains, puis fais-les en arpèges.",
+  Chant: "Respiration (4 s pour inspirer, 8 s pour souffler), quelques sirènes douces, puis la mélodie du refrain bouche fermée.",
+  Batterie: "Rudiments au métronome (simple et double coup, 70 → 90 bpm), puis le groove du morceau sur le pad.",
+};
+const METHOD = {
+  Guitare: "Isole le passage de l'objectif. Ralentis le backing à 75 % dans Moises et boucle-le. Après 3 passages propres d'affilée, monte de 5 %. Si ça casse deux fois de suite, redescends.",
+  Basse: "Isole le passage. Commence au métronome seul, puis avec la batterie isolée dans Moises à 75 %. Concentre-toi sur la mise en place avec la grosse caisse. 3 passages propres d'affilée : +5 %.",
+  Clavier: "Main par main d'abord, puis les deux mains au ralenti. Quand c'est propre 3 fois d'affilée, passe sur le backing Moises (clavier coupé) à 75 %.",
+  Chant: "Coupe la voix dans Moises. Chante le passage en boucle, puis enregistre-toi sur le téléphone et réécoute une fois : justesse et placement.",
+  Batterie: "Le passage au métronome seul, puis sur le backing Moises (batterie coupée) à 75 %. 3 passages propres d'affilée : +5 %.",
+};
+
+const BADGES = [
+  {id:'first',      ico:'🎬', name:'Premier pas',        desc:'Terminer sa première séance'},
+  {id:'sessions10', ico:'🎸', name:'Habitué du studio',  desc:'10 séances terminées'},
+  {id:'sessions30', ico:'🏟️', name:'Pilier du studio',   desc:'30 séances terminées'},
+  {id:'streak3',    ico:'🔥', name:'Ça chauffe',         desc:'Une séance 3 jours de suite'},
+  {id:'streak7',    ico:'☄️', name:'Inarrêtable',        desc:'Une séance 7 jours de suite'},
+  {id:'week4',      ico:'📅', name:'Semaine pleine',     desc:'4 séances dans la même semaine'},
+  {id:'target1',    ico:'🎯', name:'Dans le mille',      desc:'Atteindre un objectif'},
+  {id:'target10',   ico:'🏹', name:'Sniper',             desc:'10 objectifs atteints'},
+  {id:'master1',    ico:'🏆', name:'Au répertoire',      desc:'Faire passer un morceau en « maîtrisé »'},
+  {id:'master5',    ico:'👑', name:'Setlist en or',      desc:'5 morceaux passés en « maîtrisé »'},
+  {id:'plan5',      ico:'🧭', name:'Fidèle au plan',     desc:'Travailler 5 fois la priorité proposée, sans la changer'},
+  {id:'precise',    ico:'✍️', name:'Objectifs clairs',   desc:'Au moins 2 morceaux en cours, tous avec un objectif précis'},
+  {id:'multi',      ico:'🎛️', name:'Homme-orchestre',    desc:'Travailler 3 instruments différents en séance'},
+  {id:'dust',       ico:'🧹', name:'Dépoussiéreur',      desc:"Reprendre un morceau en cours oublié depuis 2 semaines"},
+  {id:'duo',        ico:'🤝', name:'Duo',                desc:'Seb et Arthur font chacun une séance le même jour'},
+];
+const XP = {session:10, progress:15, reached:30, mastered:60, badge:10};
+
+function todayStr(d=new Date()){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseDay(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function daysBetween(a,b){ return Math.round((parseDay(b)-parseDay(a))/86400000); }
+function weekKey(s){ const d=parseDay(s); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return todayStr(d); }
+function songById(id){ return songs.find(s => String(s.id)===String(id)); }
+function itemsOf(mid){ return Object.entries((progress[mid]||{}).items||{}).map(([key,it]) => ({key, ...it})).filter(it => songById(it.songId)); }
+function wipSorted(mid){
+  return itemsOf(mid).filter(i=>i.status==='wip')
+    .sort((a,b)=>(a.lastWorked||'').localeCompare(b.lastWorked||'') || (a.createdAt||'').localeCompare(b.createdAt||'') || a.key.localeCompare(b.key));
+}
+function levelOf(xp){ let L=1; while(xp >= 25*L*(L+1)) L++; return L; }   // niveau 2 à 50 XP, 3 à 150, 4 à 300…
+function levelFloor(L){ return 25*(L-1)*L; }
+
+function uniqueDays(mid){ return [...new Set((progress[mid]?.sessions||[]).map(s=>s.date))].sort(); }
+function maxStreak(days){
+  let best=0, cur=0, prev=null;
+  days.forEach(d => { cur = (prev && daysBetween(prev,d)===1) ? cur+1 : 1; best=Math.max(best,cur); prev=d; });
+  return best;
+}
+function currentStreak(mid){
+  const days = uniqueDays(mid); if(!days.length) return 0;
+  const last = days[days.length-1]; const t = todayStr();
+  if(daysBetween(last,t) > 1) return 0;
+  let n=1; for(let i=days.length-1;i>0;i--){ if(daysBetween(days[i-1],days[i])===1) n++; else break; }
+  return n;
+}
+function stats(mid){
+  const p = progress[mid] || emptyProgress();
+  const results = p.sessions.flatMap(s=>s.items||[]);
+  const perWeek = {};
+  p.sessions.forEach(s => { const k=weekKey(s.date); perWeek[k]=(perWeek[k]||0)+1; });
+  return {
+    sessions: p.sessions.length,
+    reached: results.filter(r=>r.result==='reached').length,
+    mastered: Object.values(p.items).filter(i=>i.status==='done' && i.masteredAt).length,
+    streak: currentStreak(mid),
+    maxStreak: maxStreak(uniqueDays(mid)),
+    maxWeek: Math.max(0, ...Object.values(perWeek)),
+    plan: p.sessions.filter(s=>s.followedPlan).length,
+    instruments: new Set(results.map(r=>r.key.split('|')[1])).size,
+  };
+}
+
+// Attribue les badges mérités et non encore obtenus. Renvoie la liste des nouveaux.
+function checkBadges(mid){
+  const p = progress[mid]; if(!p) return [];
+  const st = stats(mid);
+  const wip = itemsOf(mid).filter(i=>i.status==='wip');
+  const myDays = new Set(p.sessions.map(s=>s.date));
+  const duo = studioMusicians().some(o => o.id!==mid && (progress[o.id]?.sessions||[]).some(s=>myDays.has(s.date)));
+  const cond = {
+    first: st.sessions>=1, sessions10: st.sessions>=10, sessions30: st.sessions>=30,
+    streak3: st.maxStreak>=3, streak7: st.maxStreak>=7, week4: st.maxWeek>=4,
+    target1: st.reached>=1, target10: st.reached>=10,
+    master1: st.mastered>=1, master5: st.mastered>=5,
+    plan5: st.plan>=5,
+    precise: wip.length>=2 && wip.every(i => (i.objective||'').trim().length>=8),
+    multi: st.instruments>=3,
+    dust: (p.dustCount||0)>=1,
+    duo,
+  };
+  const fresh = BADGES.filter(b => cond[b.id] && !p.badges[b.id]);
+  fresh.forEach(b => { p.badges[b.id] = todayStr(); p.xp = (p.xp||0) + XP.badge; });
+  return fresh;
+}
+
+function saveProgress(mid){ if(!progressError && progress[mid]) queueSet('progress:'+mid, progress[mid]); }
+function saveSession(){ lsSet('setlistas-session', session ? JSON.stringify(session) : null); }
+
+// Séance du jour : créée au premier geste (minuteur, résultat, changement de priorité).
+function currentSession(){
+  if(session && (session.who!==studioWho || session.date!==todayStr())){ session=null; saveSession(); }
+  return session;
+}
+function ensureSession(plan){
+  if(!currentSession()){
+    session = {who:studioWho, date:todayStr(), proposedKey:plan.proposed?.key||null, priorityKey:null, swapped:false, results:{}, mastered:{}, newObjectives:{}};
+  }
+  return session;
+}
+
+function buildPlan(mid){
+  const wip = wipSorted(mid);
+  const s = currentSession();
+  const proposed = wip[0] || null;
+  let priority = proposed;
+  if(s && s.priorityKey){ priority = wip.find(i=>i.key===s.priorityKey) || proposed; }
+  // De préférence un autre morceau que la priorité (pas la même chanson à un autre instrument).
+  const second = (priority && (wip.find(i => i.songId!==priority.songId) || wip.find(i => i.key!==priority.key))) || null;
+  // Sans deuxième morceau en cours : on repasse un morceau du répertoire, choisi selon le jour.
+  let review = null;
+  if(!second){
+    const known = Object.entries(mastery[mid]||{}).filter(([id,ins]) => ins && ins.length && songById(id));
+    if(known.length){
+      const t = todayStr(); let h=0; for(const c of t) h=(h*31+c.charCodeAt(0))%9973;
+      const [id,ins] = known[h % known.length];
+      review = {song: songById(id), ins: ins[0]};
+    }
+  }
+  return {wip, proposed, priority, second, review};
+}
+
+function insTag(ins){ return `<span class="tag ${INS_CLS[ins]||''}"><span class="dot"></span>${escapeHtml(ins)}</span>`; }
+function fmtTime(sec){ sec=Math.max(0,Math.ceil(sec)); return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0'); }
+function timerLabel(stepId, minutes){
+  if(timer.step===stepId){
+    const rem = timer.endAt ? (timer.endAt-Date.now())/1000 : timer.remaining;
+    return (timer.endAt ? '⏸ ' : '▶ ') + fmtTime(rem);
+  }
+  return '▶ ' + minutes + ' min';
+}
+function sinceLabel(d){
+  if(!d) return 'jamais travaillé ici';
+  const n = daysBetween(d, todayStr());
+  return n===0 ? "travaillé aujourd'hui" : n===1 ? 'travaillé hier' : `travaillé il y a ${n} jours`;
+}
+
+function renderStudio(){
+  if(progressError) return `<div class="note" style="border-color:var(--drm);color:var(--drm)">Impossible de charger la progression. Recharge la page (rien n'a été modifié).</div>`;
+  const people = studioMusicians();
+  if(!studioWho || !people.some(m=>m.id===studioWho)){
+    return `<p style="text-align:center;font-family:'Fraunces',serif;font-size:1.4rem;margin-top:30px">Qui joue ?</p>
+      <div class="who-big">${people.map(m=>`<button class="who-chip" data-who="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>`;
+  }
+  if(!progress[studioWho]) progress[studioWho] = emptyProgress();
+  const p = progress[studioWho];
+  const L = levelOf(p.xp||0), lo = levelFloor(L), hi = levelFloor(L+1);
+  const pct = Math.round(100*((p.xp||0)-lo)/(hi-lo));
+  const streak = currentStreak(studioWho);
+  const head = `<div class="studio-head">
+      <div class="who-chips">${people.map(m=>`<button class="who-chip ${m.id===studioWho?'selected':''}" data-who="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>
+      <div class="level-box">
+        <div class="level-line"><span><b>Niveau ${L}</b> · ${p.xp||0} XP</span><span>${streak?`🔥 ${streak} j`:''} · ${Object.keys(p.badges).length}/${BADGES.length} badges</span></div>
+        <div class="bar"><div style="width:${pct}%"></div></div>
+      </div>
+    </div>
+    <div class="subtabs">
+      <button class="subtab ${studioView==='seance'?'active':''}" data-sv="seance">Séance du jour</button>
+      <button class="subtab ${studioView==='morceaux'?'active':''}" data-sv="morceaux">Mes morceaux</button>
+      <button class="subtab ${studioView==='badges'?'active':''}" data-sv="badges">Badges</button>
+    </div>`;
+  const body = studioView==='morceaux' ? renderMyItems() : studioView==='badges' ? renderBadges() : renderSeance();
+  return head + body;
+}
+
+function renderSeance(){
+  const plan = buildPlan(studioWho);
+  const s = currentSession();
+  if(!plan.priority){
+    return `<div class="note">Aucun morceau en cours. Va dans <b>Mes morceaux</b> pour en passer un « en cours » et lui donner un objectif.</div>`;
+  }
+  const lastToday = (progress[studioWho].sessions||[]).filter(x=>x.date===todayStr()).length;
+  const resultBtns = (it) => {
+    const r = s?.results?.[it.key];
+    let extra = '';
+    if(r==='reached'){
+      extra = `<label class="check" style="margin-top:10px"><input type="checkbox" class="master-cb" data-key="${it.key}" ${s.mastered[it.key]?'checked':''}> Je le maîtrise : passer en « maîtrisé » 🏆</label>
+        ${s.mastered[it.key] ? '' : `<input type="text" class="newobj-input" data-key="${it.key}" placeholder="Prochain objectif (ex. le pont, à 100 % du tempo)" value="${escapeAttr(s.newObjectives[it.key]||'')}" style="margin-top:8px">`}`;
+    }
+    return `<div class="results">
+        <button class="res-btn ${r==='reached'?'on':''}" data-res="reached" data-key="${it.key}">🎯 Objectif atteint</button>
+        <button class="res-btn ${r==='progress'?'on':''}" data-res="progress" data-key="${it.key}">📈 Ça avance</button>
+        <button class="res-btn ${r==='skip'?'on':''}" data-res="skip" data-key="${it.key}">Pas travaillé</button>
+      </div>${extra}`;
+  };
+  const objBox = (it) => (it.objective||'').trim()
+    ? `<div class="objective">🎯 ${escapeHtml(it.objective)}</div>`
+    : `<div class="objective missing-obj">Pas d'objectif écrit. Choisis-en un précis avant de jouer (un passage, un tempo), et note-le dans « Mes morceaux ».</div>`;
+  const pr = plan.priority, song = songById(pr.songId);
+  const swapSel = swapOpen && plan.wip.length>1 ? `<select id="swap-select" style="margin-top:10px">${plan.wip.map(i=>`<option value="${i.key}" ${i.key===pr.key?'selected':''}>${escapeHtml(songById(i.songId).title)} · ${i.ins}</option>`).join('')}</select>` : '';
+  const step = (n, id, min, title, inner, cls='') => `<div class="step ${cls}">
+      <div class="step-head"><div><span class="step-num">${n}</span><span class="step-title">${title}</span></div>
+        ${min ? `<button class="btn-ghost timer-btn ${timer.step===id&&timer.endAt?'running':''}" data-timer="${id}" data-min="${min}" id="timer-${id}">${timerLabel(id,min)}</button>` : ''}</div>
+      ${inner}</div>`;
+
+  let secondInner;
+  if(plan.second){
+    const s2 = songById(plan.second.songId);
+    secondInner = `<div class="step-song">${escapeHtml(s2.title)} <span class="song-artist">— ${escapeHtml(s2.artist)}</span> ${insTag(plan.second.ins)}</div>
+      ${objBox(plan.second)}
+      <div class="step-body">Joue-le en entier avec le backing Moises à vitesse normale. Repère l'endroit où ça casse : ce sera peut-être ton prochain objectif. <i>${sinceLabel(plan.second.lastWorked)}</i></div>
+      ${resultBtns(plan.second)}`;
+  } else if(plan.review){
+    secondInner = `<div class="step-song">${escapeHtml(plan.review.song.title)} <span class="song-artist">— ${escapeHtml(plan.review.song.artist)}</span> ${insTag(plan.review.ins)}</div>
+      <div class="step-body">Un morceau que tu connais déjà, en entier sur le backing, pour l'entretenir.</div>`;
+  } else {
+    secondInner = `<div class="step-body">Repasse un morceau que tu connais déjà, en entier sur le backing.</div>`;
+  }
+
+  const canFinish = s && Object.values(s.results).some(r=>r==='reached'||r==='progress');
+  return `
+    ${lastToday ? `<div class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} terminée${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</div>` : ''}
+    ${step(1,'warm',5,'Échauffement',`<div class="step-body">${WARMUP[pr.ins]||WARMUP.Guitare}</div>`)}
+    ${step(2,'prio',15,'Objectif prioritaire',`
+      <div class="step-song">${escapeHtml(song.title)} <span class="song-artist">— ${escapeHtml(song.artist)}</span> ${insTag(pr.ins)}</div>
+      ${objBox(pr)}
+      <div class="step-body">${METHOD[pr.ins]||METHOD.Guitare} <i>${sinceLabel(pr.lastWorked)}.</i>
+        ${plan.wip.length>1 ? `<a href="#" id="swap-link" style="color:var(--cream-dim);margin-left:4px">Changer de priorité</a>` : ''}</div>
+      ${swapSel}
+      ${resultBtns(pr)}`,'prio')}
+    ${step(3,'second',7, plan.second ? 'Deuxième morceau en cours' : 'Morceau du répertoire', secondInner)}
+    ${step(4,'free',0,'Jeu libre 🎸',`<div class="step-body">Joue ce que tu veux : c'est la récompense. Mais d'abord, clique sur « Terminer la séance » pour gagner tes points.</div>`)}
+    <div class="finish-bar"><button class="btn" id="finish-session" ${canFinish?'':'disabled'}>Terminer la séance</button></div>
+    ${canFinish ? '' : `<p style="font-size:0.78rem;color:var(--cream-dim);text-align:right;margin-top:6px">Indique au moins un « Objectif atteint » ou « Ça avance » pour terminer.</p>`}
+  `;
+}
+
+function renderMyItems(){
+  const items = itemsOf(studioWho);
+  const collator = new Intl.Collator('fr',{sensitivity:'base'});
+  const row = (it) => {
+    const s = songById(it.songId);
+    return `<div class="item-row">
+      <div><span class="song-title">${escapeHtml(s.title)}</span> <span class="song-artist">— ${escapeHtml(s.artist)}</span> ${insTag(it.ins)}
+        <div class="meta">${it.status==='done' ? (it.masteredAt?`maîtrisé le ${parseDay(it.masteredAt).toLocaleDateString('fr-FR')}`:'maîtrisé') : sinceLabel(it.lastWorked)}${it.reachedCount?` · ${it.reachedCount} objectif${it.reachedCount>1?'s':''} atteint${it.reachedCount>1?'s':''}`:''}</div></div>
+      <div class="item-actions">
+        <select class="status-select" data-key="${it.key}">${Object.entries(STATUS).map(([k,v])=>`<option value="${k}" ${it.status===k?'selected':''}>${v}</option>`).join('')}</select>
+        <button class="x-btn" data-delitem="${it.key}" title="Retirer">✕</button>
+      </div>
+      ${it.status!=='done' ? `<input type="text" class="obj-input" data-key="${it.key}" placeholder="Objectif précis : un passage, un tempo (ex. solo mesures 9 à 16 à 90 bpm)" value="${escapeAttr(it.objective||'')}">` : ''}
+    </div>`;
+  };
+  const group = (status) => items.filter(i=>i.status===status)
+    .sort((a,b)=>collator.compare(songById(a.songId).title, songById(b.songId).title)).map(row).join('');
+  const missingObj = items.filter(i=>i.status==='wip' && !(i.objective||'').trim()).length;
+  const sortedSongs = [...songs].sort((a,b)=>collator.compare(a.title,b.title));
+  return `
+    ${missingObj ? `<div class="note">${missingObj} morceau${missingObj>1?'x':''} en cours sans objectif. Le bon moment pour les écrire : juste après le cours de Franck, le samedi.</div>` : ''}
+    <div class="section-label">En cours</div>${group('wip') || '<p style="color:var(--cream-dim);font-size:0.85rem">Rien en cours.</p>'}
+    <div class="section-label">À travailler ensuite</div>${group('todo') || '<p style="color:var(--cream-dim);font-size:0.85rem">Rien en attente.</p>'}
+    <div class="section-label">Ajouter un morceau à travailler</div>
+    <div class="row">
+      <select id="add-item-song" style="flex:1;min-width:180px">${sortedSongs.map(s=>`<option value="${s.id}">${escapeHtml(s.title)} — ${escapeHtml(s.artist)}</option>`).join('')}</select>
+      <select id="add-item-ins">${INSTRUMENTS.map(i=>`<option>${i.key}</option>`).join('')}</select>
+      <select id="add-item-status"><option value="wip">En cours</option><option value="todo">À travailler</option></select>
+      <button class="btn" id="add-item-btn">Ajouter</button>
+    </div>
+    <p style="font-size:0.78rem;color:var(--cream-dim)">Morceau absent de la liste ? Ajoute-le d'abord dans l'onglet Répertoire.</p>
+    ${items.some(i=>i.status==='done') ? `<details><summary>Maîtrisés grâce au studio</summary>${group('done')}</details>` : ''}
+  `;
+}
+
+function renderBadges(){
+  const p = progress[studioWho]; const st = stats(studioWho);
+  return `<div class="stats">
+      <div class="stat"><b>${st.sessions}</b><span>séances</span></div>
+      <div class="stat"><b>${st.streak}</b><span>jours de suite (record ${st.maxStreak})</span></div>
+      <div class="stat"><b>${st.reached}</b><span>objectifs atteints</span></div>
+      <div class="stat"><b>${st.mastered}</b><span>morceaux maîtrisés</span></div>
+    </div>
+    <div class="badge-grid">${BADGES.map(b => {
+      const got = p.badges[b.id];
+      return `<div class="badge ${got?'earned':'locked'}"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${got ? 'obtenu le '+parseDay(got).toLocaleDateString('fr-FR') : b.desc}</div></div>`;
+    }).join('')}</div>
+    <p style="font-size:0.78rem;color:var(--cream-dim);margin-top:14px">Points : séance ${XP.session} · ça avance ${XP.progress} · objectif atteint ${XP.reached} · morceau maîtrisé ${XP.mastered} · badge ${XP.badge}.</p>`;
+}
+
+function renderToast(){
+  if(!toast) return '';
+  return `<div class="toast-back"><div class="toast">
+    <h2>${toast.title}</h2>
+    <div class="xp">+${toast.xp} XP${toast.levelUp ? ` · niveau ${toast.levelUp} atteint !` : ''}</div>
+    ${toast.badges.map(b=>`<div class="badge earned"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${b.desc}</div></div>`).join('')}
+    <button class="btn" id="toast-ok" style="margin-top:14px">${toast.cta||'Continuer'}</button>
+  </div></div>`;
+}
+
+function addMastery(mid, songId, ins){
+  const cur = mastery[mid][songId] || mastery[mid][String(songId)] || [];
+  if(!cur.includes(ins)){ cur.push(ins); mastery[mid][String(songId)] = cur; queueSet('mastery:'+mid, mastery[mid]); }
+}
+
+function finishSession(){
+  const s = currentSession(); if(!s) return;
+  const who = s.who, p = progress[who], today = todayStr();
+  const worked = Object.entries(s.results).filter(([k,r]) => (r==='reached'||r==='progress') && p.items[k]);
+  if(!worked.length) return;
+  const xpBefore = p.xp||0, levelBefore = levelOf(xpBefore);
+  let xp = XP.session;
+  worked.forEach(([k,r]) => {
+    const it = p.items[k];
+    if(it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
+    it.lastWorked = today;
+    it.workedCount = (it.workedCount||0)+1;
+    if(r==='reached'){
+      xp += XP.reached;
+      it.reachedCount = (it.reachedCount||0)+1;
+      it.lastReached = it.objective || '';
+      if(s.mastered[k]){
+        it.status = 'done'; it.masteredAt = today; xp += XP.mastered;
+        addMastery(who, it.songId, it.ins);
+      } else {
+        it.objective = (s.newObjectives[k]||'').trim();
+      }
+    } else xp += XP.progress;
+  });
+  p.sessions.push({
+    date: today, ts: new Date().toISOString(),
+    items: worked.map(([k,r]) => ({key:k, result:r})),
+    followedPlan: !s.swapped && !!s.proposedKey && worked.some(([k]) => k===s.proposedKey),
+  });
+  p.xp = xpBefore + xp;
+  const fresh = checkBadges(who);
+  // Le badge Duo peut aussi se débloquer pour l'autre.
+  studioMusicians().forEach(m => { if(m.id!==who){ const f = checkBadges(m.id); if(f.length) saveProgress(m.id); } });
+  saveProgress(who);
+  const levelAfter = levelOf(p.xp);
+  toast = {title: fresh.length ? 'Bravo !' : 'Séance enregistrée', xp: p.xp - xpBefore, badges: fresh, levelUp: levelAfter>levelBefore ? levelAfter : null, cta:'Place au jeu libre 🎸'};
+  session = null; saveSession();
+  stopTimer();
+  render();
+}
+
+function stopTimer(){ timer = {step:null, endAt:null, remaining:null}; if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+function beep(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    [0,0.35,0.7].forEach(t => { const o=ctx.createOscillator(), g=ctx.createGain(); o.frequency.value=880; g.gain.value=0.15; o.connect(g); g.connect(ctx.destination); o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.2); });
+    if(navigator.vibrate) navigator.vibrate([200,100,200]);
+  }catch(e){}
+}
+function tick(){
+  if(!timer.step || !timer.endAt) return;
+  const rem = (timer.endAt - Date.now())/1000;
+  const el = document.getElementById('timer-'+timer.step);
+  if(rem <= 0){ beep(); const id=timer.step; stopTimer(); const e2=document.getElementById('timer-'+id); if(e2){ e2.textContent='✓ terminé'; e2.classList.remove('running'); } return; }
+  if(el) el.textContent = '⏸ ' + fmtTime(rem);
+}
+
+function attachStudioEvents(){
+  const toastOk = document.getElementById('toast-ok');
+  if(toastOk) toastOk.onclick = () => { toast = null; render(); };
+  if(activeTab!=='studio') return;
+
+  document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
+    studioWho = b.dataset.who; lsSet('setlistas-who', studioWho);
+    swapOpen = false; stopTimer(); render();
+  });
+  document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { studioView = b.dataset.sv; render(); });
+
+  // Minuteurs
+  document.querySelectorAll('[data-timer]').forEach(b => b.onclick = () => {
+    const id = b.dataset.timer, min = Number(b.dataset.min);
+    ensureSession(buildPlan(studioWho)); saveSession();
+    if(timer.step===id && timer.endAt){ timer.remaining = (timer.endAt-Date.now())/1000; timer.endAt=null; }
+    else if(timer.step===id && timer.remaining!=null){ timer.endAt = Date.now()+timer.remaining*1000; }
+    else { timer = {step:id, endAt:Date.now()+min*60000, remaining:null}; }
+    if(!timerInterval) timerInterval = setInterval(tick, 500);
+    render();
+  });
+
+  const swapLink = document.getElementById('swap-link');
+  if(swapLink) swapLink.onclick = (e) => { e.preventDefault(); swapOpen = !swapOpen; render(); };
+  const swapSelect = document.getElementById('swap-select');
+  if(swapSelect) swapSelect.onchange = (e) => {
+    const s = ensureSession(buildPlan(studioWho));
+    s.priorityKey = e.target.value; s.swapped = e.target.value !== s.proposedKey;
+    saveSession(); swapOpen = false; render();
+  };
+
+  document.querySelectorAll('.res-btn').forEach(b => b.onclick = () => {
+    const s = ensureSession(buildPlan(studioWho));
+    const k = b.dataset.key;
+    s.results[k] = s.results[k]===b.dataset.res ? undefined : b.dataset.res;
+    if(!s.results[k]) delete s.results[k];
+    saveSession(); render();
+  });
+  document.querySelectorAll('.master-cb').forEach(cb => cb.onchange = () => {
+    const s = currentSession(); if(!s) return; s.mastered[cb.dataset.key] = cb.checked; saveSession(); render();
+  });
+  document.querySelectorAll('.newobj-input').forEach(inp => inp.oninput = () => {
+    const s = currentSession(); if(!s) return; s.newObjectives[inp.dataset.key] = inp.value; saveSession();
+  });
+  const finishBtn = document.getElementById('finish-session');
+  if(finishBtn) finishBtn.onclick = finishSession;
+
+  // Mes morceaux
+  const p = progress[studioWho];
+  document.querySelectorAll('.obj-input').forEach(inp => inp.onchange = () => {
+    const it = p.items[inp.dataset.key]; if(!it) return;
+    it.objective = inp.value.trim(); it.objectiveAt = todayStr();
+    const fresh = checkBadges(studioWho);
+    saveProgress(studioWho);
+    if(fresh.length){ toast = {title:'Badge débloqué', xp: fresh.length*XP.badge, badges: fresh}; render(); }
+  });
+  document.querySelectorAll('.status-select').forEach(sel => sel.onchange = () => {
+    const it = p.items[sel.dataset.key]; if(!it) return;
+    const was = it.status; it.status = sel.value;
+    let gained = 0;
+    if(sel.value==='done' && was!=='done'){
+      it.masteredAt = todayStr(); p.xp = (p.xp||0) + XP.mastered; gained += XP.mastered;
+      addMastery(studioWho, it.songId, it.ins);
+    }
+    const fresh = checkBadges(studioWho);
+    saveProgress(studioWho);
+    if(gained || fresh.length) toast = {title: sel.value==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: gained + fresh.length*XP.badge, badges: fresh};
+    render();
+  });
+  document.querySelectorAll('[data-delitem]').forEach(b => b.onclick = () => {
+    const it = p.items[b.dataset.delitem]; if(!it) return;
+    if(!confirm(`Retirer « ${songById(it.songId).title} · ${it.ins} » de tes morceaux ?`)) return;
+    delete p.items[b.dataset.delitem]; saveProgress(studioWho); render();
+  });
+  const addBtn = document.getElementById('add-item-btn');
+  if(addBtn) addBtn.onclick = () => {
+    const songId = Number(document.getElementById('add-item-song').value);
+    const ins = document.getElementById('add-item-ins').value;
+    const status = document.getElementById('add-item-status').value;
+    const key = songId+'|'+ins;
+    if(p.items[key]){ p.items[key].status = status; }
+    else p.items[key] = {songId, ins, status, objective:'', createdAt:todayStr(), lastWorked:null, workedCount:0, reachedCount:0};
+    saveProgress(studioWho); render();
+  };
+}
+
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function escapeAttr(s){ return escapeHtml(s); }
 
@@ -560,11 +1176,12 @@ function render(){
   let content = '';
   if(activeTab==='repertoire') content = renderRepertoire();
   else if(activeTab==='setlist') content = renderSetlist();
+  else if(activeTab==='studio') content = renderStudio();
   else content = renderGrille();
 
   app.innerHTML = `
     <div class="row" style="justify-content:space-between;align-items:flex-start">
-      <div><h1>Répertoire</h1><p class="subtitle">Guitare, basse, batterie, chant — qui joue quoi sur quel morceau.</p></div>
+      <div><h1>Répertoire</h1><p class="subtitle">Guitare, basse, batterie, clavier, chant — qui joue quoi, et ce qu'on travaille.</p></div>
       <div class="row" style="flex-wrap:nowrap">
         <button class="btn-ghost" id="export-csv-btn" style="white-space:nowrap">Exporter (CSV)</button>
         <button class="btn-ghost" id="import-csv-btn" style="white-space:nowrap">Importer (CSV)</button>
@@ -586,8 +1203,10 @@ function render(){
       </div>` : ''}
     ${renderTabs()}
     <div id="tab-content">${content}</div>
+    ${renderToast()}
   `;
   attachEvents();
+  attachStudioEvents();
 }
 
 function csvEscape(val){
