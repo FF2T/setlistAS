@@ -161,7 +161,7 @@
   .who-big{display:flex;gap:14px;justify-content:center;margin:40px 0;}
   .who-big .who-chip{font-size:1.3rem;padding:22px 40px;border-radius:14px;}
   .level-box{min-width:200px;flex:1;max-width:320px;}
-  .level-line{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--cream-dim);margin-bottom:5px;}
+  .level-line{display:flex;justify-content:space-between;flex-wrap:wrap;gap:2px 10px;font-size:0.8rem;color:var(--cream-dim);margin-bottom:5px;}
   .level-line b{color:var(--cream);}
   .bar{height:8px;border-radius:6px;background:var(--bg-raised-2);overflow:hidden;}
   .bar > div{height:100%;background:linear-gradient(90deg,var(--gtr),#E8C46A);border-radius:6px;}
@@ -209,6 +209,17 @@
   .toast h2{font-family:'Fraunces',serif;margin:0 0 6px;}
   .toast .xp{color:var(--gtr);font-weight:600;margin-bottom:14px;}
   .toast .badge{margin:8px 0;}
+  .stars{color:var(--gtr);font-size:0.85rem;letter-spacing:2px;margin-top:4px;}
+  .badge .count{color:var(--gtr);font-family:'IBM Plex Mono',monospace;font-size:0.8rem;}
+  .challenge{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg,rgba(217,164,65,.16),transparent);border:1px solid var(--gtr);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+  .challenge .ico{font-size:1.6rem;}
+  .challenge .ct{font-weight:600;font-size:0.92rem;}
+  .challenge .cs{font-size:0.78rem;color:var(--cream-dim);margin-top:2px;}
+  .rec-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .rec-chip{padding:6px 12px;border-radius:16px;border:1px solid var(--line);background:none;color:var(--cream-dim);font-family:inherit;font-size:0.82rem;cursor:pointer;}
+  .rec-chip.on{background:var(--cream);color:#221B17;border-color:var(--cream);font-weight:600;}
+  .rec-list{margin-top:10px;font-size:0.85rem;}
+  .rec-list div{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-top:1px solid var(--line);}
   @keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
 </head>
@@ -345,6 +356,7 @@ let swapOpen = false;
 let timer = {step:null, endAt:null, remaining:null};
 let timerInterval = null;
 let toast = null;
+let recDraft = {songId:null, ins:[]};
 
 function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
@@ -462,10 +474,15 @@ async function loadProgress(){
     else { progress[m.id] = emptyProgress(); missing.push(m.id); }
   }
   if(missing.includes('seb') && missing.includes('arthur')) await seedProgress();
+  // Passage au nouveau système de badges : on marque l'existant comme déjà vu, sans redonner d'XP.
+  for(const m of studioMusicians()){
+    const p = progress[m.id];
+    if(p && !p.seen){ p.seen = achievements(m.id); p.seenDates = {}; }
+  }
 }
 
-function emptyProgress(){ return {items:{}, sessions:[], badges:{}, xp:0, dustCount:0}; }
-function normalizeProgress(p){ return Object.assign(emptyProgress(), p, {items:p.items||{}, sessions:p.sessions||[], badges:p.badges||{}}); }
+function emptyProgress(){ return {items:{}, sessions:[], badges:{}, xp:0, dustCount:0, challenges:{}, seen:null, seenDates:{}}; }
+function normalizeProgress(p){ return Object.assign(emptyProgress(), p, {items:p.items||{}, sessions:p.sessions||[], badges:p.badges||{}, challenges:p.challenges||{}}); }
 
 function normTitle(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,''); }
 function ensureSong(title, artist){
@@ -734,24 +751,55 @@ const METHOD = {
   Batterie: "Le passage au métronome seul, puis sur le backing Moises (batterie coupée) à 75 %. 3 passages propres d'affilée : +5 %.",
 };
 
-const BADGES = [
-  {id:'first',      ico:'🎬', name:'Premier pas',        desc:'Terminer sa première séance'},
-  {id:'sessions10', ico:'🎸', name:'Habitué du studio',  desc:'10 séances terminées'},
-  {id:'sessions30', ico:'🏟️', name:'Pilier du studio',   desc:'30 séances terminées'},
-  {id:'streak3',    ico:'🔥', name:'Ça chauffe',         desc:'Une séance 3 jours de suite'},
-  {id:'streak7',    ico:'☄️', name:'Inarrêtable',        desc:'Une séance 7 jours de suite'},
-  {id:'week4',      ico:'📅', name:'Semaine pleine',     desc:'4 séances dans la même semaine'},
-  {id:'target1',    ico:'🎯', name:'Dans le mille',      desc:'Atteindre un objectif'},
-  {id:'target10',   ico:'🏹', name:'Sniper',             desc:'10 objectifs atteints'},
-  {id:'master1',    ico:'🏆', name:'Au répertoire',      desc:'Faire passer un morceau en « maîtrisé »'},
-  {id:'master5',    ico:'👑', name:'Setlist en or',      desc:'5 morceaux passés en « maîtrisé »'},
-  {id:'plan5',      ico:'🧭', name:'Fidèle au plan',     desc:'Travailler 5 fois la priorité proposée, sans la changer'},
-  {id:'precise',    ico:'✍️', name:'Objectifs clairs',   desc:'Au moins 2 morceaux en cours, tous avec un objectif précis'},
-  {id:'multi',      ico:'🎛️', name:'Homme-orchestre',    desc:'Travailler 3 instruments différents en séance'},
-  {id:'dust',       ico:'🧹', name:'Dépoussiéreur',      desc:"Reprendre un morceau en cours oublié depuis 2 semaines"},
-  {id:'duo',        ico:'🤝', name:'Duo',                desc:'Seb et Arthur font chacun une séance le même jour'},
+// ---------- Gamification dans la durée ----------
+// Paliers : le même badge monte de niveau (★) au fil du temps.
+const TIERED = [
+  {id:'sessions',    ico:'🎸', name:'Séances',              unit:['séance terminée','séances terminées'],                  steps:[1,10,25,50,100,200], stat:'sessions'},
+  {id:'streak',      ico:'🔥', name:'Série de jours',       unit:['jour de suite','jours de suite'],                     steps:[3,7,14,30],          stat:'maxStreak'},
+  {id:'weeks',       ico:'📆', name:'Semaines actives',     unit:["semaine avec 2 séances ou plus","semaines d'affilée avec 2 séances ou plus"], steps:[2,4,8,12,26,52], stat:'maxWeekStreak'},
+  {id:'reached',     ico:'🎯', name:'Objectifs atteints',   unit:['objectif atteint','objectifs atteints'],                 steps:[1,5,10,25,50,100],   stat:'reached'},
+  {id:'mastered',    ico:'🏆', name:'Morceaux maîtrisés',   unit:['morceau passé en « maîtrisé »','morceaux passés en « maîtrisé »'],    steps:[1,3,5,10,20,40],     stat:'mastered'},
+  {id:'instruments', ico:'🎛️', name:'Multi-instrumentiste', unit:['instrument travaillé en séance','instruments travaillés en séance'],   steps:[2,3,4,5],            stat:'instruments'},
+  {id:'records',     ico:'🎙️', name:'Enregistrements',      unit:['prise enregistrée','prises enregistrées'],                steps:[1,5,10,25,50,100],   stat:'records'},
+  {id:'multitrack',  ico:'🎚️', name:'Multipiste',           unit:['instrument enregistré sur un même morceau','instruments enregistrés sur un même morceau'], steps:[2,3,4,5], stat:'multitrack'},
 ];
-const XP = {session:10, progress:15, reached:30, mastered:60, badge:10};
+// Répétables : on les regagne, un compteur ×N monte.
+const REPEAT = [
+  {id:'challenge', ico:'⭐', name:'Défi de la semaine', desc:'Relever le défi de la semaine',                    stat:'challenges', xp:40},
+  {id:'week4',     ico:'📅', name:'Semaine pleine',     desc:'4 séances dans la même semaine',                   stat:'fullWeeks',  xp:20},
+  {id:'plan',      ico:'🧭', name:'Fidèle au plan',     desc:'5 séances sur la priorité proposée, sans la changer', stat:'planSets', xp:20},
+  {id:'duo',       ico:'🤝', name:'Duo',                desc:'Seb et Arthur en séance le même jour',            stat:'duoDays',    xp:10},
+  {id:'dust',      ico:'🧹', name:'Dépoussiéreur',      desc:'Reprendre un morceau oublié depuis 2 semaines',    stat:'dust',       xp:15},
+  {id:'boxed',     ico:'💿', name:'Morceau en boîte',   desc:'Un morceau avec 3 instruments enregistrés (à deux, ça compte)', stat:'boxed', xp:40},
+  {id:'comeback',  ico:'💪', name:'Le retour',          desc:"Revenir au studio après une pause d'une semaine", stat:'comebacks',  xp:20},
+];
+const ONCE = [
+  {id:'precise', ico:'✍️', name:'Objectifs clairs', desc:'Au moins 2 morceaux en cours, tous avec un objectif précis'},
+];
+const ALL_BADGES_COUNT = TIERED.length + REPEAT.length + ONCE.length;
+const XP = {session:10, progress:15, reached:30, mastered:60, tier:10, once:10, record:15};
+
+// Même défi pour Seb et Arthur, il change chaque lundi.
+const CHALLENGES = [
+  {text:'Faire 3 séances cette semaine',                  goal:3, cur:ws=>ws.length},
+  {text:'Atteindre 2 objectifs cette semaine',            goal:2, cur:ws=>ws.flatMap(s=>s.items||[]).filter(i=>i.result==='reached').length},
+  {text:'Travailler 2 instruments différents',            goal:2, cur:ws=>new Set(ws.flatMap(s=>s.items||[]).map(i=>i.key.split('|')[1])).size},
+  {text:'Faire avancer 3 morceaux différents',            goal:3, cur:ws=>new Set(ws.flatMap(s=>s.items||[]).map(i=>i.key)).size},
+  {text:'Suivre 2 fois la priorité proposée',             goal:2, cur:ws=>ws.filter(s=>s.followedPlan).length},
+  {text:'Jouer 3 jours différents cette semaine',         goal:3, cur:ws=>new Set(ws.map(s=>s.date)).size},
+];
+function weekChallenge(day=todayStr()){
+  const n = Math.round(parseDay(weekKey(day)).getTime() / (7*86400000));
+  return CHALLENGES[((n % CHALLENGES.length) + CHALLENGES.length) % CHALLENGES.length];
+}
+function challengeProgress(mid){
+  const wk = weekKey(todayStr()), ch = weekChallenge();
+  const ws = (progress[mid]?.sessions||[]).filter(s => weekKey(s.date)===wk);
+  return {ch, cur: Math.min(ch.cur(ws), ch.goal), done: !!(progress[mid]?.challenges||{})[wk]};
+}
+
+const LEVEL_TITLES = ['Débutant','Apprenti','Musicien de garage','Habitué des jams','Musicien de bar','Première partie','Tête d’affiche','Légende du studio'];
+function levelTitle(L){ return LEVEL_TITLES[Math.min(L, LEVEL_TITLES.length)-1]; }
 
 function todayStr(d=new Date()){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function parseDay(s){ const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
@@ -779,43 +827,112 @@ function currentStreak(mid){
   let n=1; for(let i=days.length-1;i>0;i--){ if(daysBetween(days[i-1],days[i])===1) n++; else break; }
   return n;
 }
+function weekStreakMax(mid){
+  const per = {};
+  (progress[mid]?.sessions||[]).forEach(s => { const k=weekKey(s.date); per[k]=(per[k]||0)+1; });
+  const weeks = Object.keys(per).filter(k=>per[k]>=2).sort();
+  let best=0, cur=0, prev=null;
+  weeks.forEach(w => { cur = (prev && daysBetween(prev,w)===7) ? cur+1 : 1; best=Math.max(best,cur); prev=w; });
+  return best;
+}
 function stats(mid){
   const p = progress[mid] || emptyProgress();
   const results = p.sessions.flatMap(s=>s.items||[]);
   const perWeek = {};
   p.sessions.forEach(s => { const k=weekKey(s.date); perWeek[k]=(perWeek[k]||0)+1; });
+  const days = uniqueDays(mid);
+  const myDays = new Set(days);
+  const otherDays = new Set(studioMusicians().filter(o=>o.id!==mid).flatMap(o=>(progress[o.id]?.sessions||[]).map(s=>s.date)));
+  let comebacks = 0; for(let i=1;i<days.length;i++) if(daysBetween(days[i-1],days[i])>=7) comebacks++;
+  const plan = p.sessions.filter(s=>s.followedPlan).length;
   return {
     sessions: p.sessions.length,
     reached: results.filter(r=>r.result==='reached').length,
     mastered: Object.values(p.items).filter(i=>i.status==='done' && i.masteredAt).length,
     streak: currentStreak(mid),
-    maxStreak: maxStreak(uniqueDays(mid)),
-    maxWeek: Math.max(0, ...Object.values(perWeek)),
-    plan: p.sessions.filter(s=>s.followedPlan).length,
+    maxStreak: maxStreak(days),
+    maxWeekStreak: weekStreakMax(mid),
     instruments: new Set(results.map(r=>r.key.split('|')[1])).size,
+    plan,
+    planSets: Math.floor(plan/5),
+    fullWeeks: Object.values(perWeek).filter(n=>n>=4).length,
+    duoDays: [...myDays].filter(d=>otherDays.has(d)).length,
+    dust: p.dustCount||0,
+    comebacks,
+    challenges: Object.keys(p.challenges||{}).length,
+    ...recordStats(mid),
   };
 }
-
-// Attribue les badges mérités et non encore obtenus. Renvoie la liste des nouveaux.
-function checkBadges(mid){
-  const p = progress[mid]; if(!p) return [];
+// Instruments enregistrés par morceau, Seb et Arthur confondus : {songId: Set(instruments)}
+function recordedBySong(){
+  const map = {};
+  studioMusicians().forEach(m => (progress[m.id]?.sessions||[]).forEach(se => (se.recordings||[]).forEach(r => {
+    (map[r.songId] = map[r.songId] || new Set());
+    r.ins.forEach(i => map[r.songId].add(i));
+  })));
+  return map;
+}
+function recordStats(mid){
+  const mine = (progress[mid]?.sessions||[]).flatMap(se => se.recordings||[]);
+  const mySongs = new Set(mine.map(r => String(r.songId)));
+  const all = recordedBySong();
+  const sizes = Object.entries(all).filter(([id]) => mySongs.has(String(id))).map(([,set]) => set.size);
+  return {
+    records: mine.reduce((n,r) => n + r.ins.length, 0),
+    multitrack: Math.max(0, ...sizes),
+    boxed: sizes.filter(n => n>=3).length,
+  };
+}
+function U(t,n){ return n>1 ? t.unit[1] : t.unit[0]; }
+function tierOf(value, steps){ return steps.filter(x => value>=x).length; }
+function achievements(mid){
   const st = stats(mid);
   const wip = itemsOf(mid).filter(i=>i.status==='wip');
-  const myDays = new Set(p.sessions.map(s=>s.date));
-  const duo = studioMusicians().some(o => o.id!==mid && (progress[o.id]?.sessions||[]).some(s=>myDays.has(s.date)));
-  const cond = {
-    first: st.sessions>=1, sessions10: st.sessions>=10, sessions30: st.sessions>=30,
-    streak3: st.maxStreak>=3, streak7: st.maxStreak>=7, week4: st.maxWeek>=4,
-    target1: st.reached>=1, target10: st.reached>=10,
-    master1: st.mastered>=1, master5: st.mastered>=5,
-    plan5: st.plan>=5,
-    precise: wip.length>=2 && wip.every(i => (i.objective||'').trim().length>=8),
-    multi: st.instruments>=3,
-    dust: (p.dustCount||0)>=1,
-    duo,
-  };
-  const fresh = BADGES.filter(b => cond[b.id] && !p.badges[b.id]);
-  fresh.forEach(b => { p.badges[b.id] = todayStr(); p.xp = (p.xp||0) + XP.badge; });
+  const out = {};
+  TIERED.forEach(t => out['t:'+t.id] = tierOf(st[t.stat], t.steps));
+  REPEAT.forEach(r => out['r:'+r.id] = st[r.stat]);
+  out['o:precise'] = (wip.length>=2 && wip.every(i => (i.objective||'').trim().length>=8)) ? 1 : 0;
+  return out;
+}
+// Prochain palier le plus proche, pour encourager.
+function nextGoal(mid){
+  const st = stats(mid); let best = null;
+  TIERED.forEach(t => {
+    const tier = tierOf(st[t.stat], t.steps); if(tier>=t.steps.length) return;
+    const target = t.steps[tier], left = target - st[t.stat];
+    const ratio = left / target;
+    if(!best || ratio < best.ratio) best = {ratio, text:`${t.ico} ${t.name} : plus que ${left} pour atteindre ${target} ${U(t,target)}`};
+  });
+  return best ? best.text : null;
+}
+
+// Compare les succès actuels à ceux déjà vus, attribue les XP et renvoie les nouveautés (avec .xp).
+function checkBadges(mid){
+  const p = progress[mid]; const fresh = []; fresh.xp = 0;
+  if(!p) return fresh;
+  const a = achievements(mid), today = todayStr();
+  p.seen = p.seen || {}; p.seenDates = p.seenDates || {};
+  TIERED.forEach(t => {
+    const k='t:'+t.id, n=a[k], old=p.seen[k]||0;
+    if(n>old){
+      for(let i=old+1;i<=n;i++) fresh.xp += XP.tier*i;
+      fresh.push({ico:t.ico, name:`${t.name} ${'★'.repeat(n)}`, desc:`${t.steps[n-1]} ${U(t,t.steps[n-1])}`});
+      p.seen[k]=n; p.seenDates[k]=today;
+    }
+  });
+  REPEAT.forEach(r => {
+    const k='r:'+r.id, n=a[k], old=p.seen[k]||0;
+    if(n>old){
+      fresh.xp += r.xp*(n-old);
+      fresh.push({ico:r.ico, name: n>1 ? `${r.name} ×${n}` : r.name, desc:r.desc});
+      p.seen[k]=n; p.seenDates[k]=today;
+    }
+  });
+  ONCE.forEach(o => {
+    const k='o:'+o.id;
+    if(a[k] && !p.seen[k]){ fresh.xp += XP.once; fresh.push({ico:o.ico, name:o.name, desc:o.desc}); p.seen[k]=1; p.seenDates[k]=today; }
+  });
+  p.xp = (p.xp||0) + fresh.xp;
   return fresh;
 }
 
@@ -885,7 +1002,7 @@ function renderStudio(){
   const head = `<div class="studio-head">
       <div class="who-chips">${people.map(m=>`<button class="who-chip ${m.id===studioWho?'selected':''}" data-who="${m.id}">${escapeHtml(m.name)}</button>`).join('')}</div>
       <div class="level-box">
-        <div class="level-line"><span><b>Niveau ${L}</b> · ${p.xp||0} XP</span><span>${streak?`🔥 ${streak} j`:''} · ${Object.keys(p.badges).length}/${BADGES.length} badges</span></div>
+        <div class="level-line"><span><b>Niveau ${L}</b> · ${levelTitle(L)} · ${p.xp||0} XP</span><span>${streak?`🔥 ${streak} j · `:''}${Object.values(p.seen||{}).filter(v=>v>0).length}/${ALL_BADGES_COUNT} badges</span></div>
         <div class="bar"><div style="width:${pct}%"></div></div>
       </div>
     </div>
@@ -942,8 +1059,28 @@ function renderSeance(){
     secondInner = `<div class="step-body">Repasse un morceau que tu connais déjà, en entier sur le backing.</div>`;
   }
 
-  const canFinish = s && Object.values(s.results).some(r=>r==='reached'||r==='progress');
+  const canFinish = s && (Object.values(s.results).some(r=>r==='reached'||r==='progress') || (s.recordings||[]).length);
+  const cp = challengeProgress(studioWho);
+  const challengeCard = `<div class="challenge"><div class="ico">⭐</div><div style="flex:1">
+      <div class="ct">Défi de la semaine : ${cp.ch.text}</div>
+      <div class="cs">${cp.done ? 'Relevé ✓ · nouveau défi lundi' : `${cp.cur} / ${cp.ch.goal} · +40 XP à la clé`}</div>
+      ${cp.done ? '' : `<div class="bar" style="margin-top:6px;height:5px"><div style="width:${Math.round(100*cp.cur/cp.ch.goal)}%"></div></div>`}
+    </div></div>`;
+  const recSong = recDraft.songId ?? pr.songId;
+  const allRec = recordedBySong();
+  (s?.recordings||[]).forEach(r => { allRec[r.songId] = new Set([...(allRec[r.songId]||[]), ...r.ins]); });
+  const already = allRec[recSong] ? [...allRec[recSong]] : [];
+  const collator2 = new Intl.Collator('fr',{sensitivity:'base'});
+  const recInner = `<div class="step-body">Enregistre-toi sur le backing (GarageBand ou le téléphone), puis indique-le ici. Chaque nouvel instrument sur un même morceau multiplie les points : ×2 pour le 2e, ×3 pour le 3e… À deux, ça compte aussi.</div>
+      <div class="row" style="margin-top:10px">
+        <select id="rec-song" style="flex:1;min-width:180px">${[...songs].sort((a,b)=>collator2.compare(a.title,b.title)).map(x=>`<option value="${x.id}" ${String(x.id)===String(recSong)?'selected':''}>${escapeHtml(x.title)}</option>`).join('')}</select>
+      </div>
+      ${already.length ? `<div class="step-body" style="margin-top:6px">Déjà enregistré sur ce morceau : ${already.map(i=>escapeHtml(i)).join(', ')}. Prochain instrument : ×${already.length+1}.</div>` : ''}
+      <div class="rec-chips">${INSTRUMENTS.map(i=>`<button class="rec-chip ${recDraft.ins.includes(i.key)?'on':''}" data-recins="${i.key}">${i.key}</button>`).join('')}</div>
+      <div style="margin-top:10px"><button class="btn-ghost" id="rec-add" ${recDraft.ins.length?'':'disabled'}>🎙️ J'ai enregistré ça</button></div>
+      ${(s?.recordings||[]).length ? `<div class="rec-list">${s.recordings.map((r,idx)=>`<div><span>🎙️ ${escapeHtml(songById(r.songId)?.title||'?')} · ${r.ins.join(' + ')}</span><button class="x-btn" data-recdel="${idx}">✕</button></div>`).join('')}</div>` : ''}`;
   return `
+    ${challengeCard}
     ${lastToday ? `<div class="note">Déjà ${lastToday} séance${lastToday>1?'s':''} terminée${lastToday>1?'s':''} aujourd'hui. Tu peux en refaire une.</div>` : ''}
     ${step(1,'warm',5,'Échauffement',`<div class="step-body">${WARMUP[pr.ins]||WARMUP.Guitare}</div>`)}
     ${step(2,'prio',15,'Objectif prioritaire',`
@@ -954,9 +1091,10 @@ function renderSeance(){
       ${swapSel}
       ${resultBtns(pr)}`,'prio')}
     ${step(3,'second',7, plan.second ? 'Deuxième morceau en cours' : 'Morceau du répertoire', secondInner)}
+    ${step('★','rec',0,'🎙️ Enregistrement (bonus)', recInner)}
     ${step(4,'free',0,'Jeu libre 🎸',`<div class="step-body">Joue ce que tu veux : c'est la récompense. Mais d'abord, clique sur « Terminer la séance » pour gagner tes points.</div>`)}
     <div class="finish-bar"><button class="btn" id="finish-session" ${canFinish?'':'disabled'}>Terminer la séance</button></div>
-    ${canFinish ? '' : `<p style="font-size:0.78rem;color:var(--cream-dim);text-align:right;margin-top:6px">Indique au moins un « Objectif atteint » ou « Ça avance » pour terminer.</p>`}
+    ${canFinish ? '' : `<p style="font-size:0.78rem;color:var(--cream-dim);text-align:right;margin-top:6px">Indique au moins un « Objectif atteint », un « Ça avance » ou un enregistrement pour terminer.</p>`}
   `;
 }
 
@@ -1003,11 +1141,29 @@ function renderBadges(){
       <div class="stat"><b>${st.reached}</b><span>objectifs atteints</span></div>
       <div class="stat"><b>${st.mastered}</b><span>morceaux maîtrisés</span></div>
     </div>
-    <div class="badge-grid">${BADGES.map(b => {
-      const got = p.badges[b.id];
-      return `<div class="badge ${got?'earned':'locked'}"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${got ? 'obtenu le '+parseDay(got).toLocaleDateString('fr-FR') : b.desc}</div></div>`;
+    ${nextGoal(studioWho) ? `<div class="note">Prochain palier : ${nextGoal(studioWho)}</div>` : ''}
+    <div class="section-label">Badges à paliers</div>
+    <div class="badge-grid">${TIERED.map(t => {
+      const v = st[t.stat], tier = tierOf(v, t.steps), max = t.steps.length;
+      const next = tier < max ? t.steps[tier] : null;
+      const prev = tier ? t.steps[tier-1] : 0;
+      const pct = next ? Math.round(100*(v-prev)/(next-prev)) : 100;
+      return `<div class="badge ${tier?'earned':'locked'}"><div class="ico">${t.ico}</div>
+        <div class="bn">${t.name}</div>
+        <div class="stars">${'★'.repeat(tier)}${'☆'.repeat(max-tier)}</div>
+        <div class="bd">${next ? `${v} / ${next} ${U(t,next)}` : `Palier max : ${prev} ${U(t,prev)}`}</div>
+        <div class="bar" style="margin-top:6px;height:5px"><div style="width:${Math.max(0,Math.min(100,pct))}%"></div></div></div>`;
     }).join('')}</div>
-    <p style="font-size:0.78rem;color:var(--cream-dim);margin-top:14px">Points : séance ${XP.session} · ça avance ${XP.progress} · objectif atteint ${XP.reached} · morceau maîtrisé ${XP.mastered} · badge ${XP.badge}.</p>`;
+    <div class="section-label">Badges à collectionner</div>
+    <div class="badge-grid">${REPEAT.map(r => {
+      const n = st[r.stat];
+      return `<div class="badge ${n?'earned':'locked'}"><div class="ico">${r.ico}</div><div class="bn">${r.name}${n?` <span class="count">×${n}</span>`:''}</div><div class="bd">${r.desc}</div></div>`;
+    }).join('')}
+    ${ONCE.map(o => {
+      const got = (p.seen||{})['o:'+o.id];
+      return `<div class="badge ${got?'earned':'locked'}"><div class="ico">${o.ico}</div><div class="bn">${o.name}</div><div class="bd">${o.desc}</div></div>`;
+    }).join('')}</div>
+    <p style="font-size:0.78rem;color:var(--cream-dim);margin-top:14px">Points : séance ${XP.session} · ça avance ${XP.progress} · objectif atteint ${XP.reached} · morceau maîtrisé ${XP.mastered} · enregistrement ${XP.record} × le nombre d'instruments déjà réunis sur le morceau · palier ${XP.tier} × le n° du palier · défi de la semaine 40.</p>`;
 }
 
 function renderToast(){
@@ -1015,7 +1171,9 @@ function renderToast(){
   return `<div class="toast-back"><div class="toast">
     <h2>${toast.title}</h2>
     <div class="xp">+${toast.xp} XP${toast.levelUp ? ` · niveau ${toast.levelUp} atteint !` : ''}</div>
+    ${toast.msg ? `<p style="color:var(--cream-dim);font-size:0.9rem;margin:0 0 12px">${toast.msg}</p>` : ''}
     ${toast.badges.map(b=>`<div class="badge earned"><div class="ico">${b.ico}</div><div class="bn">${b.name}</div><div class="bd">${b.desc}</div></div>`).join('')}
+    ${toast.next ? `<p style="color:var(--cream-dim);font-size:0.8rem;margin:12px 0 0">Prochain palier : ${toast.next}</p>` : ''}
     <button class="btn" id="toast-ok" style="margin-top:14px">${toast.cta||'Continuer'}</button>
   </div></div>`;
 }
@@ -1029,9 +1187,23 @@ function finishSession(){
   const s = currentSession(); if(!s) return;
   const who = s.who, p = progress[who], today = todayStr();
   const worked = Object.entries(s.results).filter(([k,r]) => (r==='reached'||r==='progress') && p.items[k]);
-  if(!worked.length) return;
+  const recs = (s.recordings||[]).filter(r => songById(r.songId) && r.ins.length);
+  if(!worked.length && !recs.length) return;
   const xpBefore = p.xp||0, levelBefore = levelOf(xpBefore);
+  const prevDays = uniqueDays(who).filter(d => d!==today);
+  const comeback = prevDays.length && daysBetween(prevDays[prevDays.length-1], today) >= 7;
   let xp = XP.session;
+  // Enregistrements : multiplicateur = nombre d'instruments réunis sur le morceau (Seb + Arthur).
+  const known = recordedBySong();
+  let bestMult = 1;
+  recs.forEach(r => {
+    const set = new Set(known[r.songId] || []);
+    r.ins.forEach(i => {
+      if(set.has(i)){ xp += XP.record; }
+      else { set.add(i); xp += XP.record * set.size; bestMult = Math.max(bestMult, set.size); }
+    });
+    known[r.songId] = set;
+  });
   worked.forEach(([k,r]) => {
     const it = p.items[k];
     if(it.lastWorked && daysBetween(it.lastWorked, today) >= 14) p.dustCount = (p.dustCount||0)+1;
@@ -1053,14 +1225,24 @@ function finishSession(){
     date: today, ts: new Date().toISOString(),
     items: worked.map(([k,r]) => ({key:k, result:r})),
     followedPlan: !s.swapped && !!s.proposedKey && worked.some(([k]) => k===s.proposedKey),
+    recordings: recs.map(r => ({songId:r.songId, ins:[...r.ins]})),
   });
   p.xp = xpBefore + xp;
+  // Défi de la semaine
+  const cp = challengeProgress(who);
+  if(!cp.done && cp.cur >= cp.ch.goal){ p.challenges = p.challenges || {}; p.challenges[weekKey(today)] = today; }
   const fresh = checkBadges(who);
   // Le badge Duo peut aussi se débloquer pour l'autre.
   studioMusicians().forEach(m => { if(m.id!==who){ const f = checkBadges(m.id); if(f.length) saveProgress(m.id); } });
   saveProgress(who);
   const levelAfter = levelOf(p.xp);
-  toast = {title: fresh.length ? 'Bravo !' : 'Séance enregistrée', xp: p.xp - xpBefore, badges: fresh, levelUp: levelAfter>levelBefore ? levelAfter : null, cta:'Place au jeu libre 🎸'};
+  const msgs = [];
+  if(comeback) msgs.push('Content de te revoir au studio !');
+  if(bestMult > 1) msgs.push(`🎚️ Multiplicateur ×${bestMult} sur l'enregistrement.`);
+  if(cp.done === false && (p.challenges||{})[weekKey(today)]) msgs.push('⭐ Défi de la semaine relevé !');
+  else if(!(p.challenges||{})[weekKey(today)]) msgs.push(`Défi de la semaine : ${cp.ch.text} (${challengeProgress(who).cur}/${cp.ch.goal}).`);
+  toast = {title: comeback ? 'Content de te revoir !' : fresh.length ? 'Bravo !' : 'Bien joué !', msg: msgs.join(' '), xp: p.xp - xpBefore, badges: fresh, next: nextGoal(who),
+    levelUp: levelAfter>levelBefore ? `${levelAfter} · ${levelTitle(levelAfter)}` : null, cta:'Place au jeu libre 🎸'};
   session = null; saveSession();
   stopTimer();
   render();
@@ -1089,7 +1271,7 @@ function attachStudioEvents(){
 
   document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
     studioWho = b.dataset.who; lsSet('setlistas-who', studioWho);
-    swapOpen = false; stopTimer(); render();
+    swapOpen = false; recDraft = {songId:null, ins:[]}; stopTimer(); render();
   });
   document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { studioView = b.dataset.sv; render(); });
 
@@ -1126,6 +1308,26 @@ function attachStudioEvents(){
   document.querySelectorAll('.newobj-input').forEach(inp => inp.oninput = () => {
     const s = currentSession(); if(!s) return; s.newObjectives[inp.dataset.key] = inp.value; saveSession();
   });
+  const recSel = document.getElementById('rec-song');
+  if(recSel) recSel.onchange = () => { recDraft.songId = Number(recSel.value); recDraft.ins = []; render(); };
+  document.querySelectorAll('[data-recins]').forEach(b => b.onclick = () => {
+    const i = b.dataset.recins;
+    recDraft.ins = recDraft.ins.includes(i) ? recDraft.ins.filter(x=>x!==i) : [...recDraft.ins, i];
+    render();
+  });
+  const recAdd = document.getElementById('rec-add');
+  if(recAdd) recAdd.onclick = () => {
+    if(!recDraft.ins.length) return;
+    const plan = buildPlan(studioWho);
+    const s = ensureSession(plan);
+    s.recordings = s.recordings || [];
+    s.recordings.push({songId: recDraft.songId ?? plan.priority.songId, ins:[...recDraft.ins]});
+    recDraft.ins = []; saveSession(); render();
+  };
+  document.querySelectorAll('[data-recdel]').forEach(b => b.onclick = () => {
+    const s = currentSession(); if(!s) return;
+    s.recordings.splice(Number(b.dataset.recdel),1); saveSession(); render();
+  });
   const finishBtn = document.getElementById('finish-session');
   if(finishBtn) finishBtn.onclick = finishSession;
 
@@ -1136,7 +1338,7 @@ function attachStudioEvents(){
     it.objective = inp.value.trim(); it.objectiveAt = todayStr();
     const fresh = checkBadges(studioWho);
     saveProgress(studioWho);
-    if(fresh.length){ toast = {title:'Badge débloqué', xp: fresh.length*XP.badge, badges: fresh}; render(); }
+    if(fresh.length){ toast = {title:'Badge débloqué', xp: fresh.xp, badges: fresh}; render(); }
   });
   document.querySelectorAll('.status-select').forEach(sel => sel.onchange = () => {
     const it = p.items[sel.dataset.key]; if(!it) return;
@@ -1148,7 +1350,7 @@ function attachStudioEvents(){
     }
     const fresh = checkBadges(studioWho);
     saveProgress(studioWho);
-    if(gained || fresh.length) toast = {title: sel.value==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: gained + fresh.length*XP.badge, badges: fresh};
+    if(gained || fresh.length) toast = {title: sel.value==='done' ? 'Morceau maîtrisé 🏆' : 'Badge débloqué', xp: gained + fresh.xp, badges: fresh, next: nextGoal(studioWho)};
     render();
   });
   document.querySelectorAll('[data-delitem]').forEach(b => b.onclick = () => {
