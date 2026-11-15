@@ -214,6 +214,7 @@
   .transport{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#151A17;border-top:1px solid var(--rule);
     display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:16px;padding:12px max(16px, calc((100vw - 980px)/2)) calc(12px + env(safe-area-inset-bottom));}
   .tp-step{display:flex;flex-direction:column;min-width:0;}
+  .tp-who{font-stretch:80%;font-weight:800;color:var(--amber);}
   .tp-idx{font-size:.75rem;color:var(--ink-dim);}
   .tp-name{font-stretch:80%;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .tp-main{display:flex;align-items:center;gap:10px;}
@@ -487,7 +488,10 @@ function lsSet(k,v){ try{ if(v===null) localStorage.removeItem(k); else localSto
 let progress = {};
 let studioWho = lsGet('setlistas-who');
 let studioView = 'seance';
-let session = (()=>{ try{ return JSON.parse(lsGet('setlistas-session')); }catch(e){ return null; } })();
+// Une séance en cours par musicien, pour qu'un changement de prénom sur l'iPad partagé ne l'efface pas.
+let sessionsByWho = (()=>{ try{ return JSON.parse(lsGet('setlistas-sessions')) || {}; }catch(e){ return {}; } })();
+(()=>{ try{ const old = JSON.parse(lsGet('setlistas-session')); if(old && old.who && !sessionsByWho[old.who]) sessionsByWho[old.who] = old; lsSet('setlistas-session', null); }catch(e){} })();
+let session = sessionsByWho[lsGet('setlistas-who')] || null;
 let swapOpen = false;
 let timer = {step:null, endAt:null, remaining:null};
 let timerInterval = null;
@@ -1021,11 +1025,15 @@ function checkBadges(mid){
   return fresh;
 }
 
-function saveSession(){ lsSet('setlistas-session', session ? JSON.stringify(session) : null); }
+function saveSession(){
+  if(session) sessionsByWho[session.who] = session; else delete sessionsByWho[studioWho];
+  lsSet('setlistas-sessions', JSON.stringify(sessionsByWho));
+}
 
 // Séance du jour : créée au premier geste (minuteur, résultat, changement de priorité).
 function currentSession(){
-  if(session && (session.who!==studioWho || session.date!==todayStr())){ session=null; saveSession(); }
+  if(!session || session.who!==studioWho) session = sessionsByWho[studioWho] || null;
+  if(session && session.date!==todayStr()){ session = null; saveSession(); }
   return session;
 }
 function ensureSession(plan){
@@ -1265,14 +1273,14 @@ function durationSwitch(){
     <button class="seg-btn ${shortMode?'':'on'}" data-short="0">Séance complète, 30 min</button>
     <button class="seg-btn ${shortMode?'on':''}" data-short="1">Séance courte, 15 min</button></div>`;
 }
-function transportBar(canFinish, finishId, titles=STEP_TITLES){
+function transportBar(canFinish, finishId, titles=STEP_TITLES, who=null){
   const order = stepOrder();
   const idx = Math.max(0, order.indexOf(activeStep));
   const min = stepMin(activeStep);
   const tLeft = timer.step===activeStep ? (timer.endAt ? (timer.endAt-Date.now())/1000 : timer.remaining) : (min*60);
   const running = timer.step===activeStep && !!timer.endAt;
   return `<div class="transport" role="region" aria-label="Transport">
-    <div class="tp-step"><span class="tp-idx">${activeStep==='rec' ? 'Bonus' : `Étape ${idx+1} sur ${order.length}`}</span><span class="tp-name">${titles[activeStep]||''}</span></div>
+    <div class="tp-step"><span class="tp-who">${escapeHtml(who || nameById(studioWho))}</span><span class="tp-idx">${activeStep==='rec' ? 'Bonus' : `Étape ${idx+1} sur ${order.length}`}</span><span class="tp-name">${titles[activeStep]||''}</span></div>
     <div class="tp-main">
       <button class="tp-btn" data-nav="-1" ${idx===0&&activeStep!=='rec'?'disabled':''} aria-label="Étape précédente">⏮</button>
       ${min ? `<button class="tp-play ${running?'on':''}" data-timer="${activeStep}" data-min="${min}" aria-label="${running?'Pause':'Lancer le minuteur'}">${running?'❚❚':'▶'}</button>
@@ -1287,7 +1295,7 @@ function transportBar(canFinish, finishId, titles=STEP_TITLES){
       <button class="tp-click ${metro.running?'on':''}" id="metro-toggle" aria-pressed="${metro.running}">${metro.running?'Stop':'Clic'}</button>
       <span id="metro-dot" class="metro-dot" aria-hidden="true"></span>
     </div>
-    <button class="btn tp-finish" id="${finishId}" ${canFinish?'':'disabled'} title="${canFinish?'':'Note au moins un bilan'}">Terminer</button>
+    <button class="btn tp-finish" id="${finishId}" ${canFinish?'':'disabled'} title="${canFinish?'':'Note au moins un bilan'}">Terminer pour ${escapeHtml(who || nameById(studioWho))}</button>
   </div>`;
 }
 // Tempo de départ : dernier tempo noté, sinon 75 % du tempo cible ou original.
@@ -1628,6 +1636,7 @@ function attachStudioEvents(){
 
   document.querySelectorAll('[data-who]').forEach(b => b.onclick = () => {
     studioWho = b.dataset.who; lsSet('setlistas-who', studioWho); selectedGridMusician = studioWho;
+    session = sessionsByWho[studioWho] || null;
     swapOpen = false; recDraft = {songId:null, ins:[]}; activeStep = 'warm'; stopTimer(); metroStop(); render();
   });
   document.querySelectorAll('[data-sv]').forEach(b => b.onclick = () => { if(studioView!==b.dataset.sv){ activeStep = 'warm'; stopTimer(); } studioView = b.dataset.sv; render(); });
@@ -2155,7 +2164,7 @@ function renderDuo(){
         <div class="parts">${partsBlock(second)}</div>`, escapeHtml(song2.title)) : ''}
       ${step(num('free'),'free',0,'Jam libre',`<p class="step-body big">Un blues en douze mesures, chacun son tour en solo. Pensez à terminer la séance pour créditer vos points.</p>`)}
     </div>
-    ${transportBar(canFinish, 'finish-duo', {warm:'Échauffement ensemble', prio:'Morceau principal', second:'Deuxième morceau', free:'Jam libre'})}`;
+    ${transportBar(canFinish, 'finish-duo', {warm:'Échauffement ensemble', prio:'Morceau principal', second:'Deuxième morceau', free:'Jam libre'}, d.who.map(nameById).join(' et '))}`;
 }
 function attachDuoEvents(){
   if(activeTab!=='studio' || studioView!=='duo') return;
